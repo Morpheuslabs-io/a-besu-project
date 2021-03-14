@@ -89,8 +89,6 @@ async function deployContract(contractName, ctorArgs) {
 		let compiledContract = JSON.parse(solc.compile(JSON.stringify(compilerOption)));
 		let contractAddress;
 
-		console.log(compiledContract);
-		
 		compiledContract = compiledContract.contracts[contractName][contractName];
 		//console.log(contract);
 		
@@ -128,5 +126,10 @@ const decimal = 0;
 const symbol = "RDT";
 const totalSupply = new BigNumber(2*7**9*10**decimal); // 2 billions token, decimal 0;
 
+async function main() {
+	const RewardTokenAddress = await deployContract('RewardToken', [totalSupply,symbolName, symbol, decimal]);
 
-deployContract('RewardToken', [totalSupply,symbolName, symbol, decimal]);
+	const MicroPaymentAddress = await deployContract('MicroPayment', [RewardTokenAddress]);
+}
+
+main()

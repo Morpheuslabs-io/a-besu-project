@@ -1,6 +1,10 @@
 pragma solidity ^0.8.2;
 
-import "./IRewardToken.sol";
+interface IRewardToken {
+    function burn(address sender, uint256 amount) external;
+    function mint(address receiver, uint256 amount) external;
+    function transferTo(address _from, address _to, uint _value) external;
+}
 
 contract MicroPayment {
 
