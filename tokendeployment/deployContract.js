@@ -60,7 +60,7 @@ async function sendTx(txObject) {
 }
 
 async function deployContract(contractName, ctorArgs) {
-    let sourceFile = `../contracts/${contractName}.sol`;
+    let sourceFile = `../smartcontracts/${contractName}.sol`;
     console.log(`Start compiling contract ${contractName}, source file -->`, sourceFile);
     let source;
 	
