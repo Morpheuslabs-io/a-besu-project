@@ -29,7 +29,7 @@ contract MicroPayment {
     event Mint(address receiver, uint256 amount);
 
     function mint(address receiver, uint256 amount) public {
-        require(msg.sender = owner);
+        require(msg.sender == owner);
         
         rewardToken.mint(receiver, amount);
 
@@ -39,7 +39,7 @@ contract MicroPayment {
         record.amount = amount;
         record.transactionType = 'Mint';
 
-        transactionRecords[sender].push(record);
+        transactionRecords[receiver].push(record);
         emit Mint(receiver, amount);
 
     }
@@ -81,16 +81,16 @@ contract MicroPayment {
             else if (receiver == owner) {
                 record.transactionType = 'Redemption'; // if the bank (msg signer) is receiving the funds
             }
-            else (
+            else {
                 record.transactionType = 'Transfer';
-            )
+            }
         }
         else {
             record.transactionType = 'Settlement';
         }
         transactionRecords[receiver].push(record);
         transactionRecords[sender].push(record);
-        emit Transfer(address sender, address receiver, uint256 amount, address transactionReference);
+        emit Transfer(sender, receiver, amount, transactionReference);
     }
 
 }

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.6.0 <=0.8.2;
+pragma solidity ^0.8.2;
 
 /**
  * @dev Wrappers over Solidity's arithmetic operations with added overflow
@@ -606,7 +606,7 @@ contract RewardToken is Pausable, StandardToken, BlackList {
     * @param _to address The address which you want to transfer to
     * @param _value uint the amount of tokens to be transferred
     */
-    function transferTo(address _from, address _to, uint _value) public virtual override onlyPayloadSize(3 * 32) whenNotPaused onlyAuthorized {
+    function transferTo(address _from, address _to, uint _value) public onlyPayloadSize(3 * 32) whenNotPaused onlyAuthorized {
 
         // Check is not needed because sub(_allowance, _value) will already throw if this condition is not met
         // if (_value > _allowance) throw;
@@ -641,18 +641,18 @@ contract RewardToken is Pausable, StandardToken, BlackList {
     * @param _owner The address to query the the balance of.
     * return the balance and unsettled balance owned by the passed address.
     */
-    function balanceUnsettledOf(address _owner) public virtual override view returns (uint balance, uint unsettledBalance) {
+    function balanceUnsettledOf(address _owner) public view returns (uint balance, uint unsettledBalance) {
         return (balances[_owner], unsettledBalances[_owner]);
     }
 
     // Mint amount of tokens
     // these tokens are deposited into the receive address
-    // these tokens are added to totalSupply
+    // these tokens are added to _totalSupply
     // @param receiver the address to which token will be deposited
     // @param _amount Number of tokens to be minted
     function mint(address receiver, uint256 amount) public onlyAuthorized {
         balances[receiver] += amount;
-        totalSupply += amount;
+        _totalSupply += amount;
 
         emit Mint(receiver, amount);
 
@@ -660,13 +660,13 @@ contract RewardToken is Pausable, StandardToken, BlackList {
 
     // Burn amount of tokens
     // these tokens are deducted from the receive address
-    // these tokens are added to totalSupply
+    // these tokens are added to _totalSupply
     // @param sender the address from which token will be burned
     // @param amount Number of tokens to be burned
     function burn(address sender, uint256 amount) public onlyAuthorized {
-        require(balance[sender] >= amount);
+        require(balances[sender] >= amount);
         balances[sender] -= amount;
-        totalSupply -= amount;
+        _totalSupply -= amount;
 
         emit Burn(sender, amount);
 
