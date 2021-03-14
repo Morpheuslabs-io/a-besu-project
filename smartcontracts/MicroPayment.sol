@@ -48,7 +48,6 @@ contract MicroPayment {
 
     function burn(address sender, uint256 amount) public {
         require(msg.sender == owner);
-        require(balance[sender]>=amount);
         
         rewardToken.burn(sender, amount);
 
