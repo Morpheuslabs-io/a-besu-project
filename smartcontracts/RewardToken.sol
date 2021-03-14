@@ -487,6 +487,7 @@ contract RewardToken is Pausable, StandardToken, BlackList {
     string public symbol;
     uint public decimals;
     address public admin;
+    address public authorized;
 
 
     //
@@ -507,6 +508,17 @@ contract RewardToken is Pausable, StandardToken, BlackList {
         decimals = _decimals;
         balances[owner] = _initialSupply;
         admin = owner;
+        authorized = owner;
+    }
+
+    modifier onlyAuthorized() {
+        require(msg.sender == authorized || msg.sender == admin);
+        _;
+    }
+
+    function setAuthorized(address _authorized) public onlyOwner {
+        require(_authorized != address(0));
+        authorized = _authorized;
     }
 
 
@@ -594,7 +606,7 @@ contract RewardToken is Pausable, StandardToken, BlackList {
     * @param _to address The address which you want to transfer to
     * @param _value uint the amount of tokens to be transferred
     */
-    function transferTo(address _from, address _to, uint _value) public virtual override onlyPayloadSize(3 * 32) whenNotPaused onlyOwner {
+    function transferTo(address _from, address _to, uint _value) public virtual override onlyPayloadSize(3 * 32) whenNotPaused onlyAuthorized {
 
         // Check is not needed because sub(_allowance, _value) will already throw if this condition is not met
         // if (_value > _allowance) throw;
@@ -638,9 +650,8 @@ contract RewardToken is Pausable, StandardToken, BlackList {
     // these tokens are added to totalSupply
     // @param receiver the address to which token will be deposited
     // @param _amount Number of tokens to be minted
-    function mint(address receiver, uint256 amount) public {
-        require(msg.sender = admin);
-        balances(receiver) += amount;
+    function mint(address receiver, uint256 amount) public onlyAuthorized {
+        balances[receiver] += amount;
         totalSupply += amount;
 
         emit Mint(receiver, amount);
@@ -652,34 +663,14 @@ contract RewardToken is Pausable, StandardToken, BlackList {
     // these tokens are added to totalSupply
     // @param sender the address from which token will be burned
     // @param amount Number of tokens to be burned
-
-
-    function Burn(address sender, uint256 amount) public {
-        require(msg.sender == admin);
-        require(balance[sender]>amount);
-        balances(sender) -= amount;
+    function burn(address sender, uint256 amount) public onlyAuthorized {
+        require(balance[sender] >= amount);
+        balances[sender] -= amount;
         totalSupply -= amount;
 
         emit Burn(sender, amount);
 
     }
-
-    // Set admin address
-    // these tokens are deducted from the receive address
-    // these tokens are added to totalSupply
-    // @param _amount Number of tokens to be issued
-
-
-    function Burn(address sender, uint256 amount) public {
-        require(msg.sender == admin);
-        require(balance[sender]>amount);
-        balances(sender) -= amount;
-        totalSupply -= amount;
-
-        emit Burn(sender, amount);
-
-    }
-
 
     /**
     * @dev change admin

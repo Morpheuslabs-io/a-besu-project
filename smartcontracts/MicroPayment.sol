@@ -1,8 +1,12 @@
 pragma solidity ^0.8.2;
 
+import "./IRewardToken.sol";
+
 contract MicroPayment {
 
     address public owner; // authorize transfer between two parties
+
+    IRewardToken private rewardToken;
 
     struct TransactionRecords {
         address sender;
@@ -12,19 +16,24 @@ contract MicroPayment {
         string transactionType;
     }
 
-    mapping (address => TransactionRecord[]) public transactionRecords;
+    mapping (address => TransactionRecords[]) public transactionRecords;
 
-    constructor (address _minter_address, address _burner_address) {
+    constructor (address _rewardToken) {
         owner = msg.sender;
+
+        // Contract RewardToken needs to invoke the method setAuthorized(address)
+        // where "address" is the address of the contract MicroPayment
+        rewardToken = IRewardToken(_rewardToken);
     }
 
     event Mint(address receiver, uint256 amount);
 
     function mint(address receiver, uint256 amount) public {
         require(msg.sender = owner);
-        // here need to call RewordToken mint function
+        
+        rewardToken.mint(receiver, amount);
 
-        TransactionRecord memory record;
+        TransactionRecords memory record;
         record.sender = msg.sender;
         record.receiver = receiver;
         record.amount = amount;
@@ -37,12 +46,13 @@ contract MicroPayment {
 
     event Burn(address sender, uint256 amount);
 
-    function Burn(address sender, uint256 amount) public {
+    function burn(address sender, uint256 amount) public {
         require(msg.sender == owner);
-        require(balance[sender]>amount);
-        // here need to call RewordToken burn function
+        require(balance[sender]>=amount);
+        
+        rewardToken.burn(sender, amount);
 
-        TransactionRecord memory record;
+        TransactionRecords memory record;
         record.sender = sender;
         record.receiver = msg.sender;
         record.amount = amount;
@@ -57,18 +67,19 @@ contract MicroPayment {
 
     function transfer(address sender, address receiver, uint256 amount, address transactionReference) public {
         require(msg.sender == owner);
-        // here need to call RewordToken transferTo function
+        
+        rewardToken.transferTo(sender, receiver, amount);
 
-        TransactionRecord memory record;
+        TransactionRecords memory record;
         record.sender = sender;
         record.receiver = receiver;
         record.amount = amount;
         record.transactionReference = transactionReference;
-        if (transactionReference == 0x0000000000000000000000000000000000000000) {
-            if (sender == owner_address) {
+        if (transactionReference == address(0)) {
+            if (sender == owner) {
                 record.transactionType = 'Top-Up'; // if the bank (msg signer) is sending the funds
             }
-            else if (receiver == owner_address) {
+            else if (receiver == owner) {
                 record.transactionType = 'Redemption'; // if the bank (msg signer) is receiving the funds
             }
             else (
