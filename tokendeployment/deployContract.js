@@ -8,7 +8,7 @@ const solc = require('solc');
 const ethereumUri = 'http://localhost:8545';
 
 //config private key for deployment account
-const privateKey = "0x0a06e5d64a771d89af1f7aa53a068ea3860a54b13c8b78d9e5fa4a171379cd14";
+const privateKey = "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d";
 
 let web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
@@ -88,6 +88,8 @@ async function deployContract(contractName, ctorArgs) {
 	   
 		let compiledContract = JSON.parse(solc.compile(JSON.stringify(compilerOption)));
 		let contractAddress;
+
+		console.log(compiledContract);
 		
 		compiledContract = compiledContract.contracts[contractName][contractName];
 		//console.log(contract);
