@@ -30,46 +30,11 @@ contract MicroPayment {
         rewardToken = IRewardToken(_rewardToken);
     }
 
-    event Mint(address receiver, uint256 amount);
-
-    function mint(address receiver, uint256 amount) public {
-        require(msg.sender == owner);
-        
-        rewardToken.mint(receiver, amount);
-
-        TransactionRecords memory record;
-        record.sender = msg.sender;
-        record.receiver = receiver;
-        record.amount = amount;
-        record.transactionType = 'Mint';
-
-        transactionRecords[receiver].push(record);
-        emit Mint(receiver, amount);
-
-    }
-
-    event Burn(address sender, uint256 amount);
-
-    function burn(address sender, uint256 amount) public {
-        require(msg.sender == owner);
-        
-        rewardToken.burn(sender, amount);
-
-        TransactionRecords memory record;
-        record.sender = sender;
-        record.receiver = msg.sender;
-        record.amount = amount;
-        record.transactionType = 'Burn';
-
-        transactionRecords[sender].push(record);
-        emit Burn(sender, amount);
-
-    }
 
     event Transfer(address sender, address receiver, uint256 amount, address transactionReference);
 
-    function transfer(address sender, address receiver, uint256 amount, address transactionReference) public {
-        require(msg.sender == owner);
+    function transfer(address receiver, uint256 amount, address transactionReference) public {
+        address sender = msg.sender
         
         rewardToken.transferTo(sender, receiver, amount);
 
@@ -95,6 +60,15 @@ contract MicroPayment {
         transactionRecords[receiver].push(record);
         transactionRecords[sender].push(record);
         emit Transfer(sender, receiver, amount, transactionReference);
+    }
+    
+    /**
+    * @dev Gets the balance of the specified address.
+    * @param _owner The address to query the balance of.
+    * return the balance and unsettled balance owned by the passed address.
+    */
+    function balanceOf(address who) public view returns (uint balance, uint unsettledBalance) {
+        return rewardToken.balanceUnsettledOf(balances[who], unsettledBalances[_owner]);
     }
 
 }
