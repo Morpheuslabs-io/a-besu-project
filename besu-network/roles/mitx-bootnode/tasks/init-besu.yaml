@@ -1,0 +1,145 @@
+---
+- name: Init besu
+  debug:
+        msg: "Init Besu"
+
+- name: Get public ip
+  shell: dig +short myip.opendns.com @resolver1.opendns.com 2>/dev/null || curl -s --retry 2 icanhazip.com
+  register: node_ip
+
+- name: create besu-mitx directories
+  file:
+        path: "{{ item.dest }}"
+        mode: "{{ item.mode }}"
+        state: directory
+  with_items:
+        - { dest: "/home/trung/besu-mitx/data", mode: "0440" }
+        - { dest: "/home/trung/besu-mitx/logs", mode: "0440" }
+        - { dest: "/home/trung/besu-mitx/tmp", mode: "0440" }
+
+- name: Copy permissioned nodes file
+  copy:
+        src: "{{ role_path }}/files/permissions_config.toml"
+        dest: /home/trung/besu-mitx/tmp/permissions_config.toml
+        mode: 0755
+  when: bootnode|bool
+
+- name: initializing pantheon from genesis.json
+  debug:
+        msg: Initializing Pantheon
+
+- name: Copy genesis ibft2.0 file
+  copy:
+        src: "{{ role_path }}/files/genesis.json"
+        dest: /home/trung/besu-mitx/data/genesis.json
+        mode: 0755
+
+- name: Copy node key to first bootnode node
+  copy:
+        src: "{{ role_path }}/files/key"
+        dest: /home/trung/besu-mitx/data/key
+        mode: 0700
+  when: first_node|bool
+
+- name: Copy bootnode key to first bootnode node
+  copy:
+        src: "{{ role_path }}/files/bootnode"
+        dest: /home/trung/besu-mitx/data/bootnode
+        mode: 0700
+  when: first_node|bool
+
+- name: Copy permissioned nodes file
+  copy:
+        src: "{{ role_path }}/files/permissions_config.toml"
+        dest: /home/trung/besu-mitx/data/permissions_config.toml
+        mode: 0755
+  when: first_node|bool
+
+- name: Generate node key
+  shell: pantheon --genesis-file=/root/besu-mitx/data/genesis.json --data-path=/root/besu-mitx/data public-key export --to=/root/besu-mitx/data/bootnode | grep -oE "0x[A-Fa-f0-9]*" | sed 's/0x//'
+  register: enode_key
+  when: bootnode|bool
+
+- name: print enode key
+  debug:
+        msg: enode://{{enode_key.stdout}}@{{node_ip.stdout}}:21000
+  when: bootnode|bool
+
+- name: update permissioned nodes validator file
+  replace:
+        dest: /home/trung/besu-mitx/tmp/permissions_config.toml
+        regexp: '0"]$'
+        replace: "0,]"
+  when: bootnode|bool
+
+- name: add new permissioned nodes validator
+  replace:
+        dest: /home/trung/besu-mitx/tmp/permissions_config.toml
+        regexp: "0,]$"
+        replace: ',"enode://{{enode_key.stdout}}@{{node_ip.stdout}}:21000"]'
+  when: bootnode|bool
+
+- name: Fetch permissioned node validator
+  fetch:
+        src: /home/trung/besu-mitx/tmp/permissions_config.toml
+        dest: "{{ role_path }}/files/"
+        flat: yes
+  when: bootnode|bool
+
+- name: Copy bootnodes variable from validators
+  copy:
+        src: "{{ playbook_dir }}/roles/mitx-validator-node/vars/main.yml"
+        dest: /home/trung/besu-mitx/tmp/main.yml
+        mode: 0700
+  when: bootnode|bool
+
+- name: update bootnodes connection
+  replace:
+        dest: /home/trung/besu-mitx/tmp/main.yml
+        regexp: '60606"$'
+        replace: "60606,"
+  when: bootnode|bool
+
+- name: add new bootnode to running validator or writer
+  replace:
+        dest: /home/trung/besu-mitx/tmp/main.yml
+        regexp: "60606,$"
+        replace: ',"enode://{{enode_key.stdout}}@{{node_ip.stdout}}:60606"]'
+  when: bootnode|bool
+
+- name: Fetch main.yml to repository
+  fetch:
+        src: /home/trung/besu-mitx/tmp/permissions_config.toml
+        dest: "{{ playbook_dir }}/roles/mitx-validator-node/vars/"
+        flat: yes
+  when: bootnode|bool
+
+- name: Generate shell script to execute geth service
+  template:
+        src: "startpantheon.j2"
+        dest: "/home/trung/besu-mitx/start-pantheon.sh"
+        mode: 0775
+        force: yes
+
+- name: Generate Pantheon configuration file
+  template:
+    src: "pantheon-config.j2"
+    dest: "/home/trung/besu-mitx/config.toml"
+    mode: 0775
+
+- name: Copy service file to systemd
+  copy:
+        src: "{{ role_path }}/files/pantheon.service"
+        dest: /lib/systemd/system/pantheon.service
+        mode: 0775
+
+- name: Copy Log configuration file to besu-mitx
+  copy:
+        src: "{{ role_path }}/files/log.xml"
+        dest: "/home/trung/besu-mitx/log.xml"
+        mode: 0775
+
+- name: Enable service pantheon
+  service:
+        name: pantheon
+        enabled: yes
