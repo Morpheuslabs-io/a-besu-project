@@ -1,9 +1,12 @@
+// SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.2;
 
 interface IRewardToken {
     function burn(address sender, uint256 amount) external;
     function mint(address receiver, uint256 amount) external;
     function transferTo(address _from, address _to, uint _value) external;
+    function balanceUnsettledOf(address who) external view returns (uint, uint);
 }
 
 contract MicroPayment {
@@ -34,8 +37,7 @@ contract MicroPayment {
     event Transfer(address sender, address receiver, uint256 amount, address transactionReference);
 
     function transfer(address receiver, uint256 amount, address transactionReference) public {
-        address sender = msg.sender
-        
+        address sender = msg.sender;
         rewardToken.transferTo(sender, receiver, amount);
 
         TransactionRecords memory record;
@@ -61,14 +63,13 @@ contract MicroPayment {
         transactionRecords[sender].push(record);
         emit Transfer(sender, receiver, amount, transactionReference);
     }
-    
     /**
     * @dev Gets the balance of the specified address.
-    * @param _owner The address to query the balance of.
+    * @param who The address to query the balance of.
     * return the balance and unsettled balance owned by the passed address.
     */
     function balanceOf(address who) public view returns (uint balance, uint unsettledBalance) {
-        return rewardToken.balanceUnsettledOf(balances[who], unsettledBalances[_owner]);
+        return rewardToken.balanceUnsettledOf(who);
     }
 
 }
