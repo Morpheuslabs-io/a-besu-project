@@ -1,0 +1,18 @@
+[bootnodes]
+127.0.0.1 node_ip=127.0.0.1 node_name=bootnode1
+
+[all:vars]
+password=default_password
+node_email=default@email
+bootnode=false
+validator=false
+first_node=false
+install=false
+besu_release_version='20.10.0'
+orion_release_version='1.6.0'
+dns_name=localhost
+orion=false
+
+[bootnodes:vars]
+bootnode=true
+
