@@ -8,7 +8,7 @@ const solc = require('solc');
 const ethereumUri = 'http://localhost:8545';
 
 //config private key for deployment account
-const privateKey = "0xd2a67f9aa8c9ef2a9a0a20b2a4a4a081a236f90366519ec6d860062b7e7ccb2a";
+const privateKey = "0x951b54e503524b921c7df7bbff0d61a24d6dbb7635409de7f558470f349d861d";
 
 let web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
@@ -116,16 +116,42 @@ async function deployContract(contractName, ctorArgs) {
 	}
 }
 
+async function transferToken(contract, to, amount) {
+	let nonce = await web3.eth.getTransactionCount(sender);
+
+	let payload = contract.methods.transfer(to, amount, to).encodeABI();
+
+	let tx = {
+		from : sender,
+		to: contract._address,
+		nonce : nonce,
+		data : payload,
+		gas : 2000000,
+		gasPrice: 10000000,
+		chainId
+	};
+
+	let signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
+	let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+	console.log(`New payment is done -> txHash ${txHash.transactionHash}`);
+}
+
+
 const BigNumber = web3.utils.BN;
 const symbolName = "RewardToken";
 const decimal = 0;
 const symbol = "RDT";
 const totalSupply = new BigNumber(2*10**9*10**decimal); // 2 billions token, decimal 0;
 
+function getRandomInt(max) {
+	return Math.floor(Math.random() * Math.floor(max));
+  }
+
 async function main() {
 	try {
 		const RewardToken = await deployContract('RewardToken', [totalSupply,symbolName, symbol, decimal]);
 		const MicroPayment = await deployContract('MicroPayment', [RewardToken._address]);
+
 		// set admin
 		let payload = RewardToken.methods.setAuthorized(MicroPayment._address).encodeABI();
 		let nonce = await web3.eth.getTransactionCount(sender);
@@ -139,10 +165,41 @@ async function main() {
 			gasPrice: 100,
 			chainId
 		};
-
+	
 		let signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
 		let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
 		console.log(`Set admin txHash ${txHash.transactionHash}`);
+
+		// checking balance of user
+		let { balance, unsettledBalance } = await MicroPayment.methods.balanceOf(sender).call();
+		console.log(`Balance of owner ${balance}, UnsettleBalance ${unsettledBalance}`);
+
+		// sending token
+		// transfer(address receiver, uint256 amount, address transactionReference)
+
+		for(let i = 0; i < 50; i++) {
+			let { address } = await web3.eth.accounts.create();
+			await transferToken(MicroPayment, address, getRandomInt(2000));
+
+			// checking balance of user
+			let userBalance = await MicroPayment.methods.balanceOf(address).call();
+			console.log(`New Wallet Balance ${userBalance.balance}, UnsettleBalance ${userBalance.unsettledBalance}`);
+		}
+
+		// checking transaction record
+		let {senders,receivers,amounts, txRefs,txTypes} = await MicroPayment.methods.getTransactionRecords(sender, 0).call();
+
+		let results = senders.map((sender,idx) => {
+			return {
+				sender, 
+				receiver: receivers[idx],
+				amount: amounts[idx],
+				txRef: txRefs[idx],
+				txType: web3.utils.hexToAscii(txTypes[idx]).replace(/\x00/g,'')
+			}});
+
+		console.log("History",results);
+		
 	} catch (ex) {
 		console.log(ex);
 	}
