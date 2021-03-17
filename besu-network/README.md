@@ -5,21 +5,38 @@
 1.
 Besu requires Java 11+ to compile. Earlier versions are not supported.
 
+https://stackoverflow.com/questions/52504825/how-to-install-jdk-11-under-ubuntu
+
+```
+sudo apt-get install openjdk-11-jdk
+java -version
+sudo update-java-alternatives --list
+sudo update-alternatives --config java
+```
+
+on Mac
+
+`brew install openjdk@11`
+
 2.
 Ansible requires python3.
 The best way to install ansible with python3:
 
   - Install the tool `pip3`
+      
+      `sudo apt-get update`
+      `sudo apt install python3-pip`
+
   - Install `ansible` with `pip3`: `pip3 install ansible`
 
-## Install and Run OpenSSH on localhost
+## Install and Run OpenSSH on localhost (not needed when running on platform workspace )
 
 The below commands are valid on Ubuntu
 
 ```
 sudo apt install openssh-server
-sudo systemctl status ssh
-sudo ufw allow ssh
+sudo systemctl status ssh or service ssh start
+sudo ufw allow ssh (not needed on platform workspace)
 
 ```
 

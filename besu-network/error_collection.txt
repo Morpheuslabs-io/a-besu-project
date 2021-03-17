@@ -30,6 +30,22 @@ sudo rm -rf /lib/systemd/system/pantheon.service
 
 fatal: [127.0.0.1]: FAILED! => {"ansible_facts": {}, "changed": false, "failed_modules": {"setup": {"failed": true, "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE\nSee stdout/stderr for the exact error", "rc": 1}}, "msg": "The following modules failed to execute: setup\n"}
 
+Way1:
+  --> rm -rf ~/besu-mitx
+  and run the script "script_deploy_bootnode.sh" again
 
---> rm -rf ~/besu-mitx
-and run the script "script_deploy_bootnode.sh" again
+Way2:
+  ensure the script "script_deploy_bootnode.sh" to have the option "-K" at the end.
+  This option enables to enter sudo password on cmd prompt
+
+6.
+
+TASK [mitx-bootnode : Enable service pantheon] ***********************************************************************************************************
+fatal: [127.0.0.1]: FAILED! => {"changed": false, "msg": "Error loading unit file 'pantheon': org.freedesktop.systemd1.BadUnitSetting \"Unit pantheon.service has a bad unit file setting.\""}
+
+Way1:
+  // reload the config
+  systemctl daemon-reload
+
+  // start again
+  service pantheon start
