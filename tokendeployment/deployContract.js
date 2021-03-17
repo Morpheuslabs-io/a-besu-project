@@ -38,7 +38,7 @@ async function sendTx(txObject) {
 	
 	let nonce = await web3.eth.getTransactionCount(txFrom);
 
-    gasLimit += 50000;
+    gasLimit += 100000;
     const tx = {
         from : txFrom,
         nonce : nonce,
