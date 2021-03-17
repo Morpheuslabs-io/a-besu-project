@@ -9,7 +9,7 @@
 
 The IBFT2 blockchain network can be started with this cmd
 
-`pm2 start script_start_node_all.sh`
+`./script_start_node_all.sh`
 
 **Notice**
 
