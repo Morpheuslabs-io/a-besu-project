@@ -8,7 +8,7 @@ const solc = require('solc');
 const ethereumUri = 'http://localhost:8545';
 
 //config private key for deployment account
-const privateKey = "0x951b54e503524b921c7df7bbff0d61a24d6dbb7635409de7f558470f349d861d";
+const privateKey = "0x5ec0d742c8aa2d85749289b8f535cec7a7e23955af66a03f06419d065d4afb3d";
 
 let web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
@@ -116,10 +116,10 @@ async function deployContract(contractName, ctorArgs) {
 	}
 }
 
-async function transferToken(contract, to, amount) {
+async function transferToken(contract, to, amount, ref) {
 	let nonce = await web3.eth.getTransactionCount(sender);
 
-	let payload = contract.methods.transfer(to, amount, to).encodeABI();
+	let payload = contract.methods.transfer(to, amount, web3.utils.asciiToHex(ref?ref:""), to).encodeABI();
 
 	let tx = {
 		from : sender,
@@ -179,7 +179,7 @@ async function main() {
 
 		for(let i = 0; i < 50; i++) {
 			let { address } = await web3.eth.accounts.create();
-			await transferToken(MicroPayment, address, getRandomInt(2000));
+			await transferToken(MicroPayment, address, getRandomInt(2000), `REF${i}`);
 
 			// checking balance of user
 			let userBalance = await MicroPayment.methods.balanceOf(address).call();
