@@ -35,7 +35,7 @@ contract MicroPayment {
 
     event Transfer(address sender, address receiver, uint256 amount, address transactionReference);
 
-    function transfer(address receiver, uint256 amount, address transactionReference) public {
+    function transfer(address receiver, uint256 amount, bytes32 transactionType, address transactionReference) public {
         address sender = msg.sender;
         rewardToken.transferTo(sender, receiver, amount);
 
@@ -43,21 +43,8 @@ contract MicroPayment {
         record.sender = sender;
         record.receiver = receiver;
         record.amount = amount;
+        record.transactionType = transactionType;
         record.transactionReference = transactionReference;
-        if (transactionReference == address(0)) {
-            if (sender == owner) {
-                record.transactionType = 'Top-Up'; // if the bank (msg signer) is sending the funds
-            }
-            else if (receiver == owner) {
-                record.transactionType = 'Redemption'; // if the bank (msg signer) is receiving the funds
-            }
-            else {
-                record.transactionType = 'Transfer';
-            }
-        }
-        else {
-            record.transactionType = 'Settlement';
-        }
 
         transactionRecords[receiver].push(record);
         transactionRecords[sender].push(record);
