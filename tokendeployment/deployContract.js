@@ -8,7 +8,7 @@ const solc = require('solc');
 const ethereumUri = 'http://localhost:8545';
 
 //config private key for deployment account
-const privateKey = "0xd2a67f9aa8c9ef2a9a0a20b2a4a4a081a236f90366519ec6d860062b7e7ccb2a";
+const privateKey = "0xc47ea2509a469989ec4de2ab36812241984806695ef6e354fad3c1c6766e73f8";
 
 let web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
@@ -108,7 +108,8 @@ async function deployContract(contractName, ctorArgs) {
 		// contract.options.address = tx.contractAddress;
 		console.log("Deployed contract", contractName, " contract address -->", tx.contractAddress);
 		console.log(`TxHash -> ${tx.transactionHash}`);
-		// console.log("ABI ", JSON.stringify(abi).replace(/\s+/g, ''));
+		
+		console.log(contractName, JSON.stringify(abi));
 
 		return contract;
 	} catch(e) {
