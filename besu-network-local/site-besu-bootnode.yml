@@ -1,0 +1,8 @@
+- hosts: bootnodes
+  connection: local
+  gather_facts: yes
+  become: yes
+  vars:
+    install: true
+  roles:
+    - besu-bootnode
