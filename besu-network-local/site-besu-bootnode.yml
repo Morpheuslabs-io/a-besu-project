@@ -2,7 +2,6 @@
   connection: local
   gather_facts: yes
   become: yes
-  become_user: ec2-user
   vars:
     install: true
   roles:
