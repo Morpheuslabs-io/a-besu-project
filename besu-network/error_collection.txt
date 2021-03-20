@@ -40,7 +40,7 @@ Way2:
 
 6.
 
-TASK [mitx-bootnode : Enable service pantheon] ***********************************************************************************************************
+TASK [besu-bootnode : Enable service pantheon] ***********************************************************************************************************
 fatal: [127.0.0.1]: FAILED! => {"changed": false, "msg": "Error loading unit file 'pantheon': org.freedesktop.systemd1.BadUnitSetting \"Unit pantheon.service has a bad unit file setting.\""}
 
 Way1:

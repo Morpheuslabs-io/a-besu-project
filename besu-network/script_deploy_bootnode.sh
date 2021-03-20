@@ -1,3 +1,4 @@
-ansible-playbook -i ./inventory site-mitx-bootnode.yml -K
+sudo rm -rf /opt/besu-bootnode
 
-# ansible-playbook -i ./inventory site-mitx-validator.yml -K
+# Start first node as bootnode
+ansible-playbook -i ./inventory site-besu-bootnode.yml -K

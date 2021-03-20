@@ -47,15 +47,15 @@ Execute the script `script_deploy_bootnode.sh`
 If the script is executed successfully, we should see the below output
 
 ```
-TASK [mitx-bootnode : Start Pantheon Node] ***************************************************************************************************************
+TASK [besu-bootnode : Start Pantheon Node] ***************************************************************************************************************
 ok: [127.0.0.1] => {
     "msg": "Starting Pantheon Node"
 }
 
-TASK [mitx-bootnode : Execute Pantheon service] **********************************************************************************************************
+TASK [besu-bootnode : Execute Pantheon service] **********************************************************************************************************
 changed: [127.0.0.1]
 
-TASK [mitx-bootnode : clearing unnecessary folders] ******************************************************************************************************
+TASK [besu-bootnode : clearing unnecessary folders] ******************************************************************************************************
 changed: [127.0.0.1]
 
 PLAY RECAP ***********************************************************************************************************************************************
@@ -95,3 +95,32 @@ Should see this output
   "result" : "0x0"
 }
 ```
+
+## Current folder config
+
+**Original**
+
+~/lacchain
+/root/lacchain
+
+**Notice**
+
+Never use `~/` as it won't create folder successfully
+
+### bootnode
+
+/opt/besu-bootnode
+
+port: `3000`
+
+### validator
+
+/opt/besu-validator
+
+port: `3001`
+
+### validator2
+
+/opt/besu-validator2
+
+port: `3002`
