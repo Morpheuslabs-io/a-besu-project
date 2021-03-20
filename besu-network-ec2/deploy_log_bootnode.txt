@@ -1,0 +1,160 @@
+
+PLAY [bootnodes] *****************************************************************************************************************************************
+
+TASK [Gathering Facts] ***********************************************************************************************************************************
+ok: [3.140.243.107]
+
+TASK [besu-bootnode : Remove previous docker installation] ***********************************************************************************************
+ok: [3.140.243.107]
+
+TASK [besu-bootnode : Install prerequisite packages] *****************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Enable additional repository (for RHEL only)] **************************************************************************************
+fatal: [3.140.243.107]: FAILED! => {"changed": false, "msg": "rhel-7-server-extras-rpms is not a valid repository ID", "results": ["rhel-7-server-extras-rpms is not a valid repository ID"]}
+
+PLAY RECAP ***********************************************************************************************************************************************
+3.140.243.107              : ok=3    changed=1    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+
+trung@trung-lap:~/Work/reference/morphe/task/hyperledger-besu/a-besu-project/besu-network-ec2$ ./script_deploy_bootnode.sh 
+
+PLAY [bootnodes] *****************************************************************************************************************************************
+
+TASK [Gathering Facts] ***********************************************************************************************************************************
+ok: [3.140.243.107]
+
+TASK [besu-bootnode : Install besu] **********************************************************************************************************************
+ok: [3.140.243.107] => {
+    "msg": "Installing Besu"
+}
+
+TASK [besu-bootnode : previous clearing] *****************************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : pull besu binaries] ****************************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Preparing temporal folder] *********************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Extract the Besu tarball] **********************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Renaming extracted file] ***********************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Deleting old folders] **************************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : moving files to /usr] **************************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Deleting old installed versions of besu or pantheon] *******************************************************************************
+ok: [3.140.243.107] => (item={'dest': 'pantheon'})
+ok: [3.140.243.107] => (item={'dest': 'pantheon.bat'})
+ok: [3.140.243.107] => (item={'dest': 'besu'})
+ok: [3.140.243.107] => (item={'dest': 'besu.bat'})
+
+TASK [besu-bootnode : Support for deployments prior to centos support] ***********************************************************************************
+ok: [3.140.243.107] => (item={'dest': 'pantheon'})
+ok: [3.140.243.107] => (item={'dest': 'pantheon.bat'})
+ok: [3.140.243.107] => (item={'dest': 'besu'})
+ok: [3.140.243.107] => (item={'dest': 'besu.bat'})
+
+TASK [besu-bootnode : Symbolic link for besu (pantheon and besu are linked to BESU)] *********************************************************************
+changed: [3.140.243.107] => (item={'src': 'besu', 'dest': 'pantheon'})
+changed: [3.140.243.107] => (item={'src': 'besu.bat', 'dest': 'pantheon.bat'})
+changed: [3.140.243.107] => (item={'src': 'besu', 'dest': 'besu'})
+changed: [3.140.243.107] => (item={'src': 'besu.bat', 'dest': 'besu.bat'})
+
+TASK [besu-bootnode : clearing unnecessary folders] ******************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Init besu] *************************************************************************************************************************
+ok: [3.140.243.107] => {
+    "msg": "Init Besu"
+}
+
+TASK [besu-bootnode : Get public ip] *********************************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : create besu-bootnode directories] **************************************************************************************************
+changed: [3.140.243.107] => (item={'dest': '/opt/besu-bootnode/data', 'mode': '0440'})
+changed: [3.140.243.107] => (item={'dest': '/opt/besu-bootnode/logs', 'mode': '0440'})
+changed: [3.140.243.107] => (item={'dest': '/opt/besu-bootnode/tmp', 'mode': '0440'})
+
+TASK [besu-bootnode : Copy permissioned nodes file] ******************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : initializing pantheon from genesis.json] *******************************************************************************************
+ok: [3.140.243.107] => {
+    "msg": "Initializing Pantheon"
+}
+
+TASK [besu-bootnode : Copy genesis ibft2.0 file] *********************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Copy node key to first bootnode node] **********************************************************************************************
+skipping: [3.140.243.107]
+
+TASK [besu-bootnode : Copy bootnode key to first bootnode node] ******************************************************************************************
+skipping: [3.140.243.107]
+
+TASK [besu-bootnode : Copy permissioned nodes file] ******************************************************************************************************
+skipping: [3.140.243.107]
+
+TASK [besu-bootnode : Generate node key] *****************************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : print enode key] *******************************************************************************************************************
+ok: [3.140.243.107] => {
+    "msg": "enode://94e98d7eacaf9cd1b84c71849177480713201d5e1e16c2e8d5cdd0dbb530f8041a05b28cfd62cbfd7b92e7c9d1a84a57f90a938a0e651b01e9040cbb4bb4ac5a@3.140.243.107:21000"
+}
+
+TASK [besu-bootnode : update permissioned nodes validator file] ******************************************************************************************
+ok: [3.140.243.107]
+
+TASK [besu-bootnode : add new permissioned nodes validator] **********************************************************************************************
+ok: [3.140.243.107]
+
+TASK [besu-bootnode : Fetch permissioned node validator] *************************************************************************************************
+ok: [3.140.243.107]
+
+TASK [besu-bootnode : Copy bootnodes variable from validators] *******************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : update bootnodes connection] *******************************************************************************************************
+ok: [3.140.243.107]
+
+TASK [besu-bootnode : add new bootnode to running validator or writer] ***********************************************************************************
+ok: [3.140.243.107]
+
+TASK [besu-bootnode : Fetch main.yml to repository] ******************************************************************************************************
+ok: [3.140.243.107]
+
+TASK [besu-bootnode : Generate shell script to execute geth service] *************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Generate Pantheon configuration file] **********************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Copy service file to systemd] ******************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Copy Log configuration file to besu-bootnode] **************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Enable service pantheon] ***********************************************************************************************************
+changed: [3.140.243.107]
+
+TASK [besu-bootnode : Start Pantheon Node] ***************************************************************************************************************
+skipping: [3.140.243.107]
+
+TASK [besu-bootnode : Execute Pantheon service] **********************************************************************************************************
+skipping: [3.140.243.107]
+
+TASK [besu-bootnode : start docker ethstats client] ******************************************************************************************************
+fatal: [3.140.243.107]: FAILED! => {"changed": true, "cmd": "mkdir -p /opt/ethstats-cli && docker run -d --restart always --net host -v /opt/ethstats-cli/:/root/.config/configstore/ alethio/ethstats-cli --register --account-email default@email --node-name \"bootnode1\" --server-url http://35.236.236.77:3000 --client-url ws://127.0.0.1:4546", "delta": "0:00:00.003331", "end": "2021-03-20 10:32:36.261936", "msg": "non-zero return code", "rc": 127, "start": "2021-03-20 10:32:36.258605", "stderr": "/bin/sh: docker: command not found", "stderr_lines": ["/bin/sh: docker: command not found"], "stdout": "", "stdout_lines": []}
+
+PLAY RECAP ***********************************************************************************************************************************************
+3.140.243.107              : ok=33   changed=20   unreachable=0    failed=1    skipped=5    rescued=0    ignored=0  

@@ -1,0 +1,10 @@
+[Unit]
+Description=Ethereum Pantheon client
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/opt/besu-validator/start-pantheon.sh
+
+[Install]
+WantedBy=default.target

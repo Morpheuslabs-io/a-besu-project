@@ -1,0 +1,24 @@
+[bootnodes]
+3.140.243.107 node_ip=3.140.243.107 node_name=bootnode1
+
+[validators]
+#3.140.243.107 node_ip=3.140.243.107 node_name=validator
+
+[all:vars]
+password=default_password
+node_email=default@email
+bootnode=false
+validator=false
+first_node=false
+install=false
+besu_release_version='20.10.2'
+orion_release_version='1.6.0'
+dns_name=localhost
+orion=false
+
+[bootnodes:vars]
+bootnode=true
+
+[validators:vars]
+#validator=true
+
