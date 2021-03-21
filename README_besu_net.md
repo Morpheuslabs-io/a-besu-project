@@ -100,7 +100,7 @@ Might need to delete the folder `besu-mitx` if the next run is failed for fresh 
 To check, run this cmd
 
 ```
-curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' localhost:3000
+curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' localhost:4545
 ```
 
 ```
@@ -225,6 +225,14 @@ sudo systemctl daemon-reload
 sudo rm -rf /lib/systemd/system/pantheon_boot_node_1.service
 sudo rm -rf /usr/lib/systemd/system/pantheon_boot_node_1.service
 
+### Cleanup
+
+VIP
+
+sudo rm -rf /node1
+sudo rm -rf /usr/lib/systemd/system/pantheon.service
+sudo systemctl daemon-reload
+
 ### Manual start
 
 LOG4J_CONFIGURATION_FILE=/node1/log.xml sudo pantheon --data-path /node1/data --genesis-file=/node1/data/genesis.json --network-id 648529 --permissions-nodes-contract-enabled --permissions-nodes-contract-address=0x0000000000000000000000000000000000009999 --config-file=/node1/config.toml --bootnodes
@@ -264,6 +272,13 @@ Replace "/root/lacchain" with "/home/trung/besu-mitx"
 Failed to start Ethereum Pantheon client.
 
 sudo rm -rf /lib/systemd/system/pantheon.service
+
+4.1.
+Could not find the requested service pantheon: host
+
+sudo systemctl daemon-reload
+
+https://github.com/ansible/ansible/issues/36585
 
 5.
 
