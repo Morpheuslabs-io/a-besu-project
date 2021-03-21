@@ -88,7 +88,7 @@
 
 - name: Copy bootnodes variable from validators
   copy:
-        src: "{{ playbook_dir }}/roles/besu-validator/vars/main.yml"
+        src: "{{ playbook_dir }}/roles/validator-node-1/vars/main.yml"
         dest: /node1/tmp/main.yml
         mode: 0700
   when: bootnode|bool
@@ -110,7 +110,7 @@
 - name: Fetch main.yml to repository
   fetch:
         src: /node1/tmp/permissions_config.toml
-        dest: "{{ playbook_dir }}/roles/besu-validator/vars/"
+        dest: "{{ playbook_dir }}/roles/validator-node-1/vars/"
         flat: yes
   when: bootnode|bool
 
