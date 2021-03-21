@@ -5,7 +5,7 @@ const solc = require('solc');
 /*
 * connect to ethereum node
 */ 
-const ethereumUri = 'http://localhost:8545';
+const ethereumUri = 'http://localhost:4545';
 
 //config private key for deployment account
 const privateKey = "8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63";
