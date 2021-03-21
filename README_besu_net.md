@@ -218,11 +218,16 @@ ok: [0.0.0.0] => {
 
 ### Remove the existing pantheon.service
 
-[ec2-user@ip-172-31-18-233 ~]$ sudo systemctl stop pantheon.service
-[ec2-user@ip-172-31-18-233 ~]$ sudo systemctl disable pantheon.service
-Removed /etc/systemd/system/default.target.wants/pantheon.service.
-[ec2-user@ip-172-31-18-233 ~]$ sudo systemctl daemon-reload
-[ec2-user@ip-172-31-18-233 ~]$ sudo rm -rf /lib/systemd/system/pantheon.service
+sudo systemctl stop pantheon_boot_node_1.service
+sudo systemctl disable pantheon_boot_node_1.service
+Removed /etc/systemd/system/default.target.wants/pantheon_boot_node_1.service.
+sudo systemctl daemon-reload
+sudo rm -rf /lib/systemd/system/pantheon_boot_node_1.service
+sudo rm -rf /usr/lib/systemd/system/pantheon_boot_node_1.service
+
+### Manual start
+
+LOG4J_CONFIGURATION_FILE=/node1/log.xml sudo pantheon --data-path /node1/data --genesis-file=/node1/data/genesis.json --network-id 648529 --permissions-nodes-contract-enabled --permissions-nodes-contract-address=0x0000000000000000000000000000000000009999 --config-file=/node1/config.toml --bootnodes
 
 
 -----------------
