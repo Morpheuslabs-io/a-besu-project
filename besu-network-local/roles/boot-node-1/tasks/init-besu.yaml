@@ -141,5 +141,5 @@
 
 - name: Enable service pantheon
   service:
-        name: pantheon
+        name: pantheon_boot_node_1
         enabled: yes
