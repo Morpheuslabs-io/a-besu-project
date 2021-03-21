@@ -1,5 +1,5 @@
 ---
-# file: besu-validator-node/defaults/java-redhat.yml
+# file: validator-node/defaults/java-redhat.yml
 #
 # Default variables for Redhat-based Linux distributions.
 #

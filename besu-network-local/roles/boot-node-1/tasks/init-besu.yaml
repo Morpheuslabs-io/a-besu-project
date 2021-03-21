@@ -7,7 +7,7 @@
   shell: dig +short myip.opendns.com @resolver1.opendns.com 2>/dev/null || curl -s --retry 2 icanhazip.com
   register: node_ip
 
-- name: create besu-bootnode directories
+- name: create bootnode directories
   file:
         path: "{{ item.dest }}"
         mode: "{{ item.mode }}"
@@ -56,7 +56,7 @@
   when: first_node|bool
 
 - name: Generate node key
-  shell: pantheon --genesis-file=/root/besu-bootnode/data/genesis.json --data-path=/root/besu-bootnode/data public-key export --to=/root/besu-bootnode/data/bootnode | grep -oE "0x[A-Fa-f0-9]*" | sed 's/0x//'
+  shell: pantheon --genesis-file=/node1/data/genesis.json --data-path=/node1/data public-key export --to=/node1/data/bootnode | grep -oE "0x[A-Fa-f0-9]*" | sed 's/0x//'
   register: enode_key
   when: bootnode|bool
 

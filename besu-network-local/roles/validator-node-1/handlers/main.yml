@@ -1,4 +1,4 @@
 ---
-# handlers file for besu-writer-node
+# handlers file for writer-node
 - name: run ldconfig
   shell: ldconfig
