@@ -121,6 +121,27 @@ Should see this output
 }
 ```
 
+## Port config
+
+In file `roles/.../templates/pantheon-config.j2`
+
+```
+# RPC
+rpc-http-enabled=true
+graphql-http-enabled=true
+rpc-ws-enabled=true
+rpc-http-port=4545
+graphql-http-port=4547
+rpc-ws-port=4546
+rpc-http-api=["ETH","NET","IBFT","EEA","PRIV"]
+## Uncomment the following lines to allow RPC from remote locations (risky)
+# host-whitelist=["*"]
+rpc-http-host="0.0.0.0"
+graphql-http-host="0.0.0.0"
+
+.......
+```
+
 ## Current folder config
 
 **Original**
@@ -132,23 +153,39 @@ Should see this output
 
 Never use `~/` as it won't create folder successfully
 
+### Local Deployment
 ### bootnode
 
-/opt/besu-bootnode
+/node1
 
-port: `3000`
+port: `4545`
 
 ### validator
 
-/opt/besu-validator
+/node2
+/node3
+/node4
 
-port: `3001`
+port: `5545`
+port: `6545`
+port: `7545`
 
-### validator2
 
-/opt/besu-validator2
+# Config Notice
 
-port: `3002`
+## when: first_node|bool
+
+After Ansible deployment, if `pantheon` service is not started, 
+then, check the file `roles/besu-bootnode/tasks/install.yaml`
+
+```
+- name: start node
+  import_tasks: "start-node.yaml"
+  when: first_node|bool
+```
+
+--> disable the line `when: first_node|bool` as it means to start `pantheon` only for the 1st time
+
 
 -----------------
 
@@ -205,15 +242,3 @@ Way1:
 
   // start again
   service pantheon start
-
-7.
-After Ansible deployment, if `pantheon` service is not started, 
-then, check the file `roles/besu-bootnode/tasks/install.yaml`
-
-```
-- name: start node
-  import_tasks: "start-node.yaml"
-  when: first_node|bool
-```
-
---> disable the line `when: first_node|bool` as it means to start `pantheon` only for the 1st time

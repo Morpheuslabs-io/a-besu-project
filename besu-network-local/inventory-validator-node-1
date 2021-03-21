@@ -1,0 +1,21 @@
+[validators]
+0.0.0.0 node_ip=0.0.0.0 node_name=validator-node-1
+
+[all:vars]
+password=default_password
+node_email=default@email
+bootnode=false
+validator=false
+first_node=false
+install=false
+besu_release_version='20.10.2'
+orion_release_version='1.6.0'
+dns_name=localhost
+orion=false
+
+[bootnodes:vars]
+bootnode=true
+
+[validators:vars]
+validator=true
+
