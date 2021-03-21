@@ -229,6 +229,9 @@ sudo rm -rf /usr/lib/systemd/system/pantheon_boot_node_1.service
 
 LOG4J_CONFIGURATION_FILE=/node1/log.xml sudo pantheon --data-path /node1/data --genesis-file=/node1/data/genesis.json --network-id 648529 --permissions-nodes-contract-enabled --permissions-nodes-contract-address=0x0000000000000000000000000000000000009999 --config-file=/node1/config.toml --bootnodes
 
+### List enabled services
+
+sudo systemctl list-unit-files | grep enabled
 
 -----------------
 
