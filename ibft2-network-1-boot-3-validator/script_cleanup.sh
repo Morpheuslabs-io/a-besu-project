@@ -1,15 +1,14 @@
-rm -rf ./node1/data/caches
-rm -rf ./node1/data/database
-rm -rf ./node1/data/DATABASE_METADATA.json
+echo "Kill running node"
 
-rm -rf ./node2/data/caches
-rm -rf ./node2/data/database
-rm -rf ./node2/data/DATABASE_METADATA.json
+sudo fuser -n tcp -k 4545
+sudo fuser -n tcp -k 5545
+sudo fuser -n tcp -k 6545
+sudo fuser -n tcp -k 7545
 
-rm -rf ./node3/data/caches
-rm -rf ./node3/data/database
-rm -rf ./node3/data/DATABASE_METADATA.json
+sleep 5s
 
-rm -rf ./node4/data/caches
-rm -rf ./node4/data/database
-rm -rf ./node4/data/DATABASE_METADATA.json
+echo "Delete existing node folder"
+sudo rm -rf /node1
+sudo rm -rf /node2
+sudo rm -rf /node3
+sudo rm -rf /node4

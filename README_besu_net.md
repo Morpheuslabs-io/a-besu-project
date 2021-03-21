@@ -241,6 +241,22 @@ LOG4J_CONFIGURATION_FILE=/node1/log.xml sudo pantheon --data-path /node1/data --
 
 sudo systemctl list-unit-files | grep enabled
 
+### Find process ID at port 4545
+
+`sudo netstat -tulpn | grep :4545`
+
+### Kill process ID
+
+`sudo kill -9 1394557`
+
+### Kill process at port
+
+`sudo fuser -n tcp -k 4545`
+
+### Search process
+
+`ps aux | grep besu`
+
 -----------------
 
 # Error Collection and Resolution
