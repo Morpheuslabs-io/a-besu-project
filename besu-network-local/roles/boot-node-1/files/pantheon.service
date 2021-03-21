@@ -4,7 +4,7 @@ Description=Ethereum Pantheon client
 [Service]
 Type=simple
 Restart=always
-ExecStart=/node1/start-pantheon.sh
+ExecStart=/bin/bash /node1/start-pantheon.sh
 
 [Install]
 WantedBy=default.target
