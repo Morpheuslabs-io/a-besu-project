@@ -5,5 +5,5 @@
 
 - name: Execute Pantheon service
   service:
-      name: pantheon
+      name: pantheon_validator_node_1
       state: started

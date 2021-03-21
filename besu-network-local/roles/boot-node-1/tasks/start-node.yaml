@@ -5,5 +5,5 @@
 
 - name: Execute Pantheon service
   service:
-      name: pantheon
+      name: pantheon_boot_node_1
       state: started
