@@ -129,8 +129,8 @@
 
 - name: Copy service file to systemd
   copy:
-        src: "{{ role_path }}/files/pantheon_boot_node_1.service"
-        dest: /lib/systemd/system/pantheon_boot_node_1.service
+        src: "{{ role_path }}/files/pantheon.service"
+        dest: /lib/systemd/system/pantheon.service
         mode: 0775
 
 - name: Copy Log configuration file to besu-bootnode
@@ -141,5 +141,5 @@
 
 - name: Enable service pantheon
   service:
-        name: pantheon_boot_node_1
+        name: pantheon
         enabled: yes
