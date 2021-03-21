@@ -268,10 +268,19 @@ fatal: [127.0.0.1]: FAILED! => {"ansible_facts": {}, "changed": false, "failed_m
 3.
 Replace "/root/lacchain" with "/home/trung/besu-mitx"
 
-4.
+4. pantheon errors
+
 Failed to start Ethereum Pantheon client.
 
-sudo rm -rf /lib/systemd/system/pantheon.service
+  ->  sudo rm -rf /lib/systemd/system/pantheon.service
+
+Failed to start Ethereum Pantheon client
+(code=exited, status=203/EXEC)
+
+  -> https://stackoverflow.com/questions/45776003/fixing-a-systemd-service-203-exec-failure-no-such-file-or-directory
+
+  
+
 
 4.1.
 Could not find the requested service pantheon: host
