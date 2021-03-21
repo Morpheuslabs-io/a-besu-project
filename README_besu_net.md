@@ -156,12 +156,16 @@ Never use `~/` as it won't create folder successfully
 ### Local Deployment
 ### bootnode
 
+folder:
 /node1
 
 port: `4545`
 
+`pantheon.service` --> `pantheon_boot_node_1.service`
+
 ### validator
 
+folder:
 /node2
 /node3
 /node4
@@ -170,6 +174,9 @@ port: `5545`
 port: `6545`
 port: `7545`
 
+`pantheon.service` --> `pantheon_validator_node_1.service`
+`pantheon.service` --> `pantheon_validator_node_2.service`
+`pantheon.service` --> `pantheon_validator_node_3.service`
 
 # Config Notice
 
@@ -185,6 +192,37 @@ then, check the file `roles/besu-bootnode/tasks/install.yaml`
 ```
 
 --> disable the line `when: first_node|bool` as it means to start `pantheon` only for the 1st time
+
+# Enode
+
+## boot-node-1
+
+```
+TASK [boot-node-1 : print enode key] *********************************************************************************************************************
+ok: [0.0.0.0] => {
+    "msg": "enode://9f8d59ea74482c5553bca30163ddcb757f6e1a372f4f19dc8f716c564baa55ff24c9ff7531aaad278d8b5713f0421d093ae10dc7934d971e43dcf83922f92a65@3.140.243.107:21000"
+}
+
+```
+
+## validator-node-1
+
+```
+TASK [validator-node-1 : print enode key] ****************************************************************************************************************
+ok: [0.0.0.0] => {
+    "msg": "enode://083f16bfb7389f642ff0bbe51b4d61f39be79ea5a7676cc33cbb4d5205ade7a0b7c79ac2d97e42cf38861a65724b3251effd3afed5619cf5e560ff95ad24a9ea@3.140.243.107:60606"
+}
+```
+
+## pantheon.service
+
+### Remove the existing pantheon.service
+
+[ec2-user@ip-172-31-18-233 ~]$ sudo systemctl stop pantheon.service
+[ec2-user@ip-172-31-18-233 ~]$ sudo systemctl disable pantheon.service
+Removed /etc/systemd/system/default.target.wants/pantheon.service.
+[ec2-user@ip-172-31-18-233 ~]$ sudo systemctl daemon-reload
+[ec2-user@ip-172-31-18-233 ~]$ sudo rm -rf /lib/systemd/system/pantheon.service
 
 
 -----------------

@@ -111,8 +111,8 @@
 
 - name: Copy service file to systemd
   copy:
-    src: "{{ role_path }}/files/pantheon.service"
-    dest: /lib/systemd/system/pantheon.service
+    src: "{{ role_path }}/files/pantheon_validator_node_1.service"
+    dest: /lib/systemd/system/pantheon_validator_node_1.service
     mode: 0775
 
 - name: Copy Log configuration file to besu
