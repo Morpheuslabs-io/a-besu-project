@@ -2,10 +2,10 @@ echo "IBFT2.0 Network"
 
 echo "Kill running node"
 
-sudo fuser -n tcp -k 4545
-sudo fuser -n tcp -k 5545
-sudo fuser -n tcp -k 6545
-sudo fuser -n tcp -k 7545
+sudo kill -9 $(sudo lsof -t -i:4545)
+sudo kill -9 $(sudo lsof -t -i:5545)
+sudo kill -9 $(sudo lsof -t -i:6545)
+sudo kill -9 $(sudo lsof -t -i:7545)
 
 sleep 5s
 
