@@ -2,10 +2,25 @@ echo "IBFT2.0 Network"
 
 echo "Kill running node"
 
-sudo kill -9 $(sudo lsof -t -i:4545)
-sudo kill -9 $(sudo lsof -t -i:5545)
-sudo kill -9 $(sudo lsof -t -i:6545)
-sudo kill -9 $(sudo lsof -t -i:7545)
+if [ ! -z "$(sudo lsof -t -i:4545)" ]
+then
+  sudo kill -9 $(sudo lsof -t -i:4545)
+fi
+
+if [ ! -z "$(sudo lsof -t -i:5545)" ]
+then
+  sudo kill -9 $(sudo lsof -t -i:5545)
+fi
+
+if [ ! -z "$(sudo lsof -t -i:6545)" ]
+then
+  sudo kill -9 $(sudo lsof -t -i:6545)
+fi
+
+if [ ! -z "$(sudo lsof -t -i:7545)" ]
+then
+  sudo kill -9 $(sudo lsof -t -i:7545)
+fi
 
 sleep 5s
 
