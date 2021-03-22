@@ -1,1 +1,1 @@
-./besu-21.1.2/bin/besu --data-path=/node1/data --genesis-file=./genesis.json --rpc-http-enabled --rpc-http-api=ETH,NET,IBFT --host-allowlist="*" --rpc-http-cors-origins="all" --rpc-http-host=0.0.0.0 --rpc-http-port=4545 --min-gas-price=0
+/opt/besu-21.1.2/bin/besu --data-path=/node1/data --genesis-file=./genesis.json --rpc-http-enabled --rpc-http-api=ETH,NET,IBFT --host-allowlist="*" --rpc-http-cors-origins="all" --rpc-http-host=0.0.0.0 --rpc-http-port=4545 --min-gas-price=0
