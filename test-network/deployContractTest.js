@@ -38,7 +38,7 @@ async function sendTx(txObject) {
 	
 	let nonce = await web3.eth.getTransactionCount(txFrom);
 
-    gasLimit += 50000;
+    gasLimit += 100000;
     const tx = {
         from : txFrom,
         nonce : nonce,
@@ -125,11 +125,11 @@ const totalSupply = new BigNumber(2*10**9*10**decimal); // 2 billions token, dec
 
 async function main() {
 	try {
-		// const RewardToken = await deployContract('RewardToken', [totalSupply,symbolName, symbol, decimal]);
-		// const MicroPayment = await deployContract('MicroPayment', [RewardToken._address]);
+		const RewardToken = await deployContract('RewardToken', [totalSupply,symbolName, symbol, decimal]);
+		const MicroPayment = await deployContract('MicroPayment', [RewardToken._address]);
 
 		const ERC20Token = await deployContract('ERC20Flatenned', [symbolName, symbol]);
-		return
+		// return
 
 		// set admin
 		let payload = RewardToken.methods.setAuthorized(MicroPayment._address).encodeABI();
@@ -158,7 +158,7 @@ async function main() {
 		nonce = await web3.eth.getTransactionCount(sender);
 
 		let { address } = await web3.eth.accounts.create();
-		payload = MicroPayment.methods.transfer(address, 1000, address).encodeABI();
+		payload = MicroPayment.methods.transfer(address, 1000, web3.utils.toHex('tx-type'), address).encodeABI();
 
 		tx = {
 			from : sender,
