@@ -2,9 +2,6 @@
   "name": "deployment",
   "version": "1.0.0",
   "description": "",
-  "engines": {
-    "node": ">=8.0.0 <11.0.0"
-  },
   "main": "deployContracts.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
