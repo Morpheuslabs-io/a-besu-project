@@ -1,3 +1,5 @@
+echo "Stop and cleanup IBFT2.0 Network"
+
 echo "Kill running node"
 
 if [ ! -z "$(sudo lsof -t -i:4545)" ]
@@ -19,8 +21,6 @@ if [ ! -z "$(sudo lsof -t -i:7545)" ]
 then
   sudo kill -9 $(sudo lsof -t -i:7545)
 fi
-
-sleep 5s
 
 echo "Delete existing node folder"
 sudo rm -rf /node1
