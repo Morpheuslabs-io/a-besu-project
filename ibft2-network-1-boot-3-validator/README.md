@@ -15,7 +15,7 @@
 
 The IBFT2 blockchain network can be started with this cmd
 
-`./script_start_node_all.sh`
+`script/start/start_all.sh`
 
 **Notice**
 
@@ -41,12 +41,12 @@ It should returns the current number of peers as below
 
 To stop the running network, run this cmd
 
-`./script_cleanup.sh`
+`script/stop_cleanup.sh`
 
 ## Testing interaction via smart contract deployment
 
-  - cd to above folder `test-network`
+  - cd to folder `smartcontracts/deployment`
   - Run the installation (needed only once): `npm i`
-  - Run cmd: `node deployContractTest.js`
+  - Run cmd: `node deployContract.js`
 
 
