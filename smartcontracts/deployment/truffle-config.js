@@ -2,7 +2,7 @@ const networks = require('./networks')
 
 module.exports = {
   networks,
-  contracts_directory: "../smartcontracts",
+  contracts_directory: "../contracts",
   compilers: {
     solc: {
       version: "0.8.2",
