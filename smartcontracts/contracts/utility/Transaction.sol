@@ -9,7 +9,6 @@ contract Transaction {
         bytes32 sku;
         uint256 price;
         uint256 quantity;
-        bytes32 posId;
         bytes32 desciption;
     }
     Item[] public items;
