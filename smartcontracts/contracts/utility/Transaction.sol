@@ -6,57 +6,50 @@ progma solidity ^0.8.2;
 
 contract Transaction {
     struct Item {
-        string sku;
-        string podID;
-        string posName;
-        string posLocation;
+        bytes32 sku;
         uint256 price;
+        uint256 quantity;
+        bytes32 posId;
+        bytes32 desciption;
     }
     Item[] public items;
     uint256 public total;
-    string public orderId;
-    string public merchant;
-    string public customer;
-    string public status;
-    string public posId;
-    string public posLocation;
-    string public posName;
+    bytes32 public orderId;
+    bytes32 public merchant;
+    bytes32 public customer;
+    bytes32 public status;
+    bytes32 public posId;
     bool public settlementRequested = false;
     bool public settlementApproved = false;
     uint256 public timestamp;
-    string public paymentReference;
+    bytes32 public paymentReference;
 
     constructor(
-        string memory _posId,
-        string memory _posLocation,
-        string memory _posName,
-        string memory _orderId,
-        string memory _merchant,
-        string memory _customer,
+        bytes32 memory _posId,
+        bytes32 memory _orderId,
+        bytes32 memory _merchant,
+        bytes32 memory _customer,
         uint64 _timestamp) {
             posId = _posId;
-            posLocation = _posLocation;
-            posName = _posName;
             orderId = _orderId;
             merchant = _merchant;
             customer = _customer;
             timestamp = _timestamp;
 
         }
-        function add(string memory _sku, uint256 _price, string memory _posID, string memory _posName, string memory _posLocation, string memory _description)
+        function add(bytes32 memory _sku, uint256 _price, uint256 _quantity, bytes32 memory _posID, bytes32 memory _description)
         public {
             Item memory item;
             item.sku = _sku;
             item.price = _price;
+            item.quantity = _quantity;
             item.posId = _posId;
-            item.posName = _posName;
-            item.posLocation = _posLocation;
             item.description = _description;
             total += price;
             items.push(item);
         }
 
-        function size() public view returns (uint256) {
+        function numberOfItems() public view returns (uint256) {
             return items.length;
 
         }
@@ -75,7 +68,7 @@ contract Transaction {
         }
 
         function approveSettlement(string memory _paymentReference) public {
-            paymentReferenec = +_paymentReference;
+            paymentReferenec = _paymentReference;
             approveSettlement();
         }
     )
