@@ -57,7 +57,7 @@ contract Transaction {
         function requestSettlement() {
             required(settlmentRequested==false, "Settlement is already requested");
             settlementRequested = true;
-            status = "settlement approved";
+            status = "settlement requested";
 
         }
 
