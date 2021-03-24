@@ -1,5 +1,7 @@
 pragma solidity ~0.8.2;
 
+import "./Transaction.sol";
+
 /*
 *
 */
@@ -31,7 +33,8 @@ contract Utility {
 
     function add(bytes32 memory sku, uint256 price, uint256 quantity, address debtor, bytes32 memory posId,
       , bytes32 memory description, uint256 memory timestamp) public {
-        Item memory item;
+        Transaction transaction = new Transaction();
+        transaction
         item.sku = sku;
         item.price = price;
         item.quantity = quantity;
