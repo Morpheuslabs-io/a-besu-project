@@ -17,7 +17,7 @@ contract Utility {
         bytes32 posID;
         bytes32 description;
         uint256 price;
-        uint quantity;
+        uint256 quantity;
     }
 
     /*
@@ -36,14 +36,13 @@ contract Utility {
     * assign utility to an address
     */
 
-    function add(bytes32 memory sku, uint256 price, address debtor, bytes32 memory posID,
-      string memory posName, string memory posLocation, string memory description) publioc {
+    function add(bytes32 memory sku, uint256 price, uint256 quantity, address debtor, bytes32 memory posID,
+      , bytes32 memory description) public {
         Item memory item;
         item.sku = sku;
         item.price = price;
+        item.quantity = quantity;
         item.posID = posID;
-        item.posName = posName;
-        item.posLocation = posLocation;
         item.description = description;
         utility[deptor].push(item);
         dept[debtor] += price;
