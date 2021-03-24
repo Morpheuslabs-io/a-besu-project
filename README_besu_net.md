@@ -50,6 +50,11 @@ The best way to install ansible with python3:
 
   - Install `ansible` with `pip3`: `pip3 install ansible`
 
+3.
+Install git on RedHat
+
+sudo dnf install git
+
 ## Install and Run OpenSSH on localhost (not needed when running on platform workspace )
 
 The below commands are valid on Ubuntu
