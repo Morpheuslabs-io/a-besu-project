@@ -15,7 +15,7 @@
 
 The IBFT2 blockchain network can be started with this cmd
 
-`script/start/start_all.sh`
+`besu-scripts/start/start_all.sh`
 
 **Notice**
 
@@ -41,7 +41,7 @@ It should returns the current number of peers as below
 
 To stop the running network, run this cmd
 
-`script/stop_cleanup.sh`
+`besu-scripts/stop_cleanup.sh`
 
 ## Testing interaction via smart contract deployment
 
