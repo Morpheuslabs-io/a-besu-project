@@ -1,6 +1,6 @@
 pragma solidity ~0.8.2;
 
-/**
+/*
 *
 */
 
@@ -15,7 +15,58 @@ contract Utility {
     struct Item {
         string sku;
         string posID;
-        
+        string posName;
+        string posLocation;
+        string description;
+        string price;
+
+    }
+
+    /*
+    * records of utilitization of each address
+    */
+
+    mapping (address => Item[]) public utility;
+
+    /*
+    * records of utilitization of each address
+    */
+
+    mapping (address => uint256) public dept;
+
+    /*
+    * assign utility to an address
+    */
+
+    function add(string memory sku, uint256 price, address debtor, string memory posID,
+      string memory posName, string memory posLocation, string memory description) publioc {
+        Item memory item;
+        item.sku = sku;
+        item.price = price;
+        item.posID = posID;
+        item.posName = posName;
+        item.posLocation = posLocation;
+        item.description = description;
+        utility[deptor].push(item);
+        dept[debtor] += price;
+        emit Transaction(deptor, utility[debtor].length+1);
+      }
+
+    /*
+    * clear the debt owed by an address
+    */
+
+    function burn(address to, uint256 amount) public {
+        require(msg.sender==owner, "sender not allowed");
+        debt(to)-=amount;
+    }
+
+    /*
+    * get transaction data
+    */
+
+    function getSize(address debtor) public view return (uint256 size) {
+      return utility[debtor].length;
     }
 
 }
