@@ -18,6 +18,7 @@ contract Utility {
         bytes32 description;
         uint256 price;
         uint256 quantity;
+        uint256 timestamp;
     }
 
     /*
@@ -37,7 +38,7 @@ contract Utility {
     */
 
     function add(bytes32 memory sku, uint256 price, uint256 quantity, address debtor, bytes32 memory posID,
-      , bytes32 memory description) public {
+      , bytes32 memory description, uint256 memory timestamp) public {
         Item memory item;
         item.sku = sku;
         item.price = price;
