@@ -14,8 +14,8 @@ contract Transaction {
     Item[] public items;
     uint256 public total;
     bytes32 public orderId;
-    bytes32 public merchant;
-    bytes32 public customer;
+    address public merchant;
+    address public customer;
     bytes32 public status;
     bytes32 public posId;
     bool public settlementRequested = false;
@@ -26,8 +26,8 @@ contract Transaction {
     constructor(
         bytes32 memory _posId,
         bytes32 memory _orderId,
-        bytes32 memory _merchant,
-        bytes32 memory _customer,
+        address memory _merchant,
+        address memory _customer,
         uint256 memory _total,
         uint64 _timestamp) {
             posId = _posId;
@@ -38,7 +38,7 @@ contract Transaction {
             timestamp = _timestamp;
 
         }
-        function add(bytes32 memory _sku, uint256 _price, uint256 _quantity, bytes32 memory _posID, bytes32 memory _description)
+        function add(bytes32 memory _sku, uint256 _price, uint256 _quantity, bytes32 memory _description)
         public {
             Item memory item;
             item.sku = _sku;
