@@ -37,14 +37,15 @@ contract Utility {
     * assign utility to an address
     */
 
-    function add(bytes32 memory sku, uint256 price, uint256 quantity, address debtor, bytes32 memory posID,
+    function add(bytes32 memory sku, uint256 price, uint256 quantity, address debtor, bytes32 memory posId,
       , bytes32 memory description, uint256 memory timestamp) public {
         Item memory item;
         item.sku = sku;
         item.price = price;
         item.quantity = quantity;
-        item.posID = posID;
+        item.posID = posId;
         item.description = description;
+        item.timestamp = timestamp;
         utility[deptor].push(item);
         dept[debtor] += price;
         emit Transacted(deptor, utility[debtor].length+1);
