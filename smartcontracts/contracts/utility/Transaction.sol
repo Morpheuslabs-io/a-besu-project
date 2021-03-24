@@ -28,11 +28,13 @@ contract Transaction {
         bytes32 memory _orderId,
         bytes32 memory _merchant,
         bytes32 memory _customer,
+        uint256 memory _total,
         uint64 _timestamp) {
             posId = _posId;
             orderId = _orderId;
             merchant = _merchant;
             customer = _customer;
+            total = _total;
             timestamp = _timestamp;
 
         }
@@ -42,9 +44,7 @@ contract Transaction {
             item.sku = _sku;
             item.price = _price;
             item.quantity = _quantity;
-            item.posId = _posId;
             item.description = _description;
-            total += price;
             items.push(item);
         }
 
