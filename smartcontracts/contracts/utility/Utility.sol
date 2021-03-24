@@ -12,20 +12,12 @@ contract Utility {
         merchant = _merchant;
     }
     event Transacted (address debtor, unit256 index);
-    struct Item {
-        bytes32 sku;
-        bytes32 posID;
-        bytes32 description;
-        uint256 price;
-        uint256 quantity;
-        uint256 timestamp;
-    }
 
     /*
     * records of utilitization of each address
     */
 
-    mapping (address => Item[]) public utility;
+    mapping (address => Transaction[]) public utility;
 
     /*
     * records of utilitization of each address
