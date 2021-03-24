@@ -51,9 +51,24 @@ The best way to install ansible with python3:
   - Install `ansible` with `pip3`: `pip3 install ansible`
 
 3.
-Install git on RedHat
+Install needed tools on RedHat
 
-sudo dnf install git
+`sudo dnf install git`
+
+`sudo yum install wget`
+
+`sudo yum install unzip`
+
+4.
+Download besu binary
+
+`wget https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.1.2/besu-21.1.2.zip`
+
+Unzip
+
+`unzip besu-21.1.2.zip`
+
+
 
 ## Install and Run OpenSSH on localhost (not needed when running on platform workspace )
 
@@ -109,7 +124,7 @@ curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":
 ```
 
 ```
-curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' 3.140.243.107:3000
+curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' 54.179.245.63:4545
 ```
 
 ```
