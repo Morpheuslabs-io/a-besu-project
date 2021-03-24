@@ -10,7 +10,7 @@ contract Transaction {
         string podID;
         string posName;
         string posLocation;
-        string price;
+        uint256 price;
     }
     Item[] public items;
     uint256 public total;
