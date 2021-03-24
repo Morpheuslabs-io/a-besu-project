@@ -30,7 +30,7 @@ contract Utility {
     * records of utilitization of each address
     */
 
-    mapping (address => uint256) public dept;
+    mapping (address => uint256) public debt;
 
     /*
     * assign utility to an address
