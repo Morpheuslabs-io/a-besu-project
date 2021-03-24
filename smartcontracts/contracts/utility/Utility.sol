@@ -15,8 +15,6 @@ contract Utility {
     struct Item {
         string sku;
         string posID;
-        string posName;
-        string posLocation;
         string description;
         string price;
 
