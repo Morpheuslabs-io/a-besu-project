@@ -36,7 +36,7 @@ contract Utility {
     * assign utility to an address
     */
 
-    function add(bytes32 memory sku, uint256 price, bytes32 debtor, string memory posID,
+    function add(bytes32 memory sku, uint256 price, address debtor, bytes32 memory posID,
       string memory posName, string memory posLocation, string memory description) publioc {
         Item memory item;
         item.sku = sku;
