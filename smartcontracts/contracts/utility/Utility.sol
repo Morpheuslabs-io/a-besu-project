@@ -46,7 +46,7 @@ contract Utility {
         item.description = description;
         utility[deptor].push(item);
         dept[debtor] += price;
-        emit Transaction(deptor, utility[debtor].length+1);
+        emit Transacted(deptor, utility[debtor].length+1);
       }
 
     /*
