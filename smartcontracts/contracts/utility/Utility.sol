@@ -13,11 +13,11 @@ contract Utility {
     }
     event Transacted (address debtor, unit256 index);
     struct Item {
-        string sku;
-        string posID;
-        string description;
-        string price;
-
+        bytes32 sku;
+        bytes32 posID;
+        bytes32 description;
+        uint256 price;
+        uint quantity;
     }
 
     /*
@@ -36,7 +36,7 @@ contract Utility {
     * assign utility to an address
     */
 
-    function add(string memory sku, uint256 price, address debtor, string memory posID,
+    function add(bytes32 memory sku, uint256 price, bytes32 debtor, string memory posID,
       string memory posName, string memory posLocation, string memory description) publioc {
         Item memory item;
         item.sku = sku;
