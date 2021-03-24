@@ -48,7 +48,7 @@ contract Utility {
         item.timestamp = timestamp;
         utility[debtor].push(item);
         dept[debtor] += price;
-        emit Transacted(deptor, utility[debtor].length+1);
+        emit Transacted(debtor, utility[debtor].length+1);
       }
 
     /*
