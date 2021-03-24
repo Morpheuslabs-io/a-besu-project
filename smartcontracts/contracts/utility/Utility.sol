@@ -34,7 +34,7 @@ contract Utility {
     function add(bytes32 memory sku, uint256 price, uint256 quantity, address debtor, bytes32 memory posId,
       , bytes32 memory description, uint256 memory timestamp) public {
         Transaction transaction = new Transaction();
-        transaction
+        transaction.
         item.sku = sku;
         item.price = price;
         item.quantity = quantity;

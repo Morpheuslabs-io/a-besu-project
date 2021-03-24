@@ -1,16 +1,12 @@
 progma solidity ^0.8.2;
 
+import "./Item.sol";
 /*
 *
 */
 
 contract Transaction {
-    struct Item {
-        bytes32 sku;
-        uint256 price;
-        uint256 quantity;
-        bytes32 desciption;
-    }
+
     Item[] public items;
     uint256 public total;
     bytes32 public orderId;
@@ -38,14 +34,10 @@ contract Transaction {
             timestamp = _timestamp;
 
         }
-        function add(bytes32 memory _sku, uint256 _price, uint256 _quantity, bytes32 memory _description)
-        public {
-            Item memory item;
-            item.sku = _sku;
-            item.price = _price;
-            item.quantity = _quantity;
-            item.description = _description;
+        function add(Item _item) public return (uint) {
+            Item item = new Item(_item._sku, _item._price, _item._quantity, _item._description);
             items.push(item);
+            return items.length;
         }
 
         function numberOfItems() public view returns (uint256) {
