@@ -46,7 +46,7 @@ contract Utility {
         item.posID = posId;
         item.description = description;
         item.timestamp = timestamp;
-        utility[deptor].push(item);
+        utility[debtor].push(item);
         dept[debtor] += price;
         emit Transacted(deptor, utility[debtor].length+1);
       }
