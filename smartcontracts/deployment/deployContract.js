@@ -1,19 +1,52 @@
 const Web3 = require('web3');
 const fs = require('fs');
 const solc = require('solc');
+const keythereum = require("keythereum");
 
-/*
-* connect to besu node
-*/ 
-const ethereumUri = 'http://localhost:4545';
+if (process.env.NETWORK === 'testnet') {
+  require('dotenv').config({ path: '.env.testnet' })
+} else {
+	console.error('NETWORK ENV is not defined');
+	process.exit(1)
+}
 
-//config private key for deployment account
-const privateKey = "8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63";
+const {
+  OWNER_ADDRESS,
+  KEY_FILE_PATH,
+  OWNER_PASSPHRASE,
+  CHAIN_ID,
+  BLOCKCHAIN_ENDPOINT
+} = process.env
 
-let web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri));
+if (
+  !OWNER_ADDRESS ||
+  !KEY_FILE_PATH ||
+  !OWNER_PASSPHRASE ||
+  !CHAIN_ID ||
+	!BLOCKCHAIN_ENDPOINT
+) {
+  console.error('Missing ENV variable')
+  process.exit(1)
+}
+
+function getPrivKey(addr, keyFilePath, passphrase) {
+  let keyObject = keythereum.importFromFile(addr, keyFilePath);
+  let privateKey = keythereum.recover(passphrase, keyObject);
+  let privKeyStrHex = new Buffer(privateKey.toString("hex"), "hex");
+  // privateKey.toString("hex")
+	return privateKey.toString("hex");
+}
+
+// const privateKey = '8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63' //getPrivKey(OWNER_ADDRESS, KEY_FILE_PATH, OWNER_PASSPHRASE)
+const privateKey = getPrivKey(OWNER_ADDRESS, KEY_FILE_PATH, OWNER_PASSPHRASE)
+// const privateKey = '7bc861ae7cec9c7c30d7cc6b3c3b1abbef9893215853193e782760e33cd7cbd2'
+console.log('privateKey:', privateKey);
+
+let web3 = new Web3(new Web3.providers.HttpProvider(BLOCKCHAIN_ENDPOINT));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
 const sender = account.address;
-let chainId = 2018;
+console.log('sender:', sender);
+let chainId = CHAIN_ID;
 
 async function sendTx(txObject) {
     const txTo = txObject._parent.options.address;
@@ -136,8 +169,8 @@ async function main() {
 			to: RewardToken._address,
 			nonce : nonce,
 			data : payload,
-			gas : 2000000,
-			gasPrice: 100,
+			gas : 500000,
+			gasPrice: 1,
 			chainId
 		};
 
