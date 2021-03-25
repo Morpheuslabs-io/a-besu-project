@@ -12,7 +12,7 @@ contract Utility {
     address public owner;
     string public merchant;
     
-    constructor() public {
+    constructor() {
         owner = msg.sender;
     }
     event Transacted (address debtor, uint256 index);
@@ -34,31 +34,32 @@ contract Utility {
     * assign utility to an address
     */
     
-    function add(bytes32[] sku, uint256[] price, uint256[] quantity, bytes32[] description, bytes32 orderId,
-                        address debtor, bytes32 memory posId, uint256 totalAmount, uint256 memory timestamp) public {
-        Transaction transaction = new Transaction();
+    function add(bytes32[] memory sku, uint256[] memory price, uint256[] memory quantity, 
+      bytes32[] memory description, bytes32 orderId,
+      address debtor, bytes32 posId, uint256 totalAmount, uint256 timestamp) public {
 
-
-        
+        // Check again
+        Transaction transaction = new Transaction(posId, orderId, debtor, debtor, totalAmount, timestamp);
         
         for (uint i = 0; i < sku.length; i++) {
-            Item item = new Item();
+            Item item = new Item(sku[i], price[i], quantity[i], description[i]);
 
-            item.sku = sku;
-            item.price = price;
-            item.quantity = quantity;
-            item.description = description; 
+            // item.sku = sku;
+            // item.price = price;
+            // item.quantity = quantity;
+            // item.description = description; 
+            
             transaction.add(item);
         }
 
-        transaction.posId = posId;
-        transaction.orderId = orderId;
-        transaction.total = totalAmount;        
-        transaction.timestamp = timestamp;
+        // transaction.posId = posId;
+        // transaction.orderId = orderId;
+        // transaction.total = totalAmount;        
+        // transaction.timestamp = timestamp;
 
         debt[debtor]++;        
 
-        emit Transacted(debtor, debt[debtor].length);
+        emit Transacted(debtor, debt[debtor]);
       }
 
     /*
@@ -67,7 +68,7 @@ contract Utility {
 
     function burn(address to, uint256 amount) public {
         require(msg.sender==owner, "sender not allowed");
-        debt(to)-=amount;
+        debt[to] -= amount;
     }
 
     /*
@@ -75,7 +76,7 @@ contract Utility {
     */
 
     function getSize(address debtor) public view returns (uint256 size) {
-      return debt[debtor].length;
+      return debt[debtor];
     }
 
 }

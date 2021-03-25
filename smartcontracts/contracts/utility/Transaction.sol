@@ -19,15 +19,15 @@ contract Transaction {
     bool public settlementRequested = false;
     bool public settlementApproved = false;
     uint256 public timestamp;
-    bytes32 public paymentReference;
+    string public paymentReference;
 
     constructor(
-        bytes32 memory _posId,
-        bytes32 memory _orderId,
-        address memory _merchant,
-        address memory _customer,
-        uint256 memory _total,
-        uint64 _timestamp) {
+        bytes32 _posId,
+        bytes32 _orderId,
+        address _merchant,
+        address _customer,
+        uint256 _total,
+        uint256 _timestamp) {
             posId = _posId;
             orderId = _orderId;
             merchant = _merchant;
@@ -37,7 +37,7 @@ contract Transaction {
 
         }
         function add(Item _item) public returns (uint) {
-            Item item = new Item(_item._sku, _item._price, _item._quantity, _item._description);
+            Item item = new Item(_item.sku(), _item.price(), _item.quantity(), _item.description());
             items.push(item);
             return items.length;
         }
