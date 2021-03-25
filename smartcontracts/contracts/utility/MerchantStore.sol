@@ -9,6 +9,8 @@ contract MerchantStore {
     address public admin;
 
     Merchant[] public merchants;
+    // mapping address owner to merchant address contract
+    mapping(address => address) merchantsMap;
 
     modifier onlyAdmin {
         require(msg.sender == admin, "Caller is not admin");
@@ -23,24 +25,12 @@ contract MerchantStore {
         require(_merchantOwner != address(0), "Invalid owner address");
         Merchant merchant = new Merchant(_merchantOwner, _merchantName);
         
+        merchantsMap[_merchantOwner] = address(merchant);
         merchants.push(merchant);
         
         return address(merchant);
     }
-    
-    function findMerchantByOwnerAddress(address _ownerAddress) public view returns(address) {
-        Merchant merchant;
-        for(uint256 i = 0; i < merchants.length; i++) {
-            if(merchants[i].owner() == _ownerAddress) {
-                merchant = merchants[i];
-                break;
-            }
-        }
-        
-        return address(merchant);
-    }
-    
-    
+
     function getMerchantSize() public view returns(uint256) {
         return merchants.length;
     }

@@ -19,7 +19,7 @@ contract Transaction {
     bool public settlementRequested = false;
     bool public settlementApproved = false;
     uint256 public timestamp;
-    bytes32 public paymentReference;
+    string public paymentReference;
 
     constructor(
         bytes32 _posId,

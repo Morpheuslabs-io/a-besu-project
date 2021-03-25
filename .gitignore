@@ -1,2 +1,6 @@
 smartcontracts/deployment/node_modules
+<<<<<<< HEAD
 tokendeployment/node_modules
+=======
+smartcontracts/deployment/build
+>>>>>>> 5fd6f1a2f05512a20ba5eacf441ae7ee5df5787a
