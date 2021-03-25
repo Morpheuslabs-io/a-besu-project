@@ -10,7 +10,7 @@ contract MerchantStore {
 
     Merchant[] public merchants;
     // mapping address owner to merchant address contract
-    mapping(address => address) public merchantsMap;
+    mapping(address => address) merchantsMap;
 
     modifier onlyAdmin {
         require(msg.sender == admin, "Caller is not admin");
@@ -33,5 +33,9 @@ contract MerchantStore {
 
     function getMerchantSize() public view returns(uint256) {
         return merchants.length;
+    }
+
+    function getMerchantByOwner(address _merchantOwner) public view returns (address) {
+        return merchantsMap[_merchantOwner];
     }
 }
