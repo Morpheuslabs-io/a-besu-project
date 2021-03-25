@@ -56,7 +56,9 @@ contract Utility {
         transaction.total = totalAmount;        
         transaction.timestamp = timestamp;
 
-        emit Transacted(debtor, utility[debtor].length+1);
+        debt[debtor]++;        
+
+        emit Transacted(debtor, debt[debtor].length);
       }
 
     /*
@@ -73,7 +75,7 @@ contract Utility {
     */
 
     function getSize(address debtor) public view returns (uint256 size) {
-      return utility[debtor].length;
+      return debt[debtor].length;
     }
 
 }
