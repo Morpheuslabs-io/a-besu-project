@@ -30,6 +30,16 @@ contract Organisation {
         
         return address(merchant);
     }
+    
+    function addMerchant(string memory _merchantName) public onlyAdmin returns (address merchantAddress) {
+        require(msg.sender != address(0), "Invalid owner address");
+        Merchant merchant = new Merchant(msg.sender, _merchantName);
+        
+        merchantsMap[_merchantOwner] = address(merchant);
+        merchants.push(merchant);
+        
+        return address(merchant);
+    }
 
     function getMerchantSize() public view returns(uint256) {
         return merchants.length;
