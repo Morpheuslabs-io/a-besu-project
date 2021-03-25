@@ -1,4 +1,6 @@
-progma solidity ^0.8.2;
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.2;
 
 import "./Item.sol";
 /*
@@ -34,7 +36,7 @@ contract Transaction {
             timestamp = _timestamp;
 
         }
-        function add(Item _item) public return (uint) {
+        function add(Item _item) public returns (uint) {
             Item item = new Item(_item._sku, _item._price, _item._quantity, _item._description);
             items.push(item);
             return items.length;
@@ -45,8 +47,8 @@ contract Transaction {
 
         }
 
-        function requestSettlement() {
-            required(settlmentRequested==false, "Settlement is already requested");
+        function requestSettlement() public {
+            require(settlementRequested==false, "Settlement is already requested");
             settlementRequested = true;
             status = "settlement requested";
 
@@ -59,9 +61,9 @@ contract Transaction {
         }
 
         function approveSettlement(string memory _paymentReference) public {
-            paymentReferenec = _paymentReference;
+            paymentReference = _paymentReference;
             approveSettlement();
         }
-    )
+    
 
 }

@@ -1,4 +1,6 @@
-pragma solidity ~0.8.2;
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.2;
 
 import "./Transaction.sol";
 
@@ -13,7 +15,7 @@ contract Utility {
     constructor() public {
         owner = msg.sender;
     }
-    event Transacted (address debtor, unit256 index);
+    event Transacted (address debtor, uint256 index);
     
 
     /*
@@ -32,8 +34,6 @@ contract Utility {
     * assign utility to an address
     */
     
-    transaction
-
     function add(bytes32[] sku, uint256[] price, uint256[] quantity, bytes32[] description, bytes32 orderId,
                         address debtor, bytes32 memory posId, uint256 totalAmount, uint256 memory timestamp) public {
         Transaction transaction = new Transaction();
@@ -55,7 +55,6 @@ contract Utility {
         transaction.orderId = orderId;
         transaction.total = totalAmount;        
         transaction.timestamp = timestamp;
-        }
 
         emit Transacted(debtor, utility[debtor].length+1);
       }
@@ -73,7 +72,7 @@ contract Utility {
     * get transaction data
     */
 
-    function getSize(address debtor) public view return (uint256 size) {
+    function getSize(address debtor) public view returns (uint256 size) {
       return utility[debtor].length;
     }
 
