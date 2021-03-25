@@ -3,7 +3,7 @@
 pragma solidity ^0.8.2;
 
 
-contract NamingRegistry {
+contract NameRegistryRegistry {
     address public admin;
     modifier onlyAdmin {
         require(msg.sender == admin, "Caller is not admin");
