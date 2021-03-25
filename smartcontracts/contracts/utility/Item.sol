@@ -1,4 +1,6 @@
-progma solidity ^0.8.2;
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.2;
 
 /*
 *
@@ -6,10 +8,10 @@ progma solidity ^0.8.2;
 
 contract Item {
 
-    bytes32 sku;
-    uint256 price;
-    uint256 quantity;
-    bytes32 desciption;
+    bytes32 public sku;
+    uint256 public price;
+    uint256 public quantity;
+    bytes32 public desciption;
 
     constructor(
         bytes32 _sku,
@@ -21,5 +23,4 @@ contract Item {
         quantity = _quantity;
         desciption = _description;
       }
-
 }
