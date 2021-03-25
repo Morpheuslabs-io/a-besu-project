@@ -3,8 +3,12 @@ const fs = require('fs');
 const solc = require('solc');
 const keythereum = require("keythereum");
 
-if (process.env.NETWORK === 'testnet') {
-  require('dotenv').config({ path: '.env.testnet' })
+console.log(`NETWORK: ${process.env.NETWORK}`);
+
+if (process.env.NETWORK === 'besu') {
+  require('dotenv').config({ path: '.env.besu' })
+} else if (process.env.NETWORK === 'ganache') {
+	require('dotenv').config({ path: '.env.ganache' })
 } else {
 	console.error('NETWORK ENV is not defined');
 	process.exit(1)
@@ -19,16 +23,17 @@ const {
   BLOCKCHAIN_ENDPOINT
 } = process.env
 
-if (
-  !OWNER_ADDRESS ||
-  (!PRIVATE_KEY && !KEY_FILE_PATH) ||
-  !OWNER_PASSPHRASE ||
-  !CHAIN_ID ||
-	!BLOCKCHAIN_ENDPOINT
+if ( 
+	( PRIVATE_KEY || (KEY_FILE_PATH && OWNER_ADDRESS && OWNER_PASSPHRASE)) && 
+	CHAIN_ID && 
+	BLOCKCHAIN_ENDPOINT
 ) {
-  console.error('Missing ENV variable')
+	console.log(`Deployment to: ${BLOCKCHAIN_ENDPOINT}`);
+} else {
+	console.error('Missing ENV variable')
   process.exit(1)
 }
+
 
 function getPrivKey(addr, keyFilePath, passphrase) {
   let keyObject = keythereum.importFromFile(addr, keyFilePath);

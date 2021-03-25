@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf ./build",
     "build": "npm run clean && npx truffle compile --config ./truffle-config.js",
-    "deploy": "NETWORK=testnet node deployContract.js"
+    "deploy": "NETWORK=besu node deployContract.js",
+    "deploy-ganache": "NETWORK=ganache node deployContract.js",
+    "ganache": "npx ganache-cli -l 10000000 -d 'torch almost feed brother seat earth scorpion panther nuclear interest toy guide'"
   },
   "keywords": [],
   "author": "",
