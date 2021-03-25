@@ -88,7 +88,7 @@ contract MicroPayment {
             address[] memory referenceList = new address[](aSize);
             bytes32[] memory typeList = new bytes32[](aSize);
 
-            for(uint idx = from; idx < to; idx++) {
+            for(uint idx = 0; idx < aSize; idx++) {
                 TransactionRecord memory record = records[from+idx];
 
                 sendersList[idx] = record.sender;
