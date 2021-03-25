@@ -13,6 +13,7 @@ if (process.env.NETWORK === 'testnet') {
 const {
   OWNER_ADDRESS,
   KEY_FILE_PATH,
+	PRIVATE_KEY,
   OWNER_PASSPHRASE,
   CHAIN_ID,
   BLOCKCHAIN_ENDPOINT
@@ -20,7 +21,7 @@ const {
 
 if (
   !OWNER_ADDRESS ||
-  !KEY_FILE_PATH ||
+  (!PRIVATE_KEY && !KEY_FILE_PATH) ||
   !OWNER_PASSPHRASE ||
   !CHAIN_ID ||
 	!BLOCKCHAIN_ENDPOINT
@@ -32,14 +33,18 @@ if (
 function getPrivKey(addr, keyFilePath, passphrase) {
   let keyObject = keythereum.importFromFile(addr, keyFilePath);
   let privateKey = keythereum.recover(passphrase, keyObject);
-  let privKeyStrHex = new Buffer(privateKey.toString("hex"), "hex");
-  // privateKey.toString("hex")
 	return privateKey.toString("hex");
 }
 
-// const privateKey = '8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63' //getPrivKey(OWNER_ADDRESS, KEY_FILE_PATH, OWNER_PASSPHRASE)
-const privateKey = getPrivKey(OWNER_ADDRESS, KEY_FILE_PATH, OWNER_PASSPHRASE)
+// This is the genesis account private key
+// const privateKey = '8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63'
+
+// This is the private key decoded from the keyfile
 // const privateKey = '7bc861ae7cec9c7c30d7cc6b3c3b1abbef9893215853193e782760e33cd7cbd2'
+
+// If PRIVATE_KEY is specified, it will be taken. Otherwise, read from KEY_FILE_PATH
+const privateKey = PRIVATE_KEY || getPrivKey(OWNER_ADDRESS, KEY_FILE_PATH, OWNER_PASSPHRASE)
+
 console.log('privateKey:', privateKey);
 
 let web3 = new Web3(new Web3.providers.HttpProvider(BLOCKCHAIN_ENDPOINT));
