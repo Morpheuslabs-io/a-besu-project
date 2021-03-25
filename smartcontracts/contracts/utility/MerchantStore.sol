@@ -10,7 +10,7 @@ contract MerchantStore {
 
     Merchant[] public merchants;
     // mapping address owner to merchant address contract
-    mapping(address => address) merchantsMap;
+    mapping(address => address) public merchantsMap;
 
     modifier onlyAdmin {
         require(msg.sender == admin, "Caller is not admin");
