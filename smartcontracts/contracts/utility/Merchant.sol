@@ -14,7 +14,7 @@ contract Merchant {
     // add more field for merchant information
     
     Transaction[] public merchantTransactions;
-    mapping (address => Transaction[]) public userTransactions;
+    mapping (address => Transaction[]) internal userTransactions;
     mapping (address => uint256) public debt;
 
     event Transact(address debtor, uint256 index);
@@ -25,14 +25,13 @@ contract Merchant {
     
     function add(bytes32[] memory _skus, uint256[] memory _prices, uint256[] memory _quantites, bytes32[] memory _descriptions, bytes32 _orderId,
                         address _debtor, bytes32 _posId, uint256 _totalAmount, uint256 _timestamp) public {
-                            
         require(
             (_skus.length == _prices.length) && 
             (_prices.length == _quantites.length) && 
             (_quantites.length == _descriptions.length), "Length of input array is not the same");
             
         require(_debtor != address(0), "Invalid customer");
-                            
+
         Transaction transaction = new Transaction(
             _posId,
             _orderId,
@@ -59,6 +58,10 @@ contract Merchant {
     function burn(address _to, uint256 _amount) public {
         require(msg.sender == owner, "sender not allowed");
         debt[_to] -= _amount;
+    }
+
+    function getUserTransactions(address _userAddress) public view returns(Transaction[] memory txs) {
+        return userTransactions[_userAddress];
     }
 
     // /*

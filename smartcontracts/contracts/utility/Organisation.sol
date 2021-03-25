@@ -5,7 +5,7 @@ pragma solidity ^0.8.2;
 import "./Merchant.sol";
 
 
-contract MerchantStore {
+contract Organisation {
     address public admin;
 
     Merchant[] public merchants;
