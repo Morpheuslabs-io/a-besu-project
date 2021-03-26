@@ -228,8 +228,8 @@ async function deployContract_utility() {
 }
 
 async function main() {
-  // await deployContract_micropayment();
-  await deployContract_utility();
+  await deployContract_micropayment();
+  // await deployContract_utility();
 }
 
 main();
