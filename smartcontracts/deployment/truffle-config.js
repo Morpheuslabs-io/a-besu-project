@@ -5,7 +5,7 @@ module.exports = {
   contracts_directory: "../contracts",
   compilers: {
     solc: {
-      version: "0.8.2",
+      version: "^0.8.2",
       settings: {
         optimizer: {
           enabled: true,
