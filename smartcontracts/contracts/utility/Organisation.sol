@@ -23,6 +23,7 @@ contract Organisation {
     
     function addMerchant(address _merchantOwner, string memory _merchantName) public onlyAdmin returns (address merchantAddress) {
         require(_merchantOwner != address(0), "Invalid owner address");
+        
         Merchant merchant = new Merchant(_merchantOwner, _merchantName);
         
         merchantsMap[_merchantOwner] = address(merchant);
@@ -44,7 +45,7 @@ contract Organisation {
         return merchants.length;
     }
 
-    function getMerchantByOwner(address _merchantOwner) public view returns (address) {
+    function getMerchantByOwner(address _merchantOwner) public view returns (address merchantContractAddress) {
         return merchantsMap[_merchantOwner];
     }
 }
