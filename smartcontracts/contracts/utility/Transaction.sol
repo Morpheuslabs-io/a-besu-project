@@ -16,15 +16,16 @@ contract Transaction {
     }
 
     Item[] internal items;
-    uint256 public total;
-    bytes32 public orderId;
-    address public merchant;
-    address public customer;
-    bytes32 public status;
-    bytes32 public posId;
+    uint256 internal total;
+    bytes32 internal orderId;
+    address internal merchant;
+    address internal customer;
+    bytes32 internal status;
+    bytes32 internal posId;
+    uint256 internal timestamp;
+
     bool public settlementRequested = false;
     bool public settlementApproved = false;
-    uint256 public timestamp;
     bytes32 public paymentReference;
 
     constructor(
@@ -56,6 +57,13 @@ contract Transaction {
 
     function numberOfItems() public view returns (uint256) {
         return items.length;
+    }
+
+    function getTransactionInfo() public view returns (
+        bytes32 _posId, bytes32 _orderId, address _merchant, 
+        address _customer, uint256 _total, uint256 _timestamp
+    ) {
+        return (posId, orderId, merchant, customer, total, timestamp);
     }
 
     function getItems() public view returns (bytes32[] memory skus, uint256[] memory prices, uint256[] memory qtys, bytes32[] memory descs) {

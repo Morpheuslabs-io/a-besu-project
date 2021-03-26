@@ -3,9 +3,11 @@
 pragma solidity ^0.8.2;
 
 import "./Merchant.sol";
+import "./NameRegistryService.sol";
 
 
 contract Organisation {
+    NameRegistryService public namingService;
     address public admin;
 
     Merchant[] public merchants;
@@ -19,15 +21,18 @@ contract Organisation {
     
     constructor() {
         admin = msg.sender;
+        namingService = new NameRegistryService();
     }
     
     function addMerchant(address _merchantOwner, string memory _merchantName) public onlyAdmin returns (address merchantAddress) {
         require(_merchantOwner != address(0), "Invalid owner address");
-        
+
         Merchant merchant = new Merchant(_merchantOwner, _merchantName);
         
         merchantsMap[_merchantOwner] = address(merchant);
         merchants.push(merchant);
+
+        namingService.register(_merchantName, address(merchant));
         
         return address(merchant);
     }
@@ -38,5 +43,9 @@ contract Organisation {
 
     function getMerchantByOwner(address _merchantOwner) public view returns (address merchantContractAddress) {
         return merchantsMap[_merchantOwner];
+    }
+
+    function getMerchantContractByName(string memory _name) public view returns (address merchantContractAddress) {
+        return namingService.getContractAddress(_name);
     }
 }
