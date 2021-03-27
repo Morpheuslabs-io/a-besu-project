@@ -19,10 +19,10 @@ module.exports = {
         return new HDWalletProvider(privatekey, `http://127.0.0.1:4545`);
       },
       network_id: 2018,
-      gas: 5500000,
-      confirmations: 2,
-      timeoutBlocks: 200,
-      skipDryRun: true,
+
+      // For gas-free interaction
+      gas: "0x1ffffffffffffe",
+      gasPrice: 0,
     },
   },
 
