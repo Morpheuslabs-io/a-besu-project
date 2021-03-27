@@ -20,4 +20,5 @@ Do not use folder `deployment` any more
 3. Deploy to local besu
 
 - Start local besu: please refer to the file `besu-scripts/README.md`
+- Ensure the private key specified in the file `.secret.besu` is valid and has enough funds for tx fee
 - Open another Terminal or Console and run this cmd: `npm run deploy`

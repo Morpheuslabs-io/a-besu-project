@@ -1,28 +1,34 @@
 const HDWalletProvider = require("@truffle/hdwallet-provider");
-const fs = require("fs");
 
-let privateKey;
-try {
-  privateKey = fs.readFileSync(".secret").toString().trim();
-} catch (err) {}
+const fs = require("fs");
+const path = require("path");
 
 module.exports = {
-  // contracts_directory: "../contracts",
+  plugins: ["truffle-security"],
+  contracts_directory: "contracts",
   networks: {
     development: {
       host: "127.0.0.1",
-      port: 8545, // Ganache default port
-      network_id: "*", // Any network (default: none)
-      // do not specify provider for Ganache
+      port: 8545,
+      network_id: "*",
     },
     besu: {
-      host: "127.0.0.1",
-      port: 4545,
+      provider: () => {
+        const privatekey = fs
+          .readFileSync(`${path.dirname(__filename)}/.secret.besu`)
+          .toString();
+        return new HDWalletProvider(privatekey, `http://127.0.0.1:4545`);
+      },
       network_id: 2018,
-      gas: 1000000,
-      gasPrice: 1000000000000,
-      provider: () => new HDWalletProvider(privateKey, `http://127.0.0.1:4545`),
+      gas: 5500000,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true,
     },
+  },
+
+  mocha: {
+    // timeout: 100000
   },
 
   compilers: {
