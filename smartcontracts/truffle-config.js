@@ -4,7 +4,6 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = {
-  plugins: ["truffle-security"],
   contracts_directory: "contracts",
   networks: {
     development: {
@@ -33,7 +32,7 @@ module.exports = {
 
   compilers: {
     solc: {
-      version: "^0.8.2",
+      version: "./soljson.js",
       parser: "solcjs",
       settings: {
         optimizer: {
