@@ -4,6 +4,8 @@ Do not use folder `deployment` any more
 
 ## Compile/deploy
 
+Execute the following commands in the "smartcontract" folder, 
+
 1. Installation
 
 `npm i`
