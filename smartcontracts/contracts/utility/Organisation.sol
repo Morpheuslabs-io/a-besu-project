@@ -37,7 +37,7 @@ contract Organisation {
         return address(merchant);
     }
 
-    function getMerchantSize() public view returns(uint256) {
+    function getNumOfMerchants() public view returns(uint256) {
         return merchants.length;
     }
 
@@ -45,7 +45,7 @@ contract Organisation {
         return merchantsMap[_merchantOwner];
     }
 
-    function getMerchantContractByName(string memory _name) public view returns (address merchantContractAddress) {
+    function getMerchantByName(string memory _name) public view returns (address merchantContractAddress) {
         return namingService.getContractAddress(_name);
     }
 }
