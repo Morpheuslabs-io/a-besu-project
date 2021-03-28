@@ -6,7 +6,7 @@ import "./Merchant.sol";
 import "./NameRegistryService.sol";
 
 
-contract Organisation {
+contract Program {
     NameRegistryService public namingService;
     address public admin;
 
