@@ -35,8 +35,8 @@ module.exports = function (deployer, network, accounts) {
     //deploy RewardToken
     const symbolName = "RewardToken";
     const decimal = 0;
-    const symbol = "RDT";
-    const totalSupply = web3.utils.toBN(2 * 10 ** 9 * 10 ** decimal); // 2 billions token, decimal 0;
+    const symbol = "RWT";
+    const totalSupply = web3.utils.toBN(1 * 10 ** 8 * 10 ** decimal); // 100 million token, decimal 0;
 
     let RewardTokenContract = await deployer.deploy(
       RewardToken,
