@@ -63,7 +63,7 @@ module.exports = function (deployer, network, accounts) {
       MicroPaymentContract.address
     );
 
-    console.log("Register MicroPayment Tx:", tx.tx);
+    // console.log("Register MicroPayment Tx:", tx.tx);
 
     // Register RewardToken
     tx = await NameRegistryServiceContract.register(
@@ -71,6 +71,6 @@ module.exports = function (deployer, network, accounts) {
       RewardTokenContract.address
     );
 
-    console.log("Register RewardToken Tx:", tx.tx);
+    // console.log("Register RewardToken Tx:", tx.tx);
   });
 };
