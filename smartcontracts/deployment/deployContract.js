@@ -221,7 +221,8 @@ async function deployContract_micropayment() {
 
 async function deployContract_utility() {
   try {
-    const Utility = await deployContract("../contracts/utility", "Utility");
+    const Program = await deployContract("../contracts/utility", "Program");
+    const NameRegistryService = await deployContract("../contracts/utility", "NameRegistryService");
   } catch (ex) {
     console.log(ex);
   }
@@ -229,7 +230,7 @@ async function deployContract_utility() {
 
 async function main() {
   await deployContract_micropayment();
-  // await deployContract_utility();
+  await deployContract_utility();
 }
 
 main();
