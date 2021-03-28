@@ -5,8 +5,6 @@
   "main": "deployContracts.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rm -rf ./build",
-    "build": "npm run clean && npx truffle compile --config ./truffle-config.js",
     "deploy-besu": "cross-env NETWORK=besu node deployContract.js",
     "deploy-ganache": "cross-env NETWORK=ganache node deployContract.js",
     "ganache": "npx ganache-cli -l 10000000 -d 'torch almost feed brother seat earth scorpion panther nuclear interest toy guide'"
@@ -15,7 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@truffle/hdwallet-provider": "^1.2.5",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
     "keythereum": "^1.2.0",
