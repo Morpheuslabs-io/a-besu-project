@@ -7,11 +7,8 @@ console.log(`NETWORK: ${process.env.NETWORK}`);
 
 if (process.env.NETWORK === "besu") {
   require("dotenv").config({ path: ".env.besu" });
-} else if (process.env.NETWORK === "ganache") {
-  require("dotenv").config({ path: ".env.ganache" });
 } else {
-  console.error("NETWORK ENV is not defined");
-  process.exit(1);
+  require("dotenv").config({ path: ".env.ganache" });
 }
 
 const {
@@ -105,7 +102,6 @@ async function sendTx(txObject) {
 // "contractFolder" -> ../contracts/micropayment
 // "contractName" -> RewardToken
 async function deployContract(contractFolder, contractName, ctorArgs) {
-  console.log(`deployContract`);
   let sourceFile = `${contractFolder}/${contractName}.sol`;
   console.log(
     `Start compiling contract ${contractName}, source file -->`,
@@ -136,22 +132,15 @@ async function deployContract(contractFolder, contractName, ctorArgs) {
       ...compilerOption,
       sources: { [contractName]: { content: source } },
     };
-    //console.log(compilerOption);
 
     let compiledContract = JSON.parse(
       solc.compile(JSON.stringify(compilerOption))
     );
-    let contractAddress;
-
-    console.log(compiledContract);
 
     compiledContract = compiledContract.contracts[contractName][contractName];
-    //console.log(contract);
 
     let bytecode = compiledContract.evm.bytecode.object;
     let abi = compiledContract.abi;
-
-    console.log("Compiled done.");
 
     let contract = new web3.eth.Contract(abi);
     const deploy = contract.deploy({ data: bytecode, arguments: ctorArgs });
@@ -169,7 +158,7 @@ async function deployContract(contractFolder, contractName, ctorArgs) {
     );
     console.log(`TxHash -> ${tx.transactionHash}`);
 
-    console.log(contractName, JSON.stringify(abi));
+    // console.log(contractName, JSON.stringify(abi));
 
     return contract;
   } catch (e) {
@@ -221,8 +210,17 @@ async function deployContract_micropayment() {
 
 async function deployContract_utility() {
   try {
-    const Program = await deployContract("../contracts/utility", "Program");
-    const NameRegistryService = await deployContract("../contracts/utility", "NameRegistryService");
+    // Deploy Program
+    const ProgramContract = await deployContract(
+      "../contracts/utility",
+      "Program"
+    );
+
+    // Deploy NameRegistryService
+    const NameRegistryServiceContract = await deployContract(
+      "../contracts/utility",
+      "NameRegistryService"
+    );
   } catch (ex) {
     console.log(ex);
   }
@@ -230,7 +228,7 @@ async function deployContract_utility() {
 
 async function main() {
   await deployContract_micropayment();
-  await deployContract_utility();
+  // await deployContract_utility();
 }
 
 main();

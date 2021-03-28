@@ -29,7 +29,7 @@ module.exports = {
 
   compilers: {
     solc: {
-      version: "^0.8.2",
+      version: "./soljson.js",
       parser: "solcjs",
       settings: {
         optimizer: {
