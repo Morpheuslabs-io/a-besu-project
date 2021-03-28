@@ -23,7 +23,7 @@ contract Merchant {
         merchantName = _merchantName;
     }
     
-    function add(bytes32[] memory _skus, uint256[] memory _prices, uint256[] memory _quantites, bytes32[] memory _descriptions, bytes32 _orderId,
+    function purchase(bytes32[] memory _skus, uint256[] memory _prices, uint256[] memory _quantites, bytes32[] memory _descriptions, bytes32 _orderId,
                         address _debtor, bytes32 _posId, uint256 _totalAmount, uint256 _timestamp) public {
         require(
             (_skus.length == _prices.length) && 
