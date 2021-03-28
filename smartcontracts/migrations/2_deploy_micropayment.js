@@ -1,5 +1,9 @@
 const RewardToken = artifacts.require("RewardToken");
 const MicroPayment = artifacts.require("MicroPayment");
+const NameRegistryService = artifacts.require("NameRegistryService");
+
+const MICROPAYMENT_LABEL = "MicroPayment_V1";
+const REWARDTOKEN_LABEL = "RewardToken_V1";
 
 module.exports = function (deployer, network, accounts) {
   deployer.then(async () => {
@@ -47,5 +51,26 @@ module.exports = function (deployer, network, accounts) {
       MicroPayment,
       RewardTokenContract.address
     );
+
+    //deploy NameRegistryService
+    let NameRegistryServiceContract = await deployer.deploy(
+      NameRegistryService
+    );
+
+    // Register MicroPayment
+    let tx = await NameRegistryServiceContract.register(
+      MICROPAYMENT_LABEL,
+      MicroPaymentContract.address
+    );
+
+    console.log("Register MicroPayment Tx:", tx.tx);
+
+    // Register RewardToken
+    tx = await NameRegistryServiceContract.register(
+      REWARDTOKEN_LABEL,
+      RewardTokenContract.address
+    );
+
+    console.log("Register RewardToken Tx:", tx.tx);
   });
 };
