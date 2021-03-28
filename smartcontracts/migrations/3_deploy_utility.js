@@ -1,6 +1,9 @@
 const Program = artifacts.require("Program");
 const Merchant = artifacts.require("Merchant");
 const Transaction = artifacts.require("Transaction");
+const NameRegistryService = artifacts.require("NameRegistryService");
+
+const PROGRAM_LABEL = "Program_V1";
 
 module.exports = function (deployer, network, accounts) {
   deployer.then(async () => {
@@ -115,11 +118,24 @@ module.exports = function (deployer, network, accounts) {
     // Deploy Program
     let ProgramContract = await deployer.deploy(Program);
 
+    // Deploy NameRegistryService
+    let NameRegistryServiceContract = await deployer.deploy(
+      NameRegistryService
+    );
+
+    // Register Program
+    let tx = await NameRegistryServiceContract.register(
+      PROGRAM_LABEL,
+      ProgramContract.address
+    );
+
+    console.log("Register Program Tx:", tx.tx);
+
     // Add Merchant
     let merchantName = `Merchant${getRandomInt(1000)}`;
     console.log("Adding merchant: ", merchantName);
 
-    let tx = await ProgramContract.addMerchant(setter, merchantName);
+    tx = await ProgramContract.addMerchant(setter, merchantName);
     console.log(`New merchant added -> ${tx.tx}`);
 
     // Get Merchant address
