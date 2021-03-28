@@ -130,6 +130,9 @@ module.exports = function (deployer, network, accounts) {
     );
 
     console.log("Register Program Tx:", tx.tx);
+    console.log(
+      `Program label: ${PROGRAM_LABEL}, Program address: ${ProgramContract.address}`
+    );
 
     // Add Merchant
     let merchantName = `Merchant${getRandomInt(1000)}`;
