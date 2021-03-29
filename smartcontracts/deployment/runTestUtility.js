@@ -8,24 +8,24 @@ const solc = require('solc');
 const ethereumUri = 'http://localhost:8545';
 
 //config private key for deployment account
-const privateKey = "0xdbd983e30dae90d012d27c0202b1e2f6cd83425aaf4adba829d7991fe5c1cd75";
+const privateKey = "0x935bb21098c822bb6c15d08d94c0a5a59700537b35b8193a01377202f744d00d";
 
 let web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
 const sender = account.address;
 let chainId = 5777;
 
-const organisationABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"admin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"merchants","outputs":[{"internalType":"contractMerchant","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"namingService","outputs":[{"internalType":"contractNameRegistryService","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"_merchantOwner","type":"address"},{"internalType":"string","name":"_merchantName","type":"string"}],"name":"addMerchant","outputs":[{"internalType":"address","name":"merchantAddress","type":"address"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getMerchantSize","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"_merchantOwner","type":"address"}],"name":"getMerchantByOwner","outputs":[{"internalType":"address","name":"merchantContractAddress","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"string","name":"_name","type":"string"}],"name":"getMerchantContractByName","outputs":[{"internalType":"address","name":"merchantContractAddress","type":"address"}],"stateMutability":"view","type":"function","constant":true}];
+const programABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor","signature":"constructor"},{"inputs":[{"internalType":"address","name":"_merchantOwner","type":"address"},{"internalType":"string","name":"_merchantName","type":"string"}],"name":"addMerchant","outputs":[{"internalType":"address","name":"merchantAddress","type":"address"}],"stateMutability":"nonpayable","type":"function","signature":"0x613416ac"},{"inputs":[],"name":"admin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true,"signature":"0xf851a440"},{"inputs":[{"internalType":"string","name":"_name","type":"string"}],"name":"getMerchantByName","outputs":[{"internalType":"address","name":"merchantContractAddress","type":"address"}],"stateMutability":"view","type":"function","constant":true,"signature":"0xab0b3e53"},{"inputs":[{"internalType":"address","name":"_merchantOwner","type":"address"}],"name":"getMerchantByOwner","outputs":[{"internalType":"address","name":"merchantContractAddress","type":"address"}],"stateMutability":"view","type":"function","constant":true,"signature":"0xf8a1554d"},{"inputs":[],"name":"getNumOfMerchants","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true,"signature":"0xd8f58097"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"merchants","outputs":[{"internalType":"contract Merchant","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true,"signature":"0x92c8823b"},{"inputs":[],"name":"namingService","outputs":[{"internalType":"contract NameRegistryService","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true,"signature":"0x93f9ad20"}];
 
-const merchantABI = [{"inputs":[{"internalType":"address","name":"_owner","type":"address"},{"internalType":"string","name":"_merchantName","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"debtor","type":"address"},{"indexed":false,"internalType":"uint256","name":"index","type":"uint256"}],"name":"Transact","type":"event"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"debt","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"merchantName","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"merchantTransactions","outputs":[{"internalType":"contractTransaction","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32[]","name":"_skus","type":"bytes32[]"},{"internalType":"uint256[]","name":"_prices","type":"uint256[]"},{"internalType":"uint256[]","name":"_quantites","type":"uint256[]"},{"internalType":"bytes32[]","name":"_descriptions","type":"bytes32[]"},{"internalType":"bytes32","name":"_orderId","type":"bytes32"},{"internalType":"address","name":"_debtor","type":"address"},{"internalType":"bytes32","name":"_posId","type":"bytes32"},{"internalType":"uint256","name":"_totalAmount","type":"uint256"},{"internalType":"uint256","name":"_timestamp","type":"uint256"}],"name":"add","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_to","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_userAddress","type":"address"}],"name":"getUserTransactions","outputs":[{"internalType":"contractTransaction[]","name":"txs","type":"address[]"}],"stateMutability":"view","type":"function"}];
+const merchantABI = [{"inputs":[{"internalType":"address","name":"_owner","type":"address"},{"internalType":"string","name":"_merchantName","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"index","type":"uint256"}],"name":"Transact","type":"event"},{"inputs":[{"internalType":"address","name":"_to","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getPurchasedUsers","outputs":[{"internalType":"address[]","name":"users","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_userAddress","type":"address"}],"name":"getUserTransactions","outputs":[{"internalType":"contractTransaction[]","name":"txs","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"merchantName","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"merchantTransactions","outputs":[{"internalType":"contractTransaction","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32[]","name":"_skus","type":"bytes32[]"},{"internalType":"uint256[]","name":"_prices","type":"uint256[]"},{"internalType":"uint256[]","name":"_quantites","type":"uint256[]"},{"internalType":"bytes32[]","name":"_descriptions","type":"bytes32[]"},{"internalType":"bytes32","name":"_orderId","type":"bytes32"},{"internalType":"address","name":"_user","type":"address"},{"internalType":"bytes32","name":"_posId","type":"bytes32"},{"internalType":"uint256","name":"_totalAmount","type":"uint256"},{"internalType":"uint256","name":"_timestamp","type":"uint256"}],"name":"purchase","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"supplyTotal","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"userTotal","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}];
 const transactionABI = [{"inputs":[{"internalType":"bytes32","name":"_posId","type":"bytes32"},{"internalType":"bytes32","name":"_orderId","type":"bytes32"},{"internalType":"address","name":"_merchant","type":"address"},{"internalType":"address","name":"_customer","type":"address"},{"internalType":"uint256","name":"_total","type":"uint256"},{"internalType":"uint256","name":"_timestamp","type":"uint256"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"paymentReference","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"settlementApproved","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"settlementRequested","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_sku","type":"bytes32"},{"internalType":"uint256","name":"_price","type":"uint256"},{"internalType":"uint256","name":"_quantity","type":"uint256"},{"internalType":"bytes32","name":"_description","type":"bytes32"}],"name":"add","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"numberOfItems","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getTransactionInfo","outputs":[{"internalType":"bytes32","name":"_posId","type":"bytes32"},{"internalType":"bytes32","name":"_orderId","type":"bytes32"},{"internalType":"address","name":"_merchant","type":"address"},{"internalType":"address","name":"_customer","type":"address"},{"internalType":"uint256","name":"_total","type":"uint256"},{"internalType":"uint256","name":"_timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getItems","outputs":[{"internalType":"bytes32[]","name":"skus","type":"bytes32[]"},{"internalType":"uint256[]","name":"prices","type":"uint256[]"},{"internalType":"uint256[]","name":"qtys","type":"uint256[]"},{"internalType":"bytes32[]","name":"descs","type":"bytes32[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"approveSettlement","outputs":[],"stateMutability":"nonpayable","type":"function"}];
 
 
-const organisationContractAddress = "0xDc89E3b9E1Fa6803C18054d629fDe8e142078771";
+const programContractAddress = "0xF30613e7C74F824c8ee3Dbabd77377fd2Cbb4d52";
 
 async function getMerchantAddress(merchantName) {
-	const contract = new web3.eth.Contract(organisationABI, organisationContractAddress);
-	let address = await contract.methods.getMerchantContractByName(merchantName).call();
+	const contract = new web3.eth.Contract(programABI, programContractAddress);
+	let address = await contract.methods.getMerchantByName(merchantName).call();
 
 	return address;
 }
@@ -33,6 +33,20 @@ async function getMerchantAddress(merchantName) {
 async function getUserTransactions(merchantAddress, userAddress) {
 	const contract = new web3.eth.Contract(merchantABI, merchantAddress);
 	let result = await contract.methods.getUserTransactions(userAddress).call();
+
+	return result;
+}
+
+async function getPurchasedUsers(merchantAddress) {
+	const contract = new web3.eth.Contract(merchantABI, merchantAddress);
+	let result = await contract.methods.getPurchasedUsers().call();
+
+	return result;
+}
+
+async function getUserTotalSpent(merchantAddress, userAddress) {
+	const contract = new web3.eth.Contract(merchantABI, merchantAddress);
+	let result = await contract.methods.userTotal(userAddress).call();
 
 	return result;
 }
@@ -61,7 +75,7 @@ async function getTransactionDetail(transactionAddress) {
 }
 
 async function addMerchant(address, name) {
-	const contract = new web3.eth.Contract(organisationABI, organisationContractAddress);
+	const contract = new web3.eth.Contract(programABI, programContractAddress);
 	let nonce = await web3.eth.getTransactionCount(sender);
 
 	let payload = contract.methods.addMerchant(address, name).encodeABI();
@@ -71,10 +85,12 @@ async function addMerchant(address, name) {
 		to: contract._address,
 		nonce : nonce,
 		data : payload,
-		gas : 2000000,
+		gas : 5000000,
 		gasPrice: 10,
 		chainId
 	};
+
+	console.log(payload);
 
 	let signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
 	let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
@@ -105,7 +121,7 @@ async function addItems (merchantAddress, userAddress) {
 	// (bytes32[] memory _skus, uint256[] memory _prices, uint256[] memory _quantites, bytes32[] memory _descriptions, bytes32 _orderId,
 	// 	address _debtor, bytes32 _posId, uint256 _totalAmount, uint256 _timestamp)
 
-	let payload = contract.methods.add(skus, prices, qtys, descs, orderId, userAddress, posId, totalAmount, timestamp).encodeABI();
+	let payload = contract.methods.purchase(skus, prices, qtys, descs, orderId, userAddress, posId, totalAmount, timestamp).encodeABI();
 
 	let tx = {
 		from : sender,
@@ -141,8 +157,15 @@ async function main() {
 		console.log("User transacitons", results);
 
 		let order = await getTransactionDetail(results[0]);
-
 		console.log("Added Order", order);	
+
+		let users = await getPurchasedUsers(merchantAddress, address);
+		console.log(`List purchased user for ${merchantAddress}`, users);
+		users.forEach(async user => {
+			let totalSpent = await getUserTotalSpent(merchantAddress, user);
+			console.log(`User ${user} spent ${totalSpent} for merchant ${merchantName}`);
+		});
+
 	} catch (ex) {
 		console.log(ex);
 	}
