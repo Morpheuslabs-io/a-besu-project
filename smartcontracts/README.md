@@ -33,7 +33,6 @@ Execute the following commands in the "smartcontract" folder,
 
 ## Unit-Test
 
-Do not use folder `deployment` any more
 
 ### With local Ganache
 
