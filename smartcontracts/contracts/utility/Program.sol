@@ -109,7 +109,8 @@ contract Merchant {
     
     Transaction[] public merchantTransactions;
     mapping (address => Transaction[]) internal userTransactions;
-    mapping (address => uint256) public debt;
+    mapping (address => uint256) public userTotal; // total tokens spent by each user
+    mapping (address => uint256) public supplyTotal; // total tokens merchant owed for each supplier
 
     event Transact(address debtor, uint256 index);
     constructor(address _owner, string memory _merchantName) {
