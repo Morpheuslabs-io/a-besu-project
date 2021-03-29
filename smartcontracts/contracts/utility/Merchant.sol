@@ -14,29 +14,32 @@ contract Merchant {
     // add more field for merchant information
     
     Transaction[] public merchantTransactions;
+    address[] internal purchasedUsers;
+    mapping (address => bool) isPurchased;
     mapping (address => Transaction[]) internal userTransactions;
-    mapping (address => uint256) public debt;
+    mapping (address => uint256) public userTotal; // total tokens spent by each user
+    mapping (address => uint256) public supplyTotal; // total tokens merchant owed for each supplier
 
-    event Transact(address debtor, uint256 index);
+    event Transact(address user, uint256 index);
     constructor(address _owner, string memory _merchantName) {
         owner = _owner;
         merchantName = _merchantName;
     }
     
     function purchase(bytes32[] memory _skus, uint256[] memory _prices, uint256[] memory _quantites, bytes32[] memory _descriptions, bytes32 _orderId,
-                        address _debtor, bytes32 _posId, uint256 _totalAmount, uint256 _timestamp) public {
+                        address _user, bytes32 _posId, uint256 _totalAmount, uint256 _timestamp) public {
         require(
             (_skus.length == _prices.length) && 
             (_prices.length == _quantites.length) && 
             (_quantites.length == _descriptions.length), "Length of input array is not the same");
             
-        require(_debtor != address(0), "Invalid customer");
+        require(_user != address(0), "Invalid customer");
 
         Transaction transaction = new Transaction(
             _posId,
             _orderId,
             address(this),
-            _debtor,
+            _user,
             _totalAmount,
             _timestamp
         );
@@ -46,30 +49,41 @@ contract Merchant {
         }
         
         merchantTransactions.push(transaction);
-        userTransactions[_debtor].push(transaction);
+        userTransactions[_user].push(transaction);
+
+        userTotal[_user] = userTotal[_user] + _totalAmount;
         
-        emit Transact(_debtor, merchantTransactions.length + 1);
+        if(!isPurchased[_user]) {
+            isPurchased[_user] = true;
+            purchasedUsers.push(_user);
+        }
+        
+        emit Transact(_user, merchantTransactions.length + 1);
     }
 
     /*
-    * clear the debt owed by an address
+    * clear the userTotal owed by an address
     */
 
     function burn(address _to, uint256 _amount) public {
         require(msg.sender == owner, "sender not allowed");
-        debt[_to] -= _amount;
+        userTotal[_to] -= _amount;
     }
 
     function getUserTransactions(address _userAddress) public view returns(Transaction[] memory txs) {
         return userTransactions[_userAddress];
+    }
+    
+    function getPurchasedUsers() public view returns (address[] memory users) {
+        return purchasedUsers;
     }
 
     // /*
     // * get transaction data
     // */
 
-    // function getSize(address debtor) public view returns (uint256) {
-    //   return utility[debtor].length;
+    // function getSize(address user) public view returns (uint256) {
+    //   return utility[user].length;
     // }
 
 }
