@@ -220,7 +220,20 @@ async function deployContract_utility() {
   }
 }
 
+async function deployContract_nameRegistryService() {
+  try {
+    // Deploy NameRegistryService
+    const NameRegistryServiceContract = await deployContract(
+      "../contracts/utility",
+      "NameRegistryService"
+    );
+  } catch (ex) {
+    console.log(ex);
+  }
+}
+
 async function main() {
+  await deployContract_nameRegistryService();
   await deployContract_micropayment();
   await deployContract_utility();
 }
