@@ -2,9 +2,11 @@
 
 Recommented tool for compile and deployment is to use Truffle, but if truffle is not available in the target env, then use deployContract.js directly to compile and deploy the smart contracts.
 
-## Option 1 - deploy the smart contracts using deployContracts.js in the "deployment" folder
+## Option 1 - Compile/deploy using deployContracts.js in the "deployment" folder
 
-Do not use folder `deployment` any more
+
+
+
 
 ## Option 2 - Compile/deploy using truffle
 
