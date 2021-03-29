@@ -215,12 +215,6 @@ async function deployContract_utility() {
       "../contracts/utility",
       "Program"
     );
-
-    // Deploy NameRegistryService
-    const NameRegistryServiceContract = await deployContract(
-      "../contracts/utility",
-      "NameRegistryService"
-    );
   } catch (ex) {
     console.log(ex);
   }
@@ -228,7 +222,7 @@ async function deployContract_utility() {
 
 async function main() {
   await deployContract_micropayment();
-  // await deployContract_utility();
+  await deployContract_utility();
 }
 
 main();
