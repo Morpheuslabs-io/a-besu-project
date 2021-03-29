@@ -108,6 +108,8 @@ contract Merchant {
     // add more field for merchant information
     
     Transaction[] public merchantTransactions;
+    address[] internal purchasedUsers;
+    mapping (address => bool) isPurchased;
     mapping (address => Transaction[]) internal userTransactions;
     mapping (address => uint256) public userTotal; // total tokens spent by each user
     mapping (address => uint256) public supplyTotal; // total tokens merchant owed for each supplier
@@ -142,6 +144,13 @@ contract Merchant {
         
         merchantTransactions.push(transaction);
         userTransactions[_user].push(transaction);
+
+        userTotal[_user] = userTotal[_user] + _totalAmount;
+        
+        if(!isPurchased[_user]) {
+            isPurchased[_user] = true;
+            purchasedUsers.push(_user);
+        }
         
         emit Transact(_user, merchantTransactions.length + 1);
     }
@@ -157,6 +166,10 @@ contract Merchant {
 
     function getUserTransactions(address _userAddress) public view returns(Transaction[] memory txs) {
         return userTransactions[_userAddress];
+    }
+    
+    function getPurchasedUsers() public view returns (address[] memory users) {
+        return purchasedUsers;
     }
 
     // /*
