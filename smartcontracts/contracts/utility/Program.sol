@@ -147,12 +147,12 @@ contract Merchant {
     }
 
     /*
-    * clear the debt owed by an address
+    * clear the userTotal owed by an address
     */
 
     function burn(address _to, uint256 _amount) public {
         require(msg.sender == owner, "sender not allowed");
-        debt[_to] -= _amount;
+        userTotal[_to] -= _amount;
     }
 
     function getUserTransactions(address _userAddress) public view returns(Transaction[] memory txs) {
