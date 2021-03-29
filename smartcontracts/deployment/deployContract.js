@@ -172,6 +172,29 @@ const decimal = 0;
 const symbol = "RDT";
 const totalSupply = new BigNumber(2 * 10 ** 9 * 10 ** decimal); // 2 billions token, decimal 0;
 
+// Example: contractMethodPayload = RewardToken.methods.setAuthorized(MicroPayment._address).encodeABI();
+// contractAddress = RewardToken._address
+async function invokeContractMethod(contractMethodPayload, contractAddress) {
+  // let contractMethodPayload = RewardToken.methods
+  //   .setAuthorized(MicroPayment._address)
+  //   .encodeABI();
+  let nonce = await web3.eth.getTransactionCount(sender);
+
+  let tx = {
+    from: sender,
+    to: contractAddress,
+    nonce: nonce,
+    data: contractMethodPayload,
+    gas: 500000,
+    gasPrice: 1,
+    chainId,
+  };
+
+  let signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
+  let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+  return txHash;
+}
+
 async function deployContract_micropayment() {
   try {
     const RewardToken = await deployContract(
@@ -188,23 +211,17 @@ async function deployContract_micropayment() {
     let payload = RewardToken.methods
       .setAuthorized(MicroPayment._address)
       .encodeABI();
-    let nonce = await web3.eth.getTransactionCount(sender);
 
-    let tx = {
-      from: sender,
-      to: RewardToken._address,
-      nonce: nonce,
-      data: payload,
-      gas: 500000,
-      gasPrice: 1,
-      chainId,
+    let txHash = await invokeContractMethod(payload, RewardToken._address);
+    console.log(`Set admin txHash: ${txHash.transactionHash}`);
+
+    return {
+      RewardToken,
+      MicroPayment,
     };
-
-    let signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
-    let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-    console.log(`Set admin txHash ${txHash.transactionHash}`);
   } catch (ex) {
     console.log(ex);
+    return null;
   }
 }
 
@@ -215,8 +232,10 @@ async function deployContract_utility() {
       "../contracts/utility",
       "Program"
     );
+    return ProgramContract;
   } catch (ex) {
     console.log(ex);
+    return null;
   }
 }
 
@@ -227,15 +246,57 @@ async function deployContract_nameRegistryService() {
       "../contracts/utility",
       "NameRegistryService"
     );
+    return NameRegistryServiceContract;
   } catch (ex) {
     console.log(ex);
+    return null;
   }
 }
 
+const MICROPAYMENT_LABEL = "MicroPayment_V1";
+const REWARDTOKEN_LABEL = "RewardToken_V1";
+const PROGRAM_LABEL = "Program_V1";
+
 async function main() {
-  await deployContract_nameRegistryService();
-  await deployContract_micropayment();
-  await deployContract_utility();
+  const NameRegistryServiceContract = await deployContract_nameRegistryService();
+  const { RewardToken, MicroPayment } = await deployContract_micropayment();
+  const Program = await deployContract_utility();
+
+  let payload;
+  let txHash;
+
+  // register Program
+  payload = NameRegistryServiceContract.methods
+    .register(PROGRAM_LABEL, Program._address)
+    .encodeABI();
+
+  txHash = await invokeContractMethod(
+    payload,
+    NameRegistryServiceContract._address
+  );
+  console.log(`Register Program txHash: ${txHash.transactionHash}`);
+
+  // register MicroPayment
+  payload = NameRegistryServiceContract.methods
+    .register(MICROPAYMENT_LABEL, MicroPayment._address)
+    .encodeABI();
+
+  txHash = await invokeContractMethod(
+    payload,
+    NameRegistryServiceContract._address
+  );
+  console.log(`Register MicroPayment txHash: ${txHash.transactionHash}`);
+
+  // register RewardToken
+  payload = NameRegistryServiceContract.methods
+    .register(REWARDTOKEN_LABEL, RewardToken._address)
+    .encodeABI();
+
+  txHash = await invokeContractMethod(
+    payload,
+    NameRegistryServiceContract._address
+  );
+  console.log(`Register RewardToken txHash: ${txHash.transactionHash}`);
 }
 
 main();
