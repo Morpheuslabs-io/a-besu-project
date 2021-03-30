@@ -18,7 +18,7 @@ contract MicroPayment {
         address sender;
         address receiver;
         uint256 amount;
-        address transactionReference;
+        bytes32 transactionReference;
         bytes32 transactionType;
     }
 
@@ -33,9 +33,9 @@ contract MicroPayment {
     }
 
 
-    event Transfer(address sender, address receiver, uint256 amount, address transactionReference);
+    event Transfer(address sender, address receiver, uint256 amount, bytes32 transactionReference);
 
-    function transfer(address receiver, uint256 amount, bytes32 transactionType, address transactionReference) public {
+    function transfer(address receiver, uint256 amount, bytes32 transactionType, bytes32 transactionReference) public {
         address sender = msg.sender;
         rewardToken.transferTo(sender, receiver, amount);
 
@@ -64,7 +64,7 @@ contract MicroPayment {
         (address[] memory senders, 
          address[] memory receivers,
          uint256[] memory amounts,
-         address[] memory txRefs,
+         bytes32[] memory txRefs,
          bytes32[] memory txTypes)
     {
         _page = _page == 0?1: _page;
@@ -77,7 +77,7 @@ contract MicroPayment {
             address[] memory addList = new address[](1);
             uint256[] memory amountList = new uint256[](1);
             bytes32[] memory typeList = new bytes32[](1);
-            return (addList, addList, amountList, addList, typeList);
+            return (addList, addList, amountList, typeList, typeList);
         } else {
             TransactionRecord[] memory records = transactionRecords[who];
             to = to > length?length:to;
@@ -85,7 +85,7 @@ contract MicroPayment {
             address[] memory sendersList = new address[](aSize);
             address[] memory receiversList = new address[](aSize);
             uint256[] memory amountList = new uint256[](aSize);
-            address[] memory referenceList = new address[](aSize);
+            bytes32[] memory referenceList = new bytes32[](aSize);
             bytes32[] memory typeList = new bytes32[](aSize);
 
             for(uint idx = 0; idx < aSize; idx++) {
