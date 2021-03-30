@@ -5,9 +5,9 @@
   "main": "deployContracts.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "cross-env ONLY_COMPILE=true node deployContract.js",
-    "deploy-besu": "cross-env NETWORK=besu node deployContract.js",
-    "deploy-ganache": "cross-env NETWORK=ganache node deployContract.js",
+    "build": "ONLY_COMPILE=true node deployContract.js",
+    "deploy-besu": "NETWORK=besu node deployContract.js",
+    "deploy-ganache": "NETWORK=ganache node deployContract.js",
     "ganache": "npx ganache-cli -l 10000000 -d 'torch almost feed brother seat earth scorpion panther nuclear interest toy guide'"
   },
   "keywords": [],
@@ -21,7 +21,6 @@
     "web3": "^1.3.4"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
     "ganache-cli": "^6.12.2"
   }
 }
