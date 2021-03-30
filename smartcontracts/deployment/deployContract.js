@@ -3,7 +3,7 @@ const fs = require("fs");
 const solc = require("solc");
 const keythereum = require("keythereum");
 
-console.log(`NETWORK: ${process.env.NETWORK}`);
+const onlyCompile = process.env.ONLY_COMPILE === "true";
 
 if (process.env.NETWORK === "besu") {
   require("dotenv").config({ path: ".env.besu" });
@@ -25,7 +25,12 @@ if (
   CHAIN_ID &&
   BLOCKCHAIN_ENDPOINT
 ) {
-  console.log(`Deployment to: ${BLOCKCHAIN_ENDPOINT}`);
+  if (onlyCompile) {
+    console.log(`Compiling smart contract`);
+  } else {
+    console.log(`NETWORK: ${process.env.NETWORK}`);
+    console.log(`Deployment to: ${BLOCKCHAIN_ENDPOINT}`);
+  }
 } else {
   console.error("Missing ENV variable");
   process.exit(1);
@@ -47,7 +52,7 @@ function getPrivKey(addr, keyFilePath, passphrase) {
 const privateKey =
   PRIVATE_KEY || getPrivKey(OWNER_ADDRESS, KEY_FILE_PATH, OWNER_PASSPHRASE);
 
-console.log("privateKey:", privateKey);
+// console.log("privateKey:", privateKey);
 
 let web3 = new Web3(new Web3.providers.HttpProvider(BLOCKCHAIN_ENDPOINT));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
@@ -142,6 +147,11 @@ async function deployContract(contractFolder, contractName, ctorArgs) {
     let bytecode = compiledContract.evm.bytecode.object;
     let abi = compiledContract.abi;
 
+    if (onlyCompile) {
+      console.log("Success");
+      return { _address: "0xdummy" };
+    }
+
     let contract = new web3.eth.Contract(abi);
     const deploy = contract.deploy({ data: bytecode, arguments: ctorArgs });
 
@@ -207,6 +217,11 @@ async function deployContract_micropayment() {
       "MicroPayment",
       [RewardToken._address]
     );
+
+    if (onlyCompile) {
+      return;
+    }
+
     // set admin
     let payload = RewardToken.methods
       .setAuthorized(MicroPayment._address)
@@ -259,8 +274,15 @@ const PROGRAM_LABEL = "Program_V1";
 
 async function main() {
   const NameRegistryServiceContract = await deployContract_nameRegistryService();
-  const { RewardToken, MicroPayment } = await deployContract_micropayment();
+  const MicroPaymentContract = await deployContract_micropayment();
   const Program = await deployContract_utility();
+
+  if (onlyCompile) {
+    console.log("Done");
+    process.exit(0);
+  }
+
+  const { RewardToken, MicroPayment } = MicroPaymentContract;
 
   let payload;
   let txHash;
