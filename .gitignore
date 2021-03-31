@@ -6,12 +6,16 @@ smartcontracts/build
 
 node1/data/key
 node1/data/key.pub
+node1/enode_id
 
 node2/data/key
 node2/data/key.pub
+node2/enode_id
 
 node3/data/key
 node3/data/key.pub
+node3/enode_id
 
 node4/data/key
 node4/data/key.pub
+node4/enode_id
