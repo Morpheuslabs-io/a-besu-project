@@ -15,7 +15,7 @@ Java 11+
 
 The IBFT2 blockchain network can be started with this cmd
 
-`besu-scripts/scripts/start_all.sh`
+`besu-scripts/start_all.sh`
 
 **Notice**
 
@@ -46,5 +46,4 @@ To stop the running network, run this cmd
 ## Testing interaction via smart contract deployment
 
 - cd to folder `smartcontracts/deployment`
-- Run the installation (needed only once): `npm i`
-- Run cmd: `node deployContract.js`
+- Have a look at `README.md`
