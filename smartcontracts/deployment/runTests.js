@@ -111,7 +111,7 @@ async function main() {
 
 		//filter by sender
 		result = await RewardToken.getPastEvents('Transfer',{filter: {'sender': sender}, fromBlock: fromBlock, toBlock: 'latest'});
-		console.log(result);
+		console.log("filter by sender", result);
 
 	} catch (ex) {
 		console.log(ex);
