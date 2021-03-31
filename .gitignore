@@ -3,3 +3,15 @@ smartcontracts/node_modules
 smartcontracts/deployment/build
 smartcontracts/build
 .vscode
+
+node1/data/key
+node1/data/key.pub
+
+node2/data/key
+node2/data/key.pub
+
+node3/data/key
+node3/data/key.pub
+
+node4/data/key
+node4/data/key.pub
