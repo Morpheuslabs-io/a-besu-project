@@ -11,8 +11,7 @@ sudo rm -rf /node4
 
 echo "Copy node folder to the target location"
 
-sudo cp -rf ../../node4 /node4
-sudo cp -rf ../../genesis.json /node4/genesis.json
+sudo cp -rf ../node4 /node4
 
 echo "Starting node4 as validator node"
 

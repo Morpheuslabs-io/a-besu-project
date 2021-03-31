@@ -11,8 +11,7 @@ sudo rm -rf /node1
 
 echo "Copy node folder to the target location"
 
-sudo cp -rf ../../node1 /node1
-sudo cp -rf ../../genesis.json /node1/genesis.json
+sudo cp -rf ../node1 /node1
 
 echo "Starting node1 as boot node"
 
