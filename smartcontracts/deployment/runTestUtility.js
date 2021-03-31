@@ -8,7 +8,7 @@ const solc = require('solc');
 const ethereumUri = 'http://localhost:8545';
 
 //config private key for deployment account
-const privateKey = "0x935bb21098c822bb6c15d08d94c0a5a59700537b35b8193a01377202f744d00d";
+const privateKey = "0x8b697a9fac1ed29c7cc3e61155d0fd68832c6139c433a0421b8eba45d6ce393e";
 
 let web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
@@ -21,7 +21,7 @@ const merchantABI = [{"inputs":[{"internalType":"address","name":"_owner","type"
 const transactionABI = [{"inputs":[{"internalType":"bytes32","name":"_posId","type":"bytes32"},{"internalType":"bytes32","name":"_orderId","type":"bytes32"},{"internalType":"address","name":"_merchant","type":"address"},{"internalType":"address","name":"_customer","type":"address"},{"internalType":"uint256","name":"_total","type":"uint256"},{"internalType":"uint256","name":"_timestamp","type":"uint256"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"paymentReference","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"settlementApproved","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"settlementRequested","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_sku","type":"bytes32"},{"internalType":"uint256","name":"_price","type":"uint256"},{"internalType":"uint256","name":"_quantity","type":"uint256"},{"internalType":"bytes32","name":"_description","type":"bytes32"}],"name":"add","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"numberOfItems","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getTransactionInfo","outputs":[{"internalType":"bytes32","name":"_posId","type":"bytes32"},{"internalType":"bytes32","name":"_orderId","type":"bytes32"},{"internalType":"address","name":"_merchant","type":"address"},{"internalType":"address","name":"_customer","type":"address"},{"internalType":"uint256","name":"_total","type":"uint256"},{"internalType":"uint256","name":"_timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getItems","outputs":[{"internalType":"bytes32[]","name":"skus","type":"bytes32[]"},{"internalType":"uint256[]","name":"prices","type":"uint256[]"},{"internalType":"uint256[]","name":"qtys","type":"uint256[]"},{"internalType":"bytes32[]","name":"descs","type":"bytes32[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"approveSettlement","outputs":[],"stateMutability":"nonpayable","type":"function"}];
 
 
-const programContractAddress = "0xF30613e7C74F824c8ee3Dbabd77377fd2Cbb4d52";
+const programContractAddress = "0x504C6181C526F376CEdB37633F2EC35fD724c40f";
 
 async function getMerchantAddress(merchantName) {
 	const contract = new web3.eth.Contract(programABI, programContractAddress);
@@ -136,6 +136,9 @@ async function addItems (merchantAddress, userAddress) {
 	let signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
 	let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
 	console.log(`New order added -> txHash ${txHash.transactionHash}`);
+
+	let event = await contract.getPastEvents('Transact',{ filter:{}, fromBlock: 0, toBlock: 'latest'});
+	console.log("add order event", event);
 }
 
 function getRandomInt(max) {
