@@ -1,8 +1,8 @@
 export P2P_HOST="0.0.0.0"
-export P2P_PORT="30304"
-export NODE_FOLDER="/node2"
+export P2P_PORT="30307"
+export NODE_FOLDER="/node5"
 
-echo "Starting $NODE_FOLDER as boot node"
+echo "Starting $NODE_FOLDER as validator node"
 
 echo "Delete old keypair"
 rm -rf ./data/key
