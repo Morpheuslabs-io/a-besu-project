@@ -2,63 +2,56 @@ const Web3 = require('web3');
 const fs = require('fs');
 const solc = require('solc');
 
+const { compileContract } = require("./compiler");
+
 /*
 * connect to ethereum node
 */ 
 const ethereumUri = 'http://localhost:8545';
+const sourceFolder = "../contracts/utility";
 
 //config private key for deployment account
-const privateKey = "0x8b697a9fac1ed29c7cc3e61155d0fd68832c6139c433a0421b8eba45d6ce393e";
+const privateKey = "0xdba3922888a550d7ef150e682196f061046c0fdf0813235bb2a874f0226b09fb";
 
 let web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
 const sender = account.address;
 let chainId = 5777;
 
-const programABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor","signature":"constructor"},{"inputs":[{"internalType":"address","name":"_merchantOwner","type":"address"},{"internalType":"string","name":"_merchantName","type":"string"}],"name":"addMerchant","outputs":[{"internalType":"address","name":"merchantAddress","type":"address"}],"stateMutability":"nonpayable","type":"function","signature":"0x613416ac"},{"inputs":[],"name":"admin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true,"signature":"0xf851a440"},{"inputs":[{"internalType":"string","name":"_name","type":"string"}],"name":"getMerchantByName","outputs":[{"internalType":"address","name":"merchantContractAddress","type":"address"}],"stateMutability":"view","type":"function","constant":true,"signature":"0xab0b3e53"},{"inputs":[{"internalType":"address","name":"_merchantOwner","type":"address"}],"name":"getMerchantByOwner","outputs":[{"internalType":"address","name":"merchantContractAddress","type":"address"}],"stateMutability":"view","type":"function","constant":true,"signature":"0xf8a1554d"},{"inputs":[],"name":"getNumOfMerchants","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true,"signature":"0xd8f58097"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"merchants","outputs":[{"internalType":"contract Merchant","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true,"signature":"0x92c8823b"},{"inputs":[],"name":"namingService","outputs":[{"internalType":"contract NameRegistryService","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true,"signature":"0x93f9ad20"}];
+const programContractAddress = "0xFcBF4a95B7dDba61A1c7e026D863576f71b9c6E3";
 
-const merchantABI = [{"inputs":[{"internalType":"address","name":"_owner","type":"address"},{"internalType":"string","name":"_merchantName","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"index","type":"uint256"}],"name":"Transact","type":"event"},{"inputs":[{"internalType":"address","name":"_to","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getPurchasedUsers","outputs":[{"internalType":"address[]","name":"users","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_userAddress","type":"address"}],"name":"getUserTransactions","outputs":[{"internalType":"contractTransaction[]","name":"txs","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"merchantName","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"merchantTransactions","outputs":[{"internalType":"contractTransaction","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32[]","name":"_skus","type":"bytes32[]"},{"internalType":"uint256[]","name":"_prices","type":"uint256[]"},{"internalType":"uint256[]","name":"_quantites","type":"uint256[]"},{"internalType":"bytes32[]","name":"_descriptions","type":"bytes32[]"},{"internalType":"bytes32","name":"_orderId","type":"bytes32"},{"internalType":"address","name":"_user","type":"address"},{"internalType":"bytes32","name":"_posId","type":"bytes32"},{"internalType":"uint256","name":"_totalAmount","type":"uint256"},{"internalType":"uint256","name":"_timestamp","type":"uint256"}],"name":"purchase","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"supplyTotal","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"userTotal","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}];
-const transactionABI = [{"inputs":[{"internalType":"bytes32","name":"_posId","type":"bytes32"},{"internalType":"bytes32","name":"_orderId","type":"bytes32"},{"internalType":"address","name":"_merchant","type":"address"},{"internalType":"address","name":"_customer","type":"address"},{"internalType":"uint256","name":"_total","type":"uint256"},{"internalType":"uint256","name":"_timestamp","type":"uint256"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"paymentReference","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"settlementApproved","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"settlementRequested","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_sku","type":"bytes32"},{"internalType":"uint256","name":"_price","type":"uint256"},{"internalType":"uint256","name":"_quantity","type":"uint256"},{"internalType":"bytes32","name":"_description","type":"bytes32"}],"name":"add","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"numberOfItems","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getTransactionInfo","outputs":[{"internalType":"bytes32","name":"_posId","type":"bytes32"},{"internalType":"bytes32","name":"_orderId","type":"bytes32"},{"internalType":"address","name":"_merchant","type":"address"},{"internalType":"address","name":"_customer","type":"address"},{"internalType":"uint256","name":"_total","type":"uint256"},{"internalType":"uint256","name":"_timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getItems","outputs":[{"internalType":"bytes32[]","name":"skus","type":"bytes32[]"},{"internalType":"uint256[]","name":"prices","type":"uint256[]"},{"internalType":"uint256[]","name":"qtys","type":"uint256[]"},{"internalType":"bytes32[]","name":"descs","type":"bytes32[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"approveSettlement","outputs":[],"stateMutability":"nonpayable","type":"function"}];
-
-
-const programContractAddress = "0x504C6181C526F376CEdB37633F2EC35fD724c40f";
-
-async function getMerchantAddress(merchantName) {
-	const contract = new web3.eth.Contract(programABI, programContractAddress);
-	let address = await contract.methods.getMerchantByName(merchantName).call();
+async function getMerchantAddress(programContract, merchantName) {
+	let address = await programContract.methods.getMerchantByName(merchantName).call();
 
 	return address;
 }
 
-async function getUserTransactions(merchantAddress, userAddress) {
-	const contract = new web3.eth.Contract(merchantABI, merchantAddress);
-	let result = await contract.methods.getUserTransactions(userAddress).call();
+async function getUserTransactions(merchantContract, userAddress) {
+	let result = await merchantContract.methods.getUserTransactions(userAddress).call();
 
 	return result;
 }
 
-async function getPurchasedUsers(merchantAddress) {
-	const contract = new web3.eth.Contract(merchantABI, merchantAddress);
-	let result = await contract.methods.getPurchasedUsers().call();
+async function getPurchasedUsers(merchantContract) {
+	// const contract = new web3.eth.Contract(merchantABI, merchantAddress);
+	let result = await merchantContract.methods.getPurchasedUsers().call();
 
 	return result;
 }
 
-async function getUserTotalSpent(merchantAddress, userAddress) {
-	const contract = new web3.eth.Contract(merchantABI, merchantAddress);
-	let result = await contract.methods.userTotal(userAddress).call();
+async function getUserTotalSpent(merchantContract, userAddress) {
+	// const contract = new web3.eth.Contract(merchantABI, merchantAddress);
+	let result = await merchantContract.methods.userTotal(userAddress).call();
 
 	return result;
 }
 
-async function getTransactionDetail(transactionAddress) {
-	console.log('Get detail information of transaction', transactionAddress);
-	const contract = new web3.eth.Contract(transactionABI, transactionAddress);
-	// let itemsNo = await contract.methods.numberOfItems().call();
+async function getTransactionDetail(transactionContract) {
+	console.log('Get detail information of transaction', transactionContract._address);
 
-	let { skus, prices, qtys, descs } = await contract.methods.getItems().call();
+	let { skus, prices, qtys, descs } = await transactionContract.methods.getItems().call();
 
-	let { _posId, _orderId, _merchant, _customer, _total, _timestamp }  = await contract.methods.getTransactionInfo().call();
+	let { _posId, _orderId, _merchant, _customer, _total, _timestamp }  = await transactionContract.methods.getTransactionInfo().call();
 
 	_orderId = web3.utils.hexToAscii(_orderId).replace(/\x00/g,'');
 	_posId = web3.utils.hexToAscii(_posId).replace(/\x00/g,'');
@@ -74,8 +67,9 @@ async function getTransactionDetail(transactionAddress) {
 	return { orderId: _orderId, total: _total, merchant: _merchant, customer: _customer, posId: _posId, timestamp: _timestamp, items };
 }
 
-async function addMerchant(address, name) {
-	const contract = new web3.eth.Contract(programABI, programContractAddress);
+async function addMerchant(contract, address, name) {
+	// const contract = new web3.eth.Contract(programABI, programContractAddress);
+
 	let nonce = await web3.eth.getTransactionCount(sender);
 
 	let payload = contract.methods.addMerchant(address, name).encodeABI();
@@ -97,7 +91,12 @@ async function addMerchant(address, name) {
 	console.log(`New merchant added -> ${txHash.transactionHash}`);
 }
 
-async function addItems (merchantAddress, userAddress) {
+/**
+ * 
+ * @param {*} contract merchant contract 
+ * @param {*} userAddress 
+ */
+async function addItems (contract, userAddress) {
 	let skus = [];
 	let prices = [];
 	let qtys = [];
@@ -115,7 +114,7 @@ async function addItems (merchantAddress, userAddress) {
 		descs.push(web3.utils.asciiToHex(`Desc for SKU${i}`));
 	}
 
-	const contract = new web3.eth.Contract(merchantABI, merchantAddress);
+	// const contract = new web3.eth.Contract(merchantABI, merchantAddress);
 	let nonce = await web3.eth.getTransactionCount(sender);
 
 	// (bytes32[] memory _skus, uint256[] memory _prices, uint256[] memory _quantites, bytes32[] memory _descriptions, bytes32 _orderId,
@@ -147,25 +146,35 @@ function getRandomInt(max) {
 
 async function main() {
 	try {
+		let programCompiled = await compileContract(`${sourceFolder}/Program.sol`,"Program", []);
+		let merchantCompiled = await compileContract(`${sourceFolder}/Program.sol`,"Merchant", []);
+		let transactionCompiled = await compileContract(`${sourceFolder}/Program.sol`,"Transaction", []);
+
+		let programContract = new web3.eth.Contract(programCompiled.abi, programContractAddress);
+
 		// add merchant
 		let merchantName = `Merchant${getRandomInt(1000)}`;
 		console.log('Adding merchant', merchantName);
-		await addMerchant(sender, merchantName);
-		let merchantAddress = await getMerchantAddress(merchantName);
+		await addMerchant(programContract, sender, merchantName);
+		let merchantAddress = await getMerchantAddress(programContract, merchantName);
 		console.log("Merchant Address", merchantAddress);
 
+		// add items
+		let merchantContract = new web3.eth.Contract(merchantCompiled.abi, merchantAddress);
 		let { address } = await web3.eth.accounts.create();
-		await addItems(merchantAddress, address);
-		let results = await getUserTransactions(merchantAddress, address);
+		await addItems(merchantContract, address);
+		let results = await getUserTransactions(merchantContract, address);
 		console.log("User transacitons", results);
 
-		let order = await getTransactionDetail(results[0]);
+		let transactionContract = new web3.eth.Contract(transactionCompiled.abi, results[0]);
+
+		let order = await getTransactionDetail(transactionContract);
 		console.log("Added Order", order);	
 
-		let users = await getPurchasedUsers(merchantAddress, address);
+		let users = await getPurchasedUsers(merchantContract, address);
 		console.log(`List purchased user for ${merchantAddress}`, users);
 		users.forEach(async user => {
-			let totalSpent = await getUserTotalSpent(merchantAddress, user);
+			let totalSpent = await getUserTotalSpent(merchantContract, user);
 			console.log(`User ${user} spent ${totalSpent} for merchant ${merchantName}`);
 		});
 
