@@ -11,7 +11,7 @@ rm -rf ./data/key.pub
 echo "Creating keypair"
 enode_key=$(/opt/besu-21.1.2/bin/besu --data-path=./data public-key export-address --to=./data/key.pub | grep -oE "0x[A-Fa-f0-9]*" | sed 's/0x//')
 
-echo "enode://$enode_key@$P2P_HOST:$P2P_PORT" >> ./enode_id
+echo "enode://$enode_key@$P2P_HOST:$P2P_PORT" > ./enode_id
 
 echo "Copy node folder artifacts to the target location"
 cp -rf ..$NODE_FOLDER $NODE_FOLDER
