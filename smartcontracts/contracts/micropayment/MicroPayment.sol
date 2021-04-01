@@ -11,6 +11,11 @@ contract MicroPayment {
 
     address public owner; // authorize transfer between two parties
     uint public pageSize = 20;
+    uint256 public transactionCap = 100000;
+    modifier onlyAdmin {
+        require(msg.sender == owner, "Caller is not admin");
+        _;
+    }
 
     IRewardToken private rewardToken;
 
@@ -37,6 +42,7 @@ contract MicroPayment {
 
     function transfer(address receiver, uint256 amount, bytes32 transactionType, bytes32 transactionReference) public {
         address sender = msg.sender;
+        require(amount <= transactionCap, "exceed the transaction cap!");
         rewardToken.transferTo(sender, receiver, amount);
 
         TransactionRecord memory record;
@@ -100,5 +106,13 @@ contract MicroPayment {
 
             return (sendersList, receiversList, amountList, referenceList, typeList);
         }
+    }
+
+    event SetTransactionCap(uint256 amount);
+
+    function setTransactionCap(uint256 _transactionCap) public {
+
+        transactionCap = _transactionCap;
+        emit SetTransactionCap(transactionCap);
     }
 }
