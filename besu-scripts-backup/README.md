@@ -2,26 +2,26 @@
 
 ## Prerequisite
 
-Java 11+
+  Java 11+
 
 ## Folder structure and listenning port
 
-- /node1 (4545)
-- /node2 (5545)
-- /node3 (6545)
-- /node4 (7545)
+  - /node1 (4545)
+  - /node2 (5545)
+  - /node3 (6545)
+  - /node4 (7545)
 
 ## Start
 
 The IBFT2 blockchain network can be started with this cmd
 
-`besu-scripts/start_all.sh`
+`besu-scripts/start/start_all.sh`
 
 **Notice**
 
-- RPC URL: `http://localhost:4545`
-- ChainID: `2018`
-- Private key: `8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63`
+  - RPC URL: `http://localhost:4545`
+  - ChainID: `2018`
+  - Private key: `8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63`
 
 To check the network peers, run this cmd
 
@@ -45,5 +45,8 @@ To stop the running network, run this cmd
 
 ## Testing interaction via smart contract deployment
 
-- cd to folder `smartcontracts/deployment`
-- Have a look at `README.md`
+  - cd to folder `smartcontracts/deployment`
+  - Run the installation (needed only once): `npm i`
+  - Run cmd: `node deployContract.js`
+
+
