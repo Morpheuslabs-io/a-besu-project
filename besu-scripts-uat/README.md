@@ -4,22 +4,100 @@
 
 Java 11+
 
-## Folder structure and listenning port
+## Data folder and listenning port
+
+Folder `besu-scripts-uat`
+
+### 2 bootnodes
 
 - /node1 (4545)
 - /node2 (5545)
+
+### 4 validator nodes
+
 - /node3 (6545)
 - /node4 (7545)
+- /node5 (8545)
+- /node6 (9545)
 
-## Start
+## Start Procedure
 
-The IBFT2 blockchain network can be started with this cmd
+### Server 1
 
-`besu-scripts/start_all.sh`
+Contain first bootnode and first validator node
+
+1. Start first bootnode
+
+cd to the folder `node1`
+
+To start, run the script `start_node1.sh`
+
+A file `enode_id`, which contains the `enode ID` is created.
+Example:
+
+```
+enode://efd148418d8e64a2009e45b1f73a7205c9212d0c2f06e673d0b05c0d30b686f48be6f1b85cb25e7717b6c1c77d152ab06fd96e27cf44785e18dd62afbd9909cd@0.0.0.0:30303
+
+```
+
+2. Start first validator node
+
+cd to the folder `node3` and edit the following section in the file `config.toml` by replacing with
+the above `enode` of the first bootnode
+
+
+```
+# Bootnodes
+bootnodes=["enode://a0c528675c564479dc5ae493a6c5cf348788e24e5f7b9807a6c0e0c5d734bb19523c86c073d4ab17fcb0a4e6e0d7e236f25f138ce90470e9cfcf1a91af0d0615@127.0.0.1:30303"]
+
+```
+
+To start, run the script `start_node3.sh`
+
+### Server 2
+
+Contain second bootnode and second validator node
+
+Do the same as for the `Server 1` with:
+  - `node2` is for the second bootnode
+  - `node4` is for the second validator node.
+
+### Server 3
+
+Contain third validator node
+
+cd to the folder `node5` and edit the following section in the file `config.toml` by replacing with
+the above `enode` of the first and second bootnodes
+
+
+```
+# Bootnodes
+bootnodes=["enode://a0c528675c564479dc5ae493a6c5cf348788e24e5f7b9807a6c0e0c5d734bb19523c86c073d4ab17fcb0a4e6e0d7e236f25f138ce90470e9cfcf1a91af0d0615@127.0.0.1:30303", "enode://a0c528675c564479dc5ae493a6c5cf348788e24e5f7b9807a6c0e0c5d734bb19523c86c073d4ab17fcb0a4e6e0d7e236f25f138ce90470e9cfcf1a91af0d0615@127.0.0.1:30303"]
+
+```
+
+To start, run the script `start_node5.sh`
+
+### Server 4
+
+Contain forth validator node
+
+cd to the folder `node6` and edit the following section in the file `config.toml` by replacing with
+the above `enode` of the first and second bootnodes
+
+
+```
+# Bootnodes
+bootnodes=["enode://a0c528675c564479dc5ae493a6c5cf348788e24e5f7b9807a6c0e0c5d734bb19523c86c073d4ab17fcb0a4e6e0d7e236f25f138ce90470e9cfcf1a91af0d0615@127.0.0.1:30303", "enode://a0c528675c564479dc5ae493a6c5cf348788e24e5f7b9807a6c0e0c5d734bb19523c86c073d4ab17fcb0a4e6e0d7e236f25f138ce90470e9cfcf1a91af0d0615@127.0.0.1:30303"]
+
+```
+
+To start, run the script `start_node6.sh`
+
 
 **Notice**
 
-- RPC URL: `http://localhost:4545`
+- RPC Port: `4545`
 - ChainID: `2018`
 - Private key: `8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63`
 
@@ -39,10 +117,11 @@ It should returns the current number of peers as below
 
 ## Stop and cleanup
 
-To stop the running network, run this cmd
+In each node folder, there are 2 scripts
 
-`besu-scripts/stop_cleanup.sh`
-
+  - `restart_node1.sh`: used to restart the running node with preserved data
+  - `stop_cleanup_node3.sh`: used to stop the running node and also delete the node data folder
+  
 ## Testing interaction via smart contract deployment
 
 - cd to folder `smartcontracts/deployment`
