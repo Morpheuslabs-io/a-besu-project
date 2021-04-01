@@ -1,5 +1,5 @@
 export P2P_HOST="0.0.0.0"
-export P2P_PORT="30305"
+export P2P_PORT="30304"
 export NODE_FOLDER="/node3"
 
 echo "Starting $NODE_FOLDER as validator node"

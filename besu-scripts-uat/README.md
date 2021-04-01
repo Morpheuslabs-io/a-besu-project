@@ -8,17 +8,21 @@ Java 11+
 
 Folder `besu-scripts-uat`
 
+**Notice**
+
+On 1 VM, only ports 8545 and 30303 are external
+
 ### 2 bootnodes
 
-- /node1 (4545)
-- /node2 (5545)
+- /node1 (8545 and 30303)
+- /node2 (8545 and 30303)
 
 ### 4 validator nodes
 
-- /node3 (6545)
-- /node4 (7545)
-- /node5 (8545)
-- /node6 (9545)
+- /node3 (9545 and 30304)
+- /node4 (9545 and 30304)
+- /node5 (8545 and 30303)
+- /node6 (8545 and 30303)
 
 ## Start Procedure
 

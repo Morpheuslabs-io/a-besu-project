@@ -1,5 +1,5 @@
 export P2P_HOST="0.0.0.0"
-export P2P_PORT="30304"
+export P2P_PORT="30303"
 export NODE_FOLDER="/node2"
 
 echo "Restarting $NODE_FOLDER as boot node"

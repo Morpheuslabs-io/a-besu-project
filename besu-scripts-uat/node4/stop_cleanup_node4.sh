@@ -1,4 +1,4 @@
-export RPC_PORT="7545"
+export RPC_PORT="9545"
 export NODE_FOLDER="/node4"
 
 echo "Kill running node"
