@@ -1,17 +1,8 @@
-export P2P_HOST="127.0.0.1"
+export P2P_HOST="0.0.0.0"
 export P2P_PORT="30303"
 export NODE_FOLDER="/node1"
 
 echo "Starting $NODE_FOLDER as boot node"
-
-# echo "Delete old keypair"
-# rm -rf ./data/key
-# rm -rf ./data/key.pub
-
-#echo "Creating keypair"
-#enode_key=$(/opt/besu-21.1.2/bin/besu --genesis-file=./genesis.json --data-path=./data public-key export --to=./data | grep -oE "0x[A-Fa-f0-9]*" | sed 's/0x//')
-
-#echo "enode://$enode_key@$P2P_HOST:$P2P_PORT" > ./enode_id
 
 echo "Copy node folder artifacts to the target location"
 cp -rf ..$NODE_FOLDER $NODE_FOLDER
