@@ -84,7 +84,7 @@ Leave it unchanged
 
 ### Start/restart/stop
 
-Each node can be started/restarted/stopped on VM.
+Each node can be started/restarted/stopped on VM. Node that the network requires minimum 3 / 4 validator nodes to valiidate the transaction to be included in the newly produced block.
 
 ## genesis file info 
 
