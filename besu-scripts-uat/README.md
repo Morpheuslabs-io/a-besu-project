@@ -4,6 +4,10 @@
 
 Java 11+
 
+## Network overview
+
+The besu network contains 4 validator nodes, where 2 validator nodes are also configured as boot nodes.
+
 ## Data folder and listenning port
 
 Folder `besu-scripts-uat`
