@@ -1,4 +1,4 @@
-# IBFT2 Blockchain Network
+# Besu Blockchain Network (using IBFT2 consensus)
 
 ## Prerequisite
 
