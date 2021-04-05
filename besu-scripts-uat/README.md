@@ -12,106 +12,93 @@ The besu network contains 4 validator nodes, where 2 validator nodes are also co
 
 Folder `besu-scripts-uat`
 
-**Notice**
-
-On 1 VM, only ports 8545 and 30303 are external
-
-### 2 bootnodes
+### 1 bootnode also running as validator node on 1 VM
 
 - /node1 (8545 and 30303)
+
+### 3 validator nodes on 3 separate VMs
+
 - /node2 (8545 and 30303)
+- /node3 (8545 and 30303)
+- /node4 (8545 and 30303)
 
-### 4 validator nodes
+## Node operation procedure
 
-- /node3 (9545 and 30304)
-- /node4 (9545 and 30304)
-- /node5 (8545 and 30303)
-- /node6 (8545 and 30303)
+### Generate keypair
 
-## Start Procedure
+This step is done **only once** to generate 4 pairs of keypair files for the first 4 nodes.
 
-### Server 1
+  - cd in the folder `create-network-files`
+  - In the script `create_network_files.sh`, edit the `NETWORK_FILES_LOCATION` specifying the folder path holding the generated artifacts.
+  - Run this script to generate the artifacts including:
+    - A folder `keys` with 4 sub-folders (correspondent to 4 node data folders) where `key` and `key.pub` files are contained.
+      - Copy the files `key` and `key.pub` to the node data folder:
+        - `node1/data`
+        - `node2/data`
+        - `node3/data`
+        - `node4/data`
 
-Contain first bootnode and first validator node
+    - A `genesis.json` file that needs to be copied to:
+        - `node1/`
+        - `node2/`
+        - `node3/`
+        - `node4/`
 
-1. Start first bootnode
+### Edit bootnode enode
 
-cd to the folder `node1`
+Bootnode enode(s) is specified in the the file `.env.bootnode_config`.
+This is done only once or when new bootnodes are added.
 
-To start, run the script `start_node1.sh`
+`enode` format is as follows
 
-A file `enode_id`, which contains the `enode ID` is created.
+```
+enode://key.pub.without.0x@nodeIP:nodeP2pPort
+```
+
+where:
+  - `key.pub.without.0x` is taken from the file `key.pub` omitting the `0x` in the bootnode `data` folder
+  - `nodeIP`: IP of the machine where bootnode is running
+  - `nodeP2pPort`: p2p-port of the bootnode (specified by the config param `P2P_PORT` in file `.env.node_config`)
+
 Example:
 
 ```
-enode://efd148418d8e64a2009e45b1f73a7205c9212d0c2f06e673d0b05c0d30b686f48be6f1b85cb25e7717b6c1c77d152ab06fd96e27cf44785e18dd62afbd9909cd@0.0.0.0:30303
-
+enode://be767d9fad77d1c6c57f6df233d32fa18890bc358b0b24a73ac3a5923e52b3f89ad11d9de692a7142bd0b2acc33628f5ca9f40916f24d37c4c5e61fe45f54411@172.31.39.78:30303
 ```
 
-2. Start first validator node
+### Configuration files of the node
 
-cd to the folder `node3` and edit the following section in the file `config.toml` by replacing with
-the above `enode` of the first bootnode
+1. `.env.node_config`
 
+Leave it unchanged
 
-```
-# Bootnodes
-bootnodes=["enode://a0c528675c564479dc5ae493a6c5cf348788e24e5f7b9807a6c0e0c5d734bb19523c86c073d4ab17fcb0a4e6e0d7e236f25f138ce90470e9cfcf1a91af0d0615@127.0.0.1:30303"]
+2. `config.toml`
 
-```
+Leave it unchanged
 
-To start, run the script `start_node3.sh`
+### Operation scripts of the node
 
-### Server 2
+  -  `start_node.sh`: used to initially start the node
+  -  `restart_node.sh`: used to restart the running node with preserved data
+  -  `stop_cleanup_node.sh`: used to stop the running node and also delete its data folder
 
-Contain second bootnode and second validator node
+### Start/restart/stop
 
-Do the same as for the `Server 1` with:
-  - `node2` is for the second bootnode
-  - `node4` is for the second validator node.
+Each node can be started/restarted/stopped on VM.
 
-### Server 3
+## genesis file info 
 
-Contain third validator node
+  - "chainId" : 2018,
+  - "gasLimit" : "0x1fffffffffffff",
+  - "contractSizeLimit": 2147483647,
 
-cd to the folder `node5` and edit the following section in the file `config.toml` by replacing with
-the above `enode` of the first and second bootnodes
+`gasLimit` and `contractSizeLimit` are set like above for gas-free transactions
 
-
-```
-# Bootnodes
-bootnodes=["enode://a0c528675c564479dc5ae493a6c5cf348788e24e5f7b9807a6c0e0c5d734bb19523c86c073d4ab17fcb0a4e6e0d7e236f25f138ce90470e9cfcf1a91af0d0615@127.0.0.1:30303", "enode://a0c528675c564479dc5ae493a6c5cf348788e24e5f7b9807a6c0e0c5d734bb19523c86c073d4ab17fcb0a4e6e0d7e236f25f138ce90470e9cfcf1a91af0d0615@127.0.0.1:30303"]
-
-```
-
-To start, run the script `start_node5.sh`
-
-### Server 4
-
-Contain forth validator node
-
-cd to the folder `node6` and edit the following section in the file `config.toml` by replacing with
-the above `enode` of the first and second bootnodes
-
-
-```
-# Bootnodes
-bootnodes=["enode://a0c528675c564479dc5ae493a6c5cf348788e24e5f7b9807a6c0e0c5d734bb19523c86c073d4ab17fcb0a4e6e0d7e236f25f138ce90470e9cfcf1a91af0d0615@127.0.0.1:30303", "enode://a0c528675c564479dc5ae493a6c5cf348788e24e5f7b9807a6c0e0c5d734bb19523c86c073d4ab17fcb0a4e6e0d7e236f25f138ce90470e9cfcf1a91af0d0615@127.0.0.1:30303"]
-
-```
-
-To start, run the script `start_node6.sh`
-
-
-**Notice**
-
-- RPC Port: `4545`
-- ChainID: `2018`
-- Private key: `8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63`
+## CLI
 
 To check the network peers, run this cmd
 
-`curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' localhost:4545`
+`curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' node-IP:8545`
 
 It should returns the current number of peers as below
 
@@ -123,14 +110,8 @@ It should returns the current number of peers as below
 }
 ```
 
-## Stop and cleanup
-
-In each node folder, there are 2 scripts
-
-  - `restart_node1.sh`: used to restart the running node with preserved data
-  - `stop_cleanup_node3.sh`: used to stop the running node and also delete the node data folder
-  
 ## Testing interaction via smart contract deployment
 
 - cd to folder `smartcontracts/deployment`
-- Have a look at `README.md`
+- `npm i`
+- `npm run deploy-besu`
