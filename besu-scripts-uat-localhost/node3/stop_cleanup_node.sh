@@ -1,5 +1,5 @@
-export RPC_PORT="10545"
-export NODE_FOLDER="/node3"
+# Node-specific config
+export $(egrep -v '^#' .env.node_config | xargs)
 
 echo "Kill running node"
 if [ ! -z "$(lsof -t -i:$RPC_PORT)" ]
