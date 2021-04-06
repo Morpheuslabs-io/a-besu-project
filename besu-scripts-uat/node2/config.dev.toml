@@ -2,10 +2,10 @@
 rpc-http-enabled=true
 rpc-http-api=["ETH","NET","IBFT","EEA","PRIV"]
 rpc-http-host="0.0.0.0"
-rpc-ws-port=8546
+rpc-ws-port=9546
 #graphql-http-enabled=true
 #rpc-ws-enabled=true
-#graphql-http-port=8547
+#graphql-http-port=9547
 
 host-allowlist=["*"]
 rpc-http-cors-origins=["all"]
@@ -14,6 +14,6 @@ rpc-http-cors-origins=["all"]
 min-gas-price=0
 
 # Metrics
-#metrics-enabled=true
-#metrics-host="0.0.0.0"
-#metrics-port=8548
+metrics-enabled=true
+metrics-host="0.0.0.0"
+metrics-port=9548
