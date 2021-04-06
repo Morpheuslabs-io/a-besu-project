@@ -1,4 +1,9 @@
+node-private-key-file = "node1/keynode.dev/nodekey"
+genesis-file="node1/genesis.json"
+
+
 # RPC
+rpc-port="8545"
 rpc-http-enabled=true
 rpc-http-api=["ETH","NET","IBFT","EEA","PRIV"]
 rpc-http-host="0.0.0.0"
@@ -13,7 +18,12 @@ rpc-http-cors-origins=["all"]
 # Gas free
 min-gas-price=0
 
+# p2p
+p2p-host="0.0.0.0"
+p2p-port="30303"
+
 # Metrics
 metrics-enabled=true
 metrics-host="0.0.0.0"
 metrics-port=8548
+
