@@ -1,7 +1,12 @@
+node-private-key-file = "/node4/nodekey"
+genesis-file="/node4/genesis.json"
+
+
 # RPC
 rpc-http-enabled=true
 rpc-http-api=["ETH","NET","IBFT","EEA","PRIV"]
 rpc-http-host="0.0.0.0"
+rpc-http-port=11545
 rpc-ws-port=11546
 #graphql-http-enabled=true
 #rpc-ws-enabled=true
@@ -12,6 +17,10 @@ rpc-http-cors-origins=["all"]
 
 # Gas free
 min-gas-price=0
+
+# p2p
+p2p-host="0.0.0.0"
+p2p-port="30306"
 
 # Metrics
 metrics-enabled=true
