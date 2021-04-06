@@ -1,4 +1,0 @@
----
-# handlers file for writer-node
-- name: run ldconfig
-  shell: ldconfig
