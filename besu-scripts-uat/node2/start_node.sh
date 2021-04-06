@@ -1,6 +1,6 @@
 # Node-specific config
-export $(egrep -v '^#' .env.node_config | xargs)
-export $(egrep -v '^#' ../.env.bootnode_config | xargs)
+export $(egrep -v '^#' node.config.uat | xargs)
+export $(egrep -v '^#' ../bootnode.enode.uat | xargs)
 
 echo "Starting $NODE_FOLDER as boot node"
 

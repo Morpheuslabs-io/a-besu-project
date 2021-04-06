@@ -46,7 +46,7 @@ This step is done **only once** to generate 4 pairs of keypair files for the fir
 
 ### Edit bootnode enode
 
-Bootnode enode(s) is specified in the the file `.env.bootnode_config`.
+Bootnode enode(s) is specified in the the file `bootnode.enode.uat`.
 This is done only once or when new bootnodes are added.
 
 `enode` format is as follows
@@ -58,7 +58,7 @@ enode://key.pub.without.0x@nodeIP:nodeP2pPort
 where:
   - `key.pub.without.0x` is taken from the file `key.pub` omitting the `0x` in the bootnode `data` folder
   - `nodeIP`: IP of the machine where bootnode is running
-  - `nodeP2pPort`: p2p-port of the bootnode (specified by the config param `P2P_PORT` in file `.env.node_config`)
+  - `nodeP2pPort`: p2p-port of the bootnode (specified by the config param `P2P_PORT` in file `node.config.uat`)
 
 Example:
 
@@ -68,7 +68,7 @@ enode://be767d9fad77d1c6c57f6df233d32fa18890bc358b0b24a73ac3a5923e52b3f89ad11d9d
 
 ### Configuration files of the node
 
-1. `.env.node_config`
+1. `node.config.uat`
 
 Leave it unchanged
 
