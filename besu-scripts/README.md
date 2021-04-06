@@ -14,13 +14,13 @@ Folder `besu-scripts-uat`
 
 ### 1 bootnode also running as validator node on 1 VM
 
-- /node1 (8545 and 30303)
+- /opt/node1 (8545 and 30303)
 
 ### 3 validator nodes on 3 separate VMs
 
-- /node2 (8545 and 30303)
-- /node3 (8545 and 30303)
-- /node4 (8545 and 30303)
+- /opt/node2 (8545 and 30303)
+- /opt/node3 (8545 and 30303)
+- /opt/node4 (8545 and 30303)
 
 ## Node operation procedure
 
