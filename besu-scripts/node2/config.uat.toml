@@ -1,4 +1,4 @@
-node-private-key-file = "/node2/nodekey"
+node-private-key-file = "/opt/node2/nodekey"
 genesis-file="/node2/genesis.json"
 
 
