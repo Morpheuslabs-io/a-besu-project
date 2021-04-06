@@ -31,12 +31,12 @@ This step is done **only once** to generate 4 pairs of keypair files for the fir
   - cd in the folder `create-network-files`
   - In the script `create_network_files.sh`, edit the `NETWORK_FILES_LOCATION` specifying the folder path holding the generated artifacts.
   - Run this script to generate the artifacts including:
-    - A folder `keys` with 4 sub-folders (correspondent to 4 node data folders) where `key` and `key.pub` files are contained.
-      - Copy the files `key` and `key.pub` to the node data folder:
-        - `node1/data`
-        - `node2/data`
-        - `node3/data`
-        - `node4/data`
+    - A folder `keys` with 4 sub-folders (correspondent to 4 node data folders) where `nodekey` and `nodekey.pub` files are contained.
+      - Copy the files `nodekey` and `nodekey.pub` to the node data folder:
+        - `node1/nodekey.dev|uat|prod`
+        - `node2/nodekey.dev|uat|prod`
+        - `node3/nodekey.dev|uat|prod`
+        - `node4/nodekey.dev|uat|prod`
 
     - A `genesis.json` file that needs to be copied to:
         - `node1/`
@@ -46,17 +46,17 @@ This step is done **only once** to generate 4 pairs of keypair files for the fir
 
 ### Edit bootnode enode
 
-Bootnode enode(s) is specified in the the file `bootnode.enode.uat`.
+Bootnode enode(s) is specified in the the file `bootnode.enode.uat|prod|dev`.
 This is done only once or when new bootnodes are added.
 
 `enode` format is as follows
 
 ```
-enode://key.pub.without.0x@nodeIP:nodeP2pPort
+enode://nodekey.pub.without.0x@nodeIP:nodeP2pPort
 ```
 
 where:
-  - `key.pub.without.0x` is taken from the file `key.pub` omitting the `0x` in the bootnode `data` folder
+  - `nodekey.pub.without.0x` is taken from the file `nodekey.pub` omitting the `0x` in the bootnode `data` folder
   - `nodeIP`: IP of the machine where bootnode is running
   - `nodeP2pPort`: p2p-port of the bootnode (specified by the config param `P2P_PORT` in file `node.config.uat`)
 
@@ -68,13 +68,29 @@ enode://be767d9fad77d1c6c57f6df233d32fa18890bc358b0b24a73ac3a5923e52b3f89ad11d9d
 
 ### Configuration files of the node
 
-1. `node.config.uat`
+1. Node-specific configuration
+
+`node.config.uat`
+`node.config.prod`
+`node.config.dev`
 
 Leave it unchanged
 
-2. `config.toml`
+2. Blockchain-specific configuration
+
+`config.dev.toml`
+`config.uat.toml`
+`config.prod.toml`
 
 Leave it unchanged
+
+3. Bootnode enode configuration
+
+`bootnode.enode.dev`
+`bootnode.enode.uat`
+`bootnode.enode.prod`
+
+
 
 ### Operation scripts of the node
 
@@ -86,7 +102,7 @@ Leave it unchanged
 Please always specify the target environment as the argument passed to the above script as follows:
   - `prod`: production environment
   - `uat`: uat environment
-  - anything else or not specified: dev environment
+  - anything else or not specified: `dev` environment
 
 Example:
 
