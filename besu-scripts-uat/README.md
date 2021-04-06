@@ -90,8 +90,6 @@ Leave it unchanged
 `bootnode.enode.uat`
 `bootnode.enode.prod`
 
-
-
 ### Operation scripts of the node
 
   -  `start_node.sh`: used to initially start the node
@@ -120,13 +118,13 @@ Each node can be started/restarted/stopped on VM. Node that the network requires
 
 `gasLimit` and `contractSizeLimit` are set like above for gas-free transactions
 
-## CLI
+## CLI to verify the network
 
-To check the network peers, run this cmd
+### Check the network peers
 
 `curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' node-IP:8545`
 
-It should returns the current number of peers as below
+Output
 
 ```
 {
@@ -136,8 +134,30 @@ It should returns the current number of peers as below
 }
 ```
 
+### List of validator addresses
+
+`curl -X POST --data '{"jsonrpc":"2.0","method":"ibft_getValidatorsByBlockNumber","params":["latest"], "id":1}' node-IP:8545`
+
+Output
+
+```
+{
+  "jsonrpc" : "2.0",
+  "id" : 1,
+  "result" : [ "0x32574b8e5446290f2758ff64f0d2721fb5dea4eb", "0x7517fdc292572f4f5cca795a6c2cc7f00ff42aa1", "0x8290bb1cfd33c7ee74cdd4ae966d36e42ee30a77", "0xa3c0e9991ca197760e1a77a1060df82751647981" ]
+}
+```
+
 ## Testing interaction via smart contract deployment
 
 - cd to folder `smartcontracts/deployment`
 - `npm i`
 - `npm run deploy-besu`
+
+## Manual way of stopping the node
+
+The node listenning port is `8545`. 
+So, possible to find the `PID` associated with this port and then stop it
+
+Run this cmd to find the `PID`: `sudo lsof -i:8545`
+Run this cmd to kill the process via the `PID` found above: `sudo kill -9 <PID>`
