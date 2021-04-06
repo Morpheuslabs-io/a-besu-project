@@ -8,7 +8,7 @@ rpc-ws-port=8546
 #graphql-http-port=8547
 
 host-allowlist=["*"]
-rpc-http-cors-origins=["all"
+rpc-http-cors-origins=["all"]
 
 # Gas free
 min-gas-price=0
@@ -17,5 +17,3 @@ min-gas-price=0
 #metrics-enabled=true
 #metrics-host="0.0.0.0"
 #metrics-port=8548
-
-

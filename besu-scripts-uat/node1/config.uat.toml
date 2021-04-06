@@ -17,5 +17,3 @@ min-gas-price=0
 #metrics-enabled=true
 #metrics-host="0.0.0.0"
 #metrics-port=8548
-
-
