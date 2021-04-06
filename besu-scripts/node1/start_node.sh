@@ -26,8 +26,7 @@ export $(egrep -v '^#' $nodeConfigFile | xargs)
 echo "Starting $NODE_FOLDER as boot node"
 
 echo "Copy node folder artifacts to the target location"
-rm -rf $NODE_FOLDER
-mkdir $NODE_FOLDER
+
 cp -rf ..$NODE_FOLDER/$nodeConfigFile $NODE_FOLDER
 cp -rf ..$NODE_FOLDER/$tomlConfigFile $NODE_FOLDER
 cp -rf ..$NODE_FOLDER/$keypairDataFolder/* $NODE_FOLDER
