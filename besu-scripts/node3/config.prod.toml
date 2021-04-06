@@ -1,5 +1,5 @@
-node-private-key-file = "/node3/nodekey"
-genesis-file="/node3/genesis.json"
+node-private-key-file = "/opt/node3/nodekey"
+genesis-file="/opt/node3/genesis.json"
 
 
 # RPC
