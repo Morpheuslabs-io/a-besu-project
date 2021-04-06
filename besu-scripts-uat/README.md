@@ -82,6 +82,16 @@ Leave it unchanged
   -  `restart_node.sh`: used to restart the running node with preserved data
   -  `stop_cleanup_node.sh`: used to stop the running node and also delete its data folder
 
+**Notice**
+Please always specify the target environment as the argument passed to the above script as follows:
+  - `prod`: production environment
+  - `uat`: uat environment
+  - anything else or not specified: dev environment
+
+Example:
+
+`start_node.sh uat`: start node for UAT env
+
 ### Start/restart/stop
 
 Each node can be started/restarted/stopped on VM. Node that the network requires minimum 3 / 4 validator nodes to valiidate the transaction to be included in the newly produced block.
