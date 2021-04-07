@@ -31,10 +31,10 @@ echo "Starting $NODE_FOLDER as validator node"
 
 echo "Copy node folder artifacts to the target location"
 
-cp -rf ..$NODE_FOLDER/$nodeConfigFile $NODE_FOLDER
-cp -rf ..$NODE_FOLDER/$tomlConfigFile $NODE_FOLDER
-cp -rf ..$NODE_FOLDER/$keypairDataFolder/* $NODE_FOLDER
-cp -rf ..$NODE_FOLDER/genesis.json $NODE_FOLDER
-cp -rf ..$NODE_FOLDER/*.sh $NODE_FOLDER
+cp -rf ./$nodeConfigFile $NODE_FOLDER
+cp -rf ./$tomlConfigFile $NODE_FOLDER
+cp -rf ./$keypairDataFolder/* $NODE_FOLDER
+cp -rf ./genesis.json $NODE_FOLDER
+cp -rf ./*.sh $NODE_FOLDER
 
 /opt/besu-21.1.2/bin/besu --data-path $NODE_FOLDER/data --genesis-file=$NODE_FOLDER/genesis.json --config-file=$NODE_FOLDER/$tomlConfigFile --bootnodes=$BOOT_NODE_ENODE_LIST &
