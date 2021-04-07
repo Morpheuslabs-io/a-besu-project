@@ -27,10 +27,10 @@ echo "Starting $NODE_FOLDER as boot node"
 
 echo "Copy node folder artifacts to the target location"
 
-cp -rf ..$NODE_FOLDER/$nodeConfigFile $NODE_FOLDER
-cp -rf ..$NODE_FOLDER/$tomlConfigFile $NODE_FOLDER
-cp -rf ..$NODE_FOLDER/$keypairDataFolder/* $NODE_FOLDER
-cp -rf ..$NODE_FOLDER/genesis.json $NODE_FOLDER
-cp -rf ..$NODE_FOLDER/*.sh $NODE_FOLDER
+cp -rf ../node1/$nodeConfigFile $NODE_FOLDER
+cp -rf ../node1/$tomlConfigFile $NODE_FOLDER
+cp -rf ../node1/$keypairDataFolder/* $NODE_FOLDER
+cp -rf ../node1/genesis.json $NODE_FOLDER
+cp -rf ../node1/*.sh $NODE_FOLDER
 
 /opt/besu-21.1.2/bin/besu --data-path $NODE_FOLDER/data --genesis-file=$NODE_FOLDER/genesis.json --config-file=$NODE_FOLDER/$tomlConfigFile &
