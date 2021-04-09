@@ -101,21 +101,16 @@ async function sendTx(senderLabel, txObject) {
   return txHash;
 }
 
-async function deployContract(senderLabel, contractName, ctorArgs, abi) {
+async function deployContract(senderLabel, bytecode, ctorArgs, abi) {
   try {
     const contract = new web3.eth.Contract(abi);
     const deploy = contract.deploy({ data: bytecode, arguments: ctorArgs });
 
-    console.log(`Deploying contract ${contractName}`);
+    console.log(`Deploying contract`);
     const tx = await sendTx(senderLabel, deploy);
 
     // contract.options.address = tx.contractAddress;
-    console.log(
-      "Deployed contract: ",
-      contractName,
-      ", address: ",
-      tx.contractAddress
-    );
+    console.log("Deployed contract address: ", tx.contractAddress);
     console.log(`TxHash -> ${tx.transactionHash}`);
 
     // console.log(contractName, JSON.stringify(abi));
@@ -195,7 +190,6 @@ async function deployContract_micropayment() {
   }
 }
 
-
 async function deployContract_utility() {
   try {
     // Deploy Program
@@ -228,21 +222,20 @@ const MICROPAYMENT_LABEL = "MicroPayment_V1";
 const REWARDTOKEN_LABEL = "RewardToken_V1";
 const PROGRAM_LABEL = "Program_V1";
 
-
 async function deployContractWrapper(
   senderLabel,
   contractBytecode,
   constructorArguments,
-  contractName
+  contractABI
 ) {
   if (senderLabel !== sender) {
     return { error: "Unknown senderLabel" };
   }
   const result = await deployContract(
     senderLabel,
-    contractName,
+    contractBytecode,
     constructorArguments,
-    contractBytecode
+    contractABI
   );
 
   return result;
