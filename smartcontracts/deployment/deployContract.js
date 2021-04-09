@@ -147,6 +147,8 @@ async function deployContract(contractFolder, contractName, ctorArgs) {
     let bytecode = compiledContract.evm.bytecode.object;
     let abi = compiledContract.abi;
 
+    console.log("bytecode:", bytecode);
+
     if (onlyCompile) {
       console.log("Success");
       return { _address: "0xdummy" };
