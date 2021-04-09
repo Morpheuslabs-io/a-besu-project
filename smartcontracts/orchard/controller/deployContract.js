@@ -1,6 +1,4 @@
 const Web3 = require("web3");
-const fs = require("fs");
-const solc = require("solc");
 const keythereum = require("keythereum");
 
 const onlyCompile = process.env.ONLY_COMPILE === "true";
@@ -60,7 +58,7 @@ const sender = account.address;
 console.log("sender:", sender);
 let chainId = CHAIN_ID;
 
-async function sendTx(txObject) {
+async function sendTx(senderLabel, txObject) {
   const txTo = txObject._parent.options.address;
   let gasPrice = 100000000;
 
@@ -77,7 +75,7 @@ async function sendTx(txObject) {
   }
 
   const txData = txObject.encodeABI();
-  const txFrom = account.address;
+  const txFrom = senderLabel;
   const txKey = account.privateKey;
 
   let nonce = await web3.eth.getTransactionCount(txFrom);
@@ -103,78 +101,33 @@ async function sendTx(txObject) {
   return txHash;
 }
 
-// Example
-// "contractFolder" -> ../contracts/micropayment
-// "contractName" -> RewardToken
-async function deployContract(contractFolder, contractName, ctorArgs) {
-  let sourceFile = `${contractFolder}/${contractName}.sol`;
-  console.log(
-    `Start compiling contract ${contractName}, source file -->`,
-    sourceFile
-  );
-  let source;
-
-  let compilerOption = {
-    language: "Solidity",
-    settings: {
-      outputSelection: {
-        "*": {
-          "*": ["*"],
-        },
-      },
-    },
-  };
-
+async function deployContract(senderLabel, contractName, ctorArgs, abi) {
   try {
-    source = fs.readFileSync(sourceFile, "utf8");
-  } catch (err) {
-    console.log("File not found", sourceFile);
-    return;
-  }
-
-  try {
-    compilerOption = {
-      ...compilerOption,
-      sources: { [contractName]: { content: source } },
-    };
-
-    let compiledContract = JSON.parse(
-      solc.compile(JSON.stringify(compilerOption))
-    );
-
-    compiledContract = compiledContract.contracts[contractName][contractName];
-
-    let bytecode = compiledContract.evm.bytecode.object;
-    let abi = compiledContract.abi;
-
-    console.log("bytecode:", bytecode);
-
-    if (onlyCompile) {
-      console.log("Success");
-      return { _address: "0xdummy" };
-    }
-
-    let contract = new web3.eth.Contract(abi);
+    const contract = new web3.eth.Contract(abi);
     const deploy = contract.deploy({ data: bytecode, arguments: ctorArgs });
 
     console.log(`Deploying contract ${contractName}`);
-    let tx = await sendTx(deploy);
+    const tx = await sendTx(senderLabel, deploy);
 
-    contract = new web3.eth.Contract(abi, tx.contractAddress);
     // contract.options.address = tx.contractAddress;
     console.log(
-      "Deployed contract",
+      "Deployed contract: ",
       contractName,
-      " contract address -->",
+      ", address: ",
       tx.contractAddress
     );
     console.log(`TxHash -> ${tx.transactionHash}`);
 
     // console.log(contractName, JSON.stringify(abi));
 
-    return contract;
+    return {
+      transactionHash: tx.transactionHash,
+      contractAddress: tx.contractAddress,
+      sender: senderLabel,
+    };
   } catch (e) {
-    console.log("ERROR", e);
+    console.error("deployContract - Error", e);
+    return null;
   }
 }
 
@@ -242,6 +195,7 @@ async function deployContract_micropayment() {
   }
 }
 
+
 async function deployContract_utility() {
   try {
     // Deploy Program
@@ -274,61 +228,24 @@ const MICROPAYMENT_LABEL = "MicroPayment_V1";
 const REWARDTOKEN_LABEL = "RewardToken_V1";
 const PROGRAM_LABEL = "Program_V1";
 
-async function main() {
-  const NameRegistryServiceContract = await deployContract_nameRegistryService();
-  const MicroPaymentContract = await deployContract_micropayment();
-  const Program = await deployContract_utility();
-
-  if (onlyCompile) {
-    console.log("Done");
-    process.exit(0);
-  }
-
-  const { RewardToken, MicroPayment } = MicroPaymentContract;
-
-  let payload;
-  let txHash;
-
-  // register Program
-  payload = NameRegistryServiceContract.methods
-    .register(PROGRAM_LABEL, Program._address)
-    .encodeABI();
-
-  txHash = await invokeContractMethod(
-    payload,
-    NameRegistryServiceContract._address
-  );
-  console.log(`Register Program txHash: ${txHash.transactionHash}`);
-
-  // register MicroPayment
-  payload = NameRegistryServiceContract.methods
-    .register(MICROPAYMENT_LABEL, MicroPayment._address)
-    .encodeABI();
-
-  txHash = await invokeContractMethod(
-    payload,
-    NameRegistryServiceContract._address
-  );
-  console.log(`Register MicroPayment txHash: ${txHash.transactionHash}`);
-
-  // register RewardToken
-  payload = NameRegistryServiceContract.methods
-    .register(REWARDTOKEN_LABEL, RewardToken._address)
-    .encodeABI();
-
-  txHash = await invokeContractMethod(
-    payload,
-    NameRegistryServiceContract._address
-  );
-  console.log(`Register RewardToken txHash: ${txHash.transactionHash}`);
-}
 
 async function deployContractWrapper(
-  fromLabel,
+  senderLabel,
   contractBytecode,
-  constructorArguments
+  constructorArguments,
+  contractName
 ) {
-  
+  if (senderLabel !== sender) {
+    return { error: "Unknown senderLabel" };
+  }
+  const result = await deployContract(
+    senderLabel,
+    contractName,
+    constructorArguments,
+    contractBytecode
+  );
+
+  return result;
 }
 
 module.exports = {

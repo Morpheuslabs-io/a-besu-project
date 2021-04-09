@@ -2,9 +2,9 @@ const express = require("express");
 const { deployContractHandle } = require("./handler");
 const router = new express.Router();
 
-router.get("/status", function (req, res) {
+router.get("/", function (req, res) {
   res.send({
-    message: "Good",
+    message: "Hello",
   });
 });
 

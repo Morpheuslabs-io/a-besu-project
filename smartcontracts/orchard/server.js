@@ -14,9 +14,9 @@ app.use(
     extended: true,
   })
 );
-app.use("/", router);
+app.use(`/${process.env.SERVICE_NAME || "orchard"}`, router);
 
-const port = process.env.PORT || 8545;
+const port = process.env.SERVER_PORT;
 
 app.listen(port, () => {
   console.log(`Server is listening at port ${port}`);
