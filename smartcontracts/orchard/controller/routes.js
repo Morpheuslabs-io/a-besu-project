@@ -1,5 +1,8 @@
 const express = require("express");
-const { deployContractHandle } = require("./handler");
+const {
+  deployContractHandle,
+  invokeContractMethodHandle,
+} = require("./handler");
 const router = new express.Router();
 
 router.get("/", function (req, res) {
@@ -8,7 +11,7 @@ router.get("/", function (req, res) {
   });
 });
 
-// Withdraw from HOLDER address to another address which must be a token-associted address
 router.post("/deployContract", deployContractHandle);
+router.post("/invokeContractMethod", invokeContractMethodHandle);
 
 module.exports = router;

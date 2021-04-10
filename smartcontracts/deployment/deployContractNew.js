@@ -1,6 +1,7 @@
 const axios = require("axios");
 const axiosRetry = require("axios-retry");
 const web3Utils = require("web3-utils");
+const web3EthContract = require("web3-eth-contract");
 const fs = require("fs");
 const solc = require("solc");
 
@@ -27,6 +28,21 @@ async function request_deployContract(
   });
 
   // {transactionHash, contractAddress, sender}
+  return result.data;
+}
+
+async function request_invokeContractMethod(
+  senderLabel,
+  contractMethodPayload,
+  contractAddress
+) {
+  const result = await axios.post(API_INVOKE_CONTRACT_METHOD, {
+    senderLabel,
+    contractMethodPayload,
+    contractAddress,
+  });
+
+  // {transactionHash, sender}
   return result.data;
 }
 
@@ -99,7 +115,9 @@ async function deployContract_RewardToken() {
       ctorArgsRewardToken
     );
 
-    return deployedRewardToken;
+    console.log("deployContract_RewardToken: ", deployedRewardToken);
+
+    return { ...deployedRewardToken, abi: compiledRewardToken.abi };
   } catch (e) {
     console.error("deployContract_RewardToken - Error:", e);
     return null;
@@ -122,7 +140,9 @@ async function deployContract_MicroPayment(rewardTokenAddress) {
       ctorArgsMicroPayment
     );
 
-    return deployedMicroPayment;
+    console.log("deployContract_MicroPayment: ", deployedMicroPayment);
+
+    return { ...deployedMicroPayment, abi: compiledMicroPayment.abi };
   } catch (e) {
     console.error("deployContract_MicroPayment - Error:", e);
     return null;
@@ -145,7 +165,15 @@ async function deployContract_NameRegistryService() {
       ctorArgsNameRegistryService
     );
 
-    return deployedNameRegistryService;
+    console.log(
+      "deployContract_NameRegistryService: ",
+      deployedNameRegistryService
+    );
+
+    return {
+      ...deployedNameRegistryService,
+      abi: compiledNameRegistryService.abi,
+    };
   } catch (e) {
     console.error("deployContract_NameRegistryService - Error:", e);
     return null;
@@ -168,6 +196,8 @@ async function deployContract_Program() {
       ctorArgsProgram
     );
 
+    console.log("deployContract_Program: ", deployedProgram);
+
     return deployedProgram;
   } catch (e) {
     console.error("deployContract_Program - Error:", e);
@@ -175,40 +205,58 @@ async function deployContract_Program() {
   }
 }
 
-async function invokeContractMethodWrapper(
-  senderLabel,
-  contractMethodPayload,
-  contractAddress
+async function invokeContractMethod_setAuthorized(
+  rewardTokenAbi,
+  rewardTokenAddress,
+  authAddress
 ) {
-  const api = `${API_URL}/${SERVICE_NAME}/${API_INVOKE_CONTRACT_METHOD}`;
-  const result = await axios.post(api, {
-    senderLabel,
-    contractMethodPayload,
-    contractAddress,
-  });
-  console.log("invokeContractMethodWrapper - result:", result);
+  try {
+    const rewardTokenContract = new web3EthContract(
+      rewardTokenAbi,
+      rewardTokenAddress
+    );
+
+    const contractMethodPayload = rewardTokenContract.methods
+      .setAuthorized(authAddress)
+      .encodeABI();
+
+    const result = await request_invokeContractMethod(
+      sender,
+      contractMethodPayload,
+      rewardTokenAddress
+    );
+
+    console.log("invokeContractMethod_setAuthorized:", result);
+
+    return result;
+  } catch (e) {
+    console.error("invokeContractMethod_setAuthorized - Error:", e);
+    return null;
+  }
 }
 
 async function main() {
+  // Deploy contract
   const deployedRewardToken = await deployContract_RewardToken();
-  console.log("deployedRewardToken: ", deployedRewardToken);
 
   const deployedMicroPayment = await deployContract_MicroPayment(
     deployedRewardToken.contractAddress
   );
-  console.log("deployedMicroPayment: ", deployedMicroPayment);
 
   const deployedNameRegistryService = await deployContract_NameRegistryService();
-  console.log("deployedNameRegistryService: ", deployedNameRegistryService);
 
   const deployedProgram = await deployContract_Program();
-  console.log("deployedProgram: ", deployedProgram);
 
-  // const invokeContractMethodResult = await invokeContractMethodWrapper(
-  //   senderLabel,
-  //   contractMethodPayload,
-  //   contractAddress
-  // );
+  ////////////////////////////////////////////////////
+
+  // Invoke contract method
+  const resultSetAuthorized = await invokeContractMethod_setAuthorized(
+    deployedRewardToken.abi,
+    deployedRewardToken.contractAddress,
+    deployedMicroPayment.contractAddress
+  );
+
+  ////////////////////////////////////////////////////
 
   process.exit(0);
 }

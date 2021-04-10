@@ -40,19 +40,11 @@ function getPrivKey(addr, keyFilePath, passphrase) {
   return privateKey.toString("hex");
 }
 
-// This is the genesis account private key
-// const privateKey = '8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63'
-
-// This is the private key decoded from the keyfile
-// const privateKey = '7bc861ae7cec9c7c30d7cc6b3c3b1abbef9893215853193e782760e33cd7cbd2'
-
 // If PRIVATE_KEY is specified, it will be taken. Otherwise, read from KEY_FILE_PATH
 const privateKey =
   PRIVATE_KEY || getPrivKey(OWNER_ADDRESS, KEY_FILE_PATH, OWNER_PASSPHRASE);
 
-// console.log("privateKey:", privateKey);
-
-let web3 = new Web3(new Web3.providers.HttpProvider(BLOCKCHAIN_ENDPOINT));
+const web3 = new Web3(new Web3.providers.HttpProvider(BLOCKCHAIN_ENDPOINT));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
 const sender = account.address;
 console.log("sender:", sender);
@@ -91,12 +83,7 @@ async function sendTx(senderLabel, txObject) {
   };
 
   const signedTx = await web3.eth.accounts.signTransaction(tx, txKey);
-  // don't wait for confirmation
-  //signedTxs.push(signedTx.rawTransaction);
-
-  //console.log(signedTx);
-
-  let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+  const txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
 
   return txHash;
 }
@@ -126,22 +113,15 @@ async function deployContract(senderLabel, bytecode, ctorArgs, abi) {
   }
 }
 
-const BigNumber = web3.utils.BN;
-const symbolName = "RewardToken";
-const decimal = 0;
-const symbol = "RDT";
-const totalSupply = new BigNumber(2 * 10 ** 9 * 10 ** decimal); // 2 billions token, decimal 0;
+async function invokeContractMethod(
+  senderLabel,
+  contractMethodPayload,
+  contractAddress
+) {
+  const nonce = await web3.eth.getTransactionCount(senderLabel);
 
-// Example: contractMethodPayload = RewardToken.methods.setAuthorized(MicroPayment._address).encodeABI();
-// contractAddress = RewardToken._address
-async function invokeContractMethod(contractMethodPayload, contractAddress) {
-  // let contractMethodPayload = RewardToken.methods
-  //   .setAuthorized(MicroPayment._address)
-  //   .encodeABI();
-  let nonce = await web3.eth.getTransactionCount(sender);
-
-  let tx = {
-    from: sender,
+  const tx = {
+    from: senderLabel,
     to: contractAddress,
     nonce: nonce,
     data: contractMethodPayload,
@@ -150,9 +130,12 @@ async function invokeContractMethod(contractMethodPayload, contractAddress) {
     chainId,
   };
 
-  let signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
-  let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-  return txHash;
+  const signedTx = await web3.eth.accounts.signTransaction(
+    tx,
+    account.privateKey
+  );
+  const txData = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+  return { transactionHash: txData.transactionHash, sender: senderLabel };
 }
 
 async function deployContractWrapper(
@@ -174,6 +157,24 @@ async function deployContractWrapper(
   return result;
 }
 
+async function invokeContractMethodWrapper(
+  senderLabel,
+  contractMethodPayload,
+  contractAddress
+) {
+  if (senderLabel !== sender) {
+    return { error: "Unknown senderLabel" };
+  }
+  const result = await invokeContractMethod(
+    senderLabel,
+    contractMethodPayload,
+    contractAddress
+  );
+
+  return result;
+}
+
 module.exports = {
   deployContractWrapper,
+  invokeContractMethodWrapper,
 };
