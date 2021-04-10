@@ -26,10 +26,11 @@ async function request_deployContract(
     contractAbi,
   });
 
+  // {transactionHash, contractAddress, sender}
   return result.data;
 }
 
-async function compileContract(contractFolder, contractName, ctorArgs) {
+async function compileContract(contractFolder, contractName) {
   let sourceFile = `${contractFolder}/${contractName}.sol`;
   console.log(
     `Start compiling contract ${contractName}, source file -->`,
@@ -84,28 +85,46 @@ async function deployContract_RewardToken() {
     const symbol = "RDT";
     const totalSupply = web3Utils.toBN(2 * 10 ** 9 * 10 ** decimal); // 2 billions token, decimal 0;
 
-    const constructorArgumentsRewardToken = [
-      totalSupply,
-      symbolName,
-      symbol,
-      decimal,
-    ];
     const compiledRewardToken = await compileContract(
       "../contracts/micropayment",
-      "RewardToken",
-      constructorArgumentsRewardToken
+      "RewardToken"
     );
+
+    const ctorArgsRewardToken = [totalSupply, symbolName, symbol, decimal];
 
     const deployedRewardToken = await request_deployContract(
       sender,
       compiledRewardToken.bytecode,
       compiledRewardToken.abi,
-      constructorArgumentsRewardToken
+      ctorArgsRewardToken
     );
 
     return deployedRewardToken;
   } catch (e) {
     console.error("deployContract_RewardToken - Error:", e);
+    return null;
+  }
+}
+
+async function deployContract_MicroPayment(rewardTokenAddress) {
+  try {
+    const compiledMicroPayment = await compileContract(
+      "../contracts/micropayment",
+      "MicroPayment"
+    );
+
+    const ctorArgsMicroPayment = [rewardTokenAddress];
+
+    const deployedMicroPayment = await request_deployContract(
+      sender,
+      compiledMicroPayment.bytecode,
+      compiledMicroPayment.abi,
+      ctorArgsMicroPayment
+    );
+
+    return deployedMicroPayment;
+  } catch (e) {
+    console.error("deployContract_MicroPayment - Error:", e);
     return null;
   }
 }
@@ -127,6 +146,11 @@ async function invokeContractMethodWrapper(
 async function main() {
   const deployedRewardToken = await deployContract_RewardToken();
   console.log("deployedRewardToken: ", deployedRewardToken);
+
+  const deployedMicroPayment = await deployContract_MicroPayment(
+    deployedRewardToken.contractAddress
+  );
+  console.log("deployedMicroPayment: ", deployedMicroPayment);
 
   // const invokeContractMethodResult = await invokeContractMethodWrapper(
   //   senderLabel,
