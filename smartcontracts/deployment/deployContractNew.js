@@ -17,7 +17,7 @@ async function request_deployContract(
   senderLabel,
   binary,
   contractAbi,
-  encodedConstructor
+  encodedConstructor = null
 ) {
   const result = await axios.post(API_DEPLOY_CONTRACT, {
     senderLabel,
@@ -136,7 +136,7 @@ async function deployContract_NameRegistryService() {
       "NameRegistryService"
     );
 
-    const ctorArgsNameRegistryService = [];
+    const ctorArgsNameRegistryService = null;
 
     const deployedNameRegistryService = await request_deployContract(
       sender,

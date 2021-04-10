@@ -4,7 +4,7 @@ async function deployContractHandle(req, res) {
   try {
     const { senderLabel, binary, encodedConstructor, contractAbi } = req.body;
 
-    if (!senderLabel || !binary || !encodedConstructor || !contractAbi) {
+    if (!senderLabel || !binary || !contractAbi) {
       return res.status(400).send({
         status: "error",
         message: "One of the input params is missing",
@@ -14,7 +14,7 @@ async function deployContractHandle(req, res) {
     const deployResult = await deployContractWrapper(
       senderLabel,
       binary,
-      encodedConstructor,
+      encodedConstructor || null,
       contractAbi
     );
 
