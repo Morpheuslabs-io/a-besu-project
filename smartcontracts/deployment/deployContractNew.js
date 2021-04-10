@@ -205,6 +205,7 @@ async function deployContract_Program() {
   }
 }
 
+// RewardToken setAuthorized for a given "authAddress"
 async function invokeContractMethod_setAuthorized(
   rewardTokenAbi,
   rewardTokenAddress,
@@ -235,6 +236,42 @@ async function invokeContractMethod_setAuthorized(
   }
 }
 
+// NameRegistryService register label for a given address
+async function invokeContractMethod_register(
+  nameRegistryServiceAbi,
+  nameRegistryServiceAddress,
+  registeredLabel,
+  registeredAddress
+) {
+  try {
+    const nameRegistryServiceContract = new web3EthContract(
+      nameRegistryServiceAbi,
+      nameRegistryServiceAddress
+    );
+
+    const contractMethodPayload = nameRegistryServiceContract.methods
+      .register(registeredLabel, registeredAddress)
+      .encodeABI();
+
+    const result = await request_invokeContractMethod(
+      sender,
+      contractMethodPayload,
+      nameRegistryServiceAddress
+    );
+
+    console.log("invokeContractMethod_register:", result);
+
+    return result;
+  } catch (e) {
+    console.error("invokeContractMethod_register - Error:", e);
+    return null;
+  }
+}
+
+const MICROPAYMENT_LABEL = "MicroPayment_V1";
+const REWARDTOKEN_LABEL = "RewardToken_V1";
+const PROGRAM_LABEL = "Program_V1";
+
 async function main() {
   // Deploy contract
   const deployedRewardToken = await deployContract_RewardToken();
@@ -250,10 +287,35 @@ async function main() {
   ////////////////////////////////////////////////////
 
   // Invoke contract method
+  // RewardToken setAuthorized for MicroPayment
   const resultSetAuthorized = await invokeContractMethod_setAuthorized(
     deployedRewardToken.abi,
     deployedRewardToken.contractAddress,
     deployedMicroPayment.contractAddress
+  );
+
+  // NameRegistryService register for RewardToken
+  const resultRegisterRewardToken = await invokeContractMethod_register(
+    deployedNameRegistryService.abi,
+    deployedNameRegistryService.contractAddress,
+    REWARDTOKEN_LABEL,
+    deployedRewardToken.contractAddress
+  );
+
+  // NameRegistryService register for MicroPayment
+  const resultRegisterMicroPayment = await invokeContractMethod_register(
+    deployedNameRegistryService.abi,
+    deployedNameRegistryService.contractAddress,
+    MICROPAYMENT_LABEL,
+    deployedMicroPayment.contractAddress
+  );
+
+  // NameRegistryService register for Program
+  const resultRegisterProgram = await invokeContractMethod_register(
+    deployedNameRegistryService.abi,
+    deployedNameRegistryService.contractAddress,
+    PROGRAM_LABEL,
+    deployedProgram.contractAddress
   );
 
   ////////////////////////////////////////////////////

@@ -135,6 +135,10 @@ async function invokeContractMethod(
     account.privateKey
   );
   const txData = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+  console.log(
+    "invokeContractMethod - transactionHash:",
+    txData.transactionHash
+  );
   return { transactionHash: txData.transactionHash, sender: senderLabel };
 }
 
