@@ -129,6 +129,29 @@ async function deployContract_MicroPayment(rewardTokenAddress) {
   }
 }
 
+async function deployContract_NameRegistryService() {
+  try {
+    const compiledNameRegistryService = await compileContract(
+      "../contracts/utility",
+      "NameRegistryService"
+    );
+
+    const ctorArgsNameRegistryService = [];
+
+    const deployedNameRegistryService = await request_deployContract(
+      sender,
+      compiledNameRegistryService.bytecode,
+      compiledNameRegistryService.abi,
+      ctorArgsNameRegistryService
+    );
+
+    return deployedNameRegistryService;
+  } catch (e) {
+    console.error("deployContract_NameRegistryService - Error:", e);
+    return null;
+  }
+}
+
 async function invokeContractMethodWrapper(
   senderLabel,
   contractMethodPayload,
@@ -151,6 +174,9 @@ async function main() {
     deployedRewardToken.contractAddress
   );
   console.log("deployedMicroPayment: ", deployedMicroPayment);
+
+  const deployedNameRegistryService = await deployContract_NameRegistryService();
+  console.log("deployedNameRegistryService: ", deployedNameRegistryService);
 
   // const invokeContractMethodResult = await invokeContractMethodWrapper(
   //   senderLabel,
