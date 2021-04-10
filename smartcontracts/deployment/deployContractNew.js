@@ -152,6 +152,29 @@ async function deployContract_NameRegistryService() {
   }
 }
 
+async function deployContract_Program() {
+  try {
+    const compiledProgram = await compileContract(
+      "../contracts/utility",
+      "Program"
+    );
+
+    const ctorArgsProgram = null;
+
+    const deployedProgram = await request_deployContract(
+      sender,
+      compiledProgram.bytecode,
+      compiledProgram.abi,
+      ctorArgsProgram
+    );
+
+    return deployedProgram;
+  } catch (e) {
+    console.error("deployContract_Program - Error:", e);
+    return null;
+  }
+}
+
 async function invokeContractMethodWrapper(
   senderLabel,
   contractMethodPayload,
@@ -177,6 +200,9 @@ async function main() {
 
   const deployedNameRegistryService = await deployContract_NameRegistryService();
   console.log("deployedNameRegistryService: ", deployedNameRegistryService);
+
+  const deployedProgram = await deployContract_Program();
+  console.log("deployedProgram: ", deployedProgram);
 
   // const invokeContractMethodResult = await invokeContractMethodWrapper(
   //   senderLabel,
