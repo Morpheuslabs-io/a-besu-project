@@ -4,10 +4,10 @@ const web3Utils = require("web3-utils");
 
 axiosRetry(axios, { retries: 3 });
 
-const API_URL = "http://127.0.0.1:30303";
-const SERVICE_NAME = "orchard";
-const API_DEPLOY_CONTRACT = "deployContract";
-const API_INVOKE_CONTRACT_METHOD = "invokeContractMethod";
+const API_DEPLOY_CONTRACT = "http://127.0.0.1:30303/orchard/deployContract";
+
+const API_INVOKE_CONTRACT_METHOD =
+  "http://127.0.0.1:30303/orchard/invokeContractMethod";
 
 async function deployContractWrapper(
   senderLabel,
@@ -15,8 +15,7 @@ async function deployContractWrapper(
   encodedConstructor,
   contractAbi
 ) {
-  const api = `${API_URL}/${SERVICE_NAME}/${API_DEPLOY_CONTRACT}`;
-  const result = await axios.post(api, {
+  const result = await axios.post(API_DEPLOY_CONTRACT, {
     senderLabel,
     binary,
     encodedConstructor,
