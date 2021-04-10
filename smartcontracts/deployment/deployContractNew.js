@@ -12,6 +12,10 @@ const API_DEPLOY_CONTRACT = "http://127.0.0.1:30303/orchard/deployContract";
 const API_INVOKE_CONTRACT_METHOD =
   "http://127.0.0.1:30303/orchard/invokeContractMethod";
 
+const API_ETH_KEY = "http://127.0.0.1:30303/orchard/eth/key";
+
+const API_GENERATE_ETH_KEY = "http://127.0.0.1:30303/orchard/generate/eth/key";
+
 const sender = "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1";
 
 async function request_deployContract(
@@ -36,6 +40,39 @@ async function request_invokeContractMethod(
   contractMethodPayload,
   contractAddress
 ) {
+  const result = await axios.post(API_INVOKE_CONTRACT_METHOD, {
+    senderLabel,
+    contractMethodPayload,
+    contractAddress,
+  });
+
+  // {transactionHash, sender}
+  return result.data;
+}
+
+async function request_ethKey(labelName) {
+  const result = await axios.post(API_ETH_KEY, {
+    labelName,
+  });
+
+  console.log("request_ethKey: ", result.data);
+
+  // {publicKey, address}
+  return result.data;
+}
+
+async function request_generateEthKey(labelName) {
+  const result = await axios.post(API_GENERATE_ETH_KEY, {
+    labelName,
+  });
+
+  console.log("request_ethKey: ", result.data);
+
+  // {publicKey, address}
+  return result.data;
+}
+
+async function request_(senderLabel, contractMethodPayload, contractAddress) {
   const result = await axios.post(API_INVOKE_CONTRACT_METHOD, {
     senderLabel,
     contractMethodPayload,
@@ -317,6 +354,12 @@ async function main() {
     PROGRAM_LABEL,
     deployedProgram.contractAddress
   );
+
+  ////////////////////////////////////////////////////
+
+  // Get/generate key
+  await request_ethKey("Label-1");
+  await request_generateEthKey("Label-new");
 
   ////////////////////////////////////////////////////
 

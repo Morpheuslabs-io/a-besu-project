@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-besu": "NETWORK=besu node server.js",
-    "start-ganache": "NETWORK=ganache node server.js"
+    "orchard-besu": "NETWORK=besu node server.js",
+    "orchard-ganache": "NETWORK=ganache node server.js"
   },
   "author": "",
   "license": "ISC",

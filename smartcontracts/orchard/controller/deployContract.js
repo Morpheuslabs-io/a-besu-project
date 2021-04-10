@@ -178,7 +178,21 @@ async function invokeContractMethodWrapper(
   return result;
 }
 
+async function generateAccount() {
+  try {
+    const account = await web3.eth.accounts.create();
+    console.log(
+      `generateAccount - address: ${account.address}, privateKey: ${account.privateKey}`
+    );
+    return { address: account.address, privateKey: account.privateKey };
+  } catch (e) {
+    console.log("generateAccount - Error:", e);
+    return null;
+  }
+}
+
 module.exports = {
   deployContractWrapper,
   invokeContractMethodWrapper,
+  generateAccount,
 };
