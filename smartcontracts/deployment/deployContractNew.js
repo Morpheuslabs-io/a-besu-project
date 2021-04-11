@@ -24,15 +24,20 @@ async function request_deployContract(
   contractAbi,
   encodedConstructor = null
 ) {
-  const result = await axios.post(API_DEPLOY_CONTRACT, {
-    senderLabel,
-    binary,
-    encodedConstructor,
-    contractAbi,
-  });
+  try {
+    const result = await axios.post(API_DEPLOY_CONTRACT, {
+      senderLabel,
+      binary,
+      encodedConstructor,
+      contractAbi,
+    });
 
-  // {transactionHash, contractAddress, senderLabel}
-  return result.data;
+    // {transactionHash, contractAddress, senderLabel}
+    return result.data;
+  } catch (err) {
+    console.error(err.response.data);
+    process.exit(1);
+  }
 }
 
 async function request_invokeContractMethod(
@@ -40,47 +45,51 @@ async function request_invokeContractMethod(
   contractMethodPayload,
   contractAddress
 ) {
-  const result = await axios.post(API_INVOKE_CONTRACT_METHOD, {
-    senderLabel,
-    contractMethodPayload,
-    contractAddress,
-  });
+  try {
+    const result = await axios.post(API_INVOKE_CONTRACT_METHOD, {
+      senderLabel,
+      contractMethodPayload,
+      contractAddress,
+    });
 
-  // {transactionHash, senderLabel}
-  return result.data;
+    // {transactionHash, senderLabel}
+    return result.data;
+  } catch (err) {
+    console.error(err.response.data);
+    process.exit(1);
+  }
 }
 
 async function request_ethKey(labelName) {
-  const result = await axios.post(API_ETH_KEY, {
-    labelName,
-  });
+  try {
+    const result = await axios.post(API_ETH_KEY, {
+      labelName,
+    });
 
-  console.log("request_ethKey: ", result.data);
+    console.log("request_ethKey: ", result.data);
 
-  // {publicKey, address}
-  return result.data;
+    // {publicKey, address}
+    return result.data;
+  } catch (err) {
+    console.error(err.response.data);
+    return null;
+  }
 }
 
 async function request_generateEthKey(labelName) {
-  const result = await axios.post(API_GENERATE_ETH_KEY, {
-    labelName,
-  });
+  try {
+    const result = await axios.post(API_GENERATE_ETH_KEY, {
+      labelName,
+    });
 
-  console.log("request_ethKey: ", result.data);
+    console.log("request_ethKey: ", result.data);
 
-  // {publicKey, address}
-  return result.data;
-}
-
-async function request_(senderLabel, contractMethodPayload, contractAddress) {
-  const result = await axios.post(API_INVOKE_CONTRACT_METHOD, {
-    senderLabel,
-    contractMethodPayload,
-    contractAddress,
-  });
-
-  // {transactionHash, senderLabel}
-  return result.data;
+    // {publicKey, address}
+    return result.data;
+  } catch (err) {
+    console.error(err.response.data);
+    return null;
+  }
 }
 
 async function compileContract(contractFolder, contractName) {

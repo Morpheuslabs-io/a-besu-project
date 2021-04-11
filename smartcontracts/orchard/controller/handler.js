@@ -12,17 +12,21 @@ async function deployContractHandle(req, res) {
     const { senderLabel, binary, encodedConstructor, contractAbi } = req.body;
 
     if (!senderLabel || !binary || !contractAbi) {
+      const message = "One of the input params is missing";
+      console.log(message);
       return res.status(400).send({
         status: "error",
-        message: "One of the input params is missing",
+        message,
       });
     }
 
     // Get senderAddress from senderLabel
     if (!labelAddressMap[senderLabel]) {
+      const message = "senderLabel not found";
+      console.log(message);
       return res.status(400).send({
         status: "error",
-        message: "senderLabel not found",
+        message,
       });
     }
     const senderAddress = labelAddressMap[senderLabel].address;
@@ -38,6 +42,8 @@ async function deployContractHandle(req, res) {
     );
 
     if (!deployResult) {
+      const message = "Failed to deploy contract";
+      console.log(message);
       return res.status(500).send({ message: "Failed to deploy contract" });
     }
 
