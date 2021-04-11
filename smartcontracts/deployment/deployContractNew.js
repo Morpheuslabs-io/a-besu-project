@@ -18,6 +18,16 @@ const API_GENERATE_ETH_KEY = "http://127.0.0.1:30303/orchard/generate/eth/key";
 
 const senderLabel = "Label-1";
 
+const MICROPAYMENT_LABEL = "MicroPayment_V1";
+const REWARDTOKEN_LABEL = "RewardToken_V1";
+const PROGRAM_LABEL = "Program_V1";
+
+// For RewardToken deployment
+const symbolName = "RewardToken";
+const decimal = 0;
+const symbol = "RDT";
+const totalSupply = web3Utils.toBN(2 * 10 ** 9 * 10 ** decimal); // 2 billions token, decimal 0;
+
 async function request_deployContract(
   senderLabel,
   binary,
@@ -82,7 +92,7 @@ async function request_generateEthKey(labelName) {
       labelName,
     });
 
-    console.log("request_ethKey: ", result.data);
+    console.log("request_generateEthKey: ", result.data);
 
     // {publicKey, address}
     return result.data;
@@ -142,11 +152,6 @@ async function compileContract(contractFolder, contractName) {
 
 async function deployContract_RewardToken() {
   try {
-    const symbolName = "Reward Token";
-    const decimal = 0;
-    const symbol = "RWT";
-    const totalSupply = web3Utils.toBN(1 * 10 ** 7 * 10 ** decimal); // 2 billions token, decimal 0;
-
     const compiledRewardToken = await compileContract(
       "../contracts/micropayment",
       "RewardToken"
@@ -314,26 +319,28 @@ async function invokeContractMethod_register(
   }
 }
 
-const MICROPAYMENT_LABEL = "MicroPayment_V1";
-const REWARDTOKEN_LABEL = "RewardToken_V1";
-const PROGRAM_LABEL = "Program_V1";
-
 async function main() {
-  // Deploy contract
+  // Deploy NameRegistryService contract
+  const deployedNameRegistryService = await deployContract_NameRegistryService();
+
+  // Deploy RewardToken contract
   const deployedRewardToken = await deployContract_RewardToken();
 
+  // Deploy MicroPayment contract
   const deployedMicroPayment = await deployContract_MicroPayment(
     deployedRewardToken.contractAddress
   );
 
-  const deployedNameRegistryService = await deployContract_NameRegistryService();
-
+  // Deploy Program contract
   const deployedProgram = await deployContract_Program();
 
   ////////////////////////////////////////////////////
 
   // Invoke contract method
   // RewardToken setAuthorized for MicroPayment
+  console.log(
+    `RewardToken setAuthorized for MicroPayment at address: ${deployedMicroPayment.contractAddress}`
+  );
   const resultSetAuthorized = await invokeContractMethod_setAuthorized(
     deployedRewardToken.abi,
     deployedRewardToken.contractAddress,
@@ -341,6 +348,9 @@ async function main() {
   );
 
   // NameRegistryService register for RewardToken
+  console.log(
+    `NameRegistryService register for RewardToken at address: ${deployedRewardToken.contractAddress}`
+  );
   const resultRegisterRewardToken = await invokeContractMethod_register(
     deployedNameRegistryService.abi,
     deployedNameRegistryService.contractAddress,
@@ -349,6 +359,9 @@ async function main() {
   );
 
   // NameRegistryService register for MicroPayment
+  console.log(
+    `NameRegistryService register for MicroPayment at address: ${deployedMicroPayment.contractAddress}`
+  );
   const resultRegisterMicroPayment = await invokeContractMethod_register(
     deployedNameRegistryService.abi,
     deployedNameRegistryService.contractAddress,
@@ -357,6 +370,9 @@ async function main() {
   );
 
   // NameRegistryService register for Program
+  console.log(
+    `NameRegistryService register for Program at address: ${deployedProgram.contractAddress}`
+  );
   const resultRegisterProgram = await invokeContractMethod_register(
     deployedNameRegistryService.abi,
     deployedNameRegistryService.contractAddress,

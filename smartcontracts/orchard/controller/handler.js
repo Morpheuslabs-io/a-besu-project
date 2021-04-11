@@ -52,7 +52,8 @@ async function deployContractHandle(req, res) {
     return res.status(200).send({
       transactionHash,
       contractAddress,
-      sender,
+      senderAddress: sender,
+      senderLabel,
     });
   } catch (error) {
     console.error("deployContractHandle - Error:", error);
@@ -97,7 +98,8 @@ async function invokeContractMethodHandle(req, res) {
 
     return res.status(200).send({
       transactionHash,
-      sender,
+      senderAddress: sender,
+      senderLabel,
     });
   } catch (error) {
     console.error("invokeContractMethodHandle - Error:", error);
