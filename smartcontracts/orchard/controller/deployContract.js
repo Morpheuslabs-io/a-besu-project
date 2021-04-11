@@ -49,7 +49,6 @@ let chainId = CHAIN_ID;
 
 async function sendTx(senderAddress, senderPrivateKey, txObject) {
   const txTo = txObject._parent.options.address;
-  let gasPrice = 100000000;
 
   let gasLimit;
   try {
@@ -76,7 +75,7 @@ async function sendTx(senderAddress, senderPrivateKey, txObject) {
     data: txData,
     gas: gasLimit,
     chainId,
-    gasPrice,
+    gasPrice: 0, // must specify 0 for gas-free tx
   };
 
   const signedTx = await web3.eth.accounts.signTransaction(tx, txKey);
@@ -130,7 +129,7 @@ async function invokeContractMethod(
     nonce: nonce,
     data: contractMethodPayload,
     gas: 500000,
-    gasPrice: 1,
+    gasPrice: 0, // must specify 0 for gas-free tx
     chainId,
   };
 
