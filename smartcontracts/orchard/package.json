@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "orchard-besu": "NETWORK=besu node server.js",
-    "orchard-ganache": "NETWORK=ganache node server.js"
+    "orchard-ganache": "NETWORK=ganache node server.js",
+    "deploy-uat-besu": "NETWORK=uat-besu node deployContract.js",
+    "deploy-prod-besu": "NETWORK=prod-besu node deployContract.js"
   },
   "author": "",
   "license": "ISC",

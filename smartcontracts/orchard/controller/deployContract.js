@@ -5,8 +5,12 @@ const onlyCompile = process.env.ONLY_COMPILE === "true";
 
 if (process.env.NETWORK === "besu") {
   require("dotenv").config({ path: ".env.besu" });
-} else {
+} else if (process.env.NETWORK === "ganache") {
   require("dotenv").config({ path: ".env.ganache" });
+} else if (process.env.NETWORK === "uat-besu") {
+  require("dotenv").config({ path: ".env.uat.besu" });
+} else if (process.env.NETWORK === "prod-besu") {
+  require("dotenv").config({ path: ".env.prod.besu" });
 }
 
 const {
