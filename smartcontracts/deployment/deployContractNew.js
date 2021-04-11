@@ -142,10 +142,10 @@ async function compileContract(contractFolder, contractName) {
 
 async function deployContract_RewardToken() {
   try {
-    const symbolName = "RewardToken";
+    const symbolName = "Reward Token";
     const decimal = 0;
-    const symbol = "RDT";
-    const totalSupply = web3Utils.toBN(2 * 10 ** 9 * 10 ** decimal); // 2 billions token, decimal 0;
+    const symbol = "RWT";
+    const totalSupply = web3Utils.toBN(1 * 10 ** 7 * 10 ** decimal); // 2 billions token, decimal 0;
 
     const compiledRewardToken = await compileContract(
       "../contracts/micropayment",
