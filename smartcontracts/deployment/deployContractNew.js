@@ -76,7 +76,7 @@ async function request_ethKey(labelName) {
       labelName,
     });
 
-    console.log("request_ethKey: ", result.data);
+    console.log("Deployment account info: ", result.data);
 
     // {publicKey, address}
     return result.data;
@@ -322,7 +322,7 @@ async function invokeContractMethod_register(
 async function main() {
   // Get/generate key
   await request_ethKey("Label-1");
-  await request_generateEthKey("Label-new");
+  // await request_generateEthKey("Label-new");
 
   ////////////////////////////////////////////////////
 
