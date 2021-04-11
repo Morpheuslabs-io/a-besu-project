@@ -320,6 +320,12 @@ async function invokeContractMethod_register(
 }
 
 async function main() {
+  // Get/generate key
+  await request_ethKey("Label-1");
+  await request_generateEthKey("Label-new");
+
+  ////////////////////////////////////////////////////
+
   // Deploy NameRegistryService contract
   const deployedNameRegistryService = await deployContract_NameRegistryService();
 
@@ -379,12 +385,6 @@ async function main() {
     PROGRAM_LABEL,
     deployedProgram.contractAddress
   );
-
-  ////////////////////////////////////////////////////
-
-  // Get/generate key
-  await request_ethKey("Label-1");
-  await request_generateEthKey("Label-new");
 
   ////////////////////////////////////////////////////
 
