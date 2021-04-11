@@ -14,7 +14,7 @@ app.use(
     extended: true,
   })
 );
-app.use(`/${process.env.SERVICE_NAME || "orchard"}`, router);
+app.use("/orchard", router);
 
 const port = process.env.SERVER_PORT;
 
