@@ -74,7 +74,7 @@ async function sendTx(senderAddress, senderPrivateKey, txObject) {
     nonce: nonce,
     data: txData,
     gas: gasLimit,
-    chainId,
+    // chainId,
     gasPrice: 0, // must specify 0 for gas-free tx
   };
 
@@ -130,7 +130,7 @@ async function invokeContractMethod(
     data: contractMethodPayload,
     gas: 500000,
     gasPrice: 0, // must specify 0 for gas-free tx
-    chainId,
+    // chainId,
   };
 
   const signedTx = await web3.eth.accounts.signTransaction(
