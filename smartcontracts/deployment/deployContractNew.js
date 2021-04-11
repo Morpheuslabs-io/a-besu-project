@@ -16,7 +16,7 @@ const API_ETH_KEY = "http://127.0.0.1:30303/orchard/eth/key";
 
 const API_GENERATE_ETH_KEY = "http://127.0.0.1:30303/orchard/generate/eth/key";
 
-const sender = "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1";
+const senderLabel = "Label-1";
 
 async function request_deployContract(
   senderLabel,
@@ -31,7 +31,7 @@ async function request_deployContract(
     contractAbi,
   });
 
-  // {transactionHash, contractAddress, sender}
+  // {transactionHash, contractAddress, senderLabel}
   return result.data;
 }
 
@@ -46,7 +46,7 @@ async function request_invokeContractMethod(
     contractAddress,
   });
 
-  // {transactionHash, sender}
+  // {transactionHash, senderLabel}
   return result.data;
 }
 
@@ -79,7 +79,7 @@ async function request_(senderLabel, contractMethodPayload, contractAddress) {
     contractAddress,
   });
 
-  // {transactionHash, sender}
+  // {transactionHash, senderLabel}
   return result.data;
 }
 
@@ -146,7 +146,7 @@ async function deployContract_RewardToken() {
     const ctorArgsRewardToken = [totalSupply, symbolName, symbol, decimal];
 
     const deployedRewardToken = await request_deployContract(
-      sender,
+      senderLabel,
       compiledRewardToken.bytecode,
       compiledRewardToken.abi,
       ctorArgsRewardToken
@@ -171,7 +171,7 @@ async function deployContract_MicroPayment(rewardTokenAddress) {
     const ctorArgsMicroPayment = [rewardTokenAddress];
 
     const deployedMicroPayment = await request_deployContract(
-      sender,
+      senderLabel,
       compiledMicroPayment.bytecode,
       compiledMicroPayment.abi,
       ctorArgsMicroPayment
@@ -196,7 +196,7 @@ async function deployContract_NameRegistryService() {
     const ctorArgsNameRegistryService = null;
 
     const deployedNameRegistryService = await request_deployContract(
-      sender,
+      senderLabel,
       compiledNameRegistryService.bytecode,
       compiledNameRegistryService.abi,
       ctorArgsNameRegistryService
@@ -227,7 +227,7 @@ async function deployContract_Program() {
     const ctorArgsProgram = null;
 
     const deployedProgram = await request_deployContract(
-      sender,
+      senderLabel,
       compiledProgram.bytecode,
       compiledProgram.abi,
       ctorArgsProgram
@@ -259,7 +259,7 @@ async function invokeContractMethod_setAuthorized(
       .encodeABI();
 
     const result = await request_invokeContractMethod(
-      sender,
+      senderLabel,
       contractMethodPayload,
       rewardTokenAddress
     );
@@ -291,7 +291,7 @@ async function invokeContractMethod_register(
       .encodeABI();
 
     const result = await request_invokeContractMethod(
-      sender,
+      senderLabel,
       contractMethodPayload,
       nameRegistryServiceAddress
     );

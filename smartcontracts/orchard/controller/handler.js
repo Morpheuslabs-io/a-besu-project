@@ -4,6 +4,9 @@ const {
   generateAccount,
 } = require("./deployContract");
 
+// Map of labelName and address
+let labelAddressMap = require("../labelAddressMap.json");
+
 async function deployContractHandle(req, res) {
   try {
     const { senderLabel, binary, encodedConstructor, contractAbi } = req.body;
@@ -15,8 +18,20 @@ async function deployContractHandle(req, res) {
       });
     }
 
+    // Get senderAddress from senderLabel
+    if (!labelAddressMap[senderLabel]) {
+      return res.status(400).send({
+        status: "error",
+        message: "senderLabel not found",
+      });
+    }
+    const senderAddress = labelAddressMap[senderLabel].address;
+    const senderPrivateKey = labelAddressMap[senderLabel].privateKey;
+    /////////////////////
+
     const deployResult = await deployContractWrapper(
-      senderLabel,
+      senderAddress,
+      senderPrivateKey,
       binary,
       encodedConstructor || null,
       contractAbi
@@ -50,8 +65,20 @@ async function invokeContractMethodHandle(req, res) {
       });
     }
 
+    // Get senderAddress from senderLabel
+    if (!labelAddressMap[senderLabel]) {
+      return res.status(400).send({
+        status: "error",
+        message: "senderLabel not found",
+      });
+    }
+    const senderAddress = labelAddressMap[senderLabel].address;
+    const senderPrivateKey = labelAddressMap[senderLabel].privateKey;
+    /////////////////////
+
     const deployResult = await invokeContractMethodWrapper(
-      senderLabel,
+      senderAddress,
+      senderPrivateKey,
       contractMethodPayload,
       contractAddress
     );
@@ -72,7 +99,6 @@ async function invokeContractMethodHandle(req, res) {
   }
 }
 
-let labelAddressMap = require("../labelAddressMap.json");
 async function getKeyHandle(req, res) {
   try {
     const { labelName } = req.body;

@@ -45,12 +45,9 @@ const privateKey =
   PRIVATE_KEY || getPrivKey(OWNER_ADDRESS, KEY_FILE_PATH, OWNER_PASSPHRASE);
 
 const web3 = new Web3(new Web3.providers.HttpProvider(BLOCKCHAIN_ENDPOINT));
-const account = web3.eth.accounts.privateKeyToAccount(privateKey);
-const sender = account.address;
-console.log("sender:", sender);
 let chainId = CHAIN_ID;
 
-async function sendTx(senderLabel, txObject) {
+async function sendTx(senderAddress, senderPrivateKey, txObject) {
   const txTo = txObject._parent.options.address;
   let gasPrice = 100000000;
 
@@ -67,8 +64,8 @@ async function sendTx(senderLabel, txObject) {
   }
 
   const txData = txObject.encodeABI();
-  const txFrom = senderLabel;
-  const txKey = account.privateKey;
+  const txFrom = senderAddress;
+  const txKey = senderPrivateKey;
 
   let nonce = await web3.eth.getTransactionCount(txFrom);
 
@@ -88,13 +85,19 @@ async function sendTx(senderLabel, txObject) {
   return txHash;
 }
 
-async function deployContract(senderLabel, bytecode, ctorArgs, abi) {
+async function deployContract(
+  senderAddress,
+  senderPrivateKey,
+  bytecode,
+  ctorArgs,
+  abi
+) {
   try {
     const contract = new web3.eth.Contract(abi);
     const deploy = contract.deploy({ data: bytecode, arguments: ctorArgs });
 
     console.log(`Deploying contract`);
-    const tx = await sendTx(senderLabel, deploy);
+    const tx = await sendTx(senderAddress, senderPrivateKey, deploy);
 
     // contract.options.address = tx.contractAddress;
     console.log("Deployed contract address: ", tx.contractAddress);
@@ -105,7 +108,7 @@ async function deployContract(senderLabel, bytecode, ctorArgs, abi) {
     return {
       transactionHash: tx.transactionHash,
       contractAddress: tx.contractAddress,
-      sender: senderLabel,
+      sender: senderAddress,
     };
   } catch (e) {
     console.error("deployContract - Error", e);
@@ -114,14 +117,15 @@ async function deployContract(senderLabel, bytecode, ctorArgs, abi) {
 }
 
 async function invokeContractMethod(
-  senderLabel,
+  senderAddress,
+  senderPrivateKey,
   contractMethodPayload,
   contractAddress
 ) {
-  const nonce = await web3.eth.getTransactionCount(senderLabel);
+  const nonce = await web3.eth.getTransactionCount(senderAddress);
 
   const tx = {
-    from: senderLabel,
+    from: senderAddress,
     to: contractAddress,
     nonce: nonce,
     data: contractMethodPayload,
@@ -132,27 +136,26 @@ async function invokeContractMethod(
 
   const signedTx = await web3.eth.accounts.signTransaction(
     tx,
-    account.privateKey
+    senderPrivateKey
   );
   const txData = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
   console.log(
     "invokeContractMethod - transactionHash:",
     txData.transactionHash
   );
-  return { transactionHash: txData.transactionHash, sender: senderLabel };
+  return { transactionHash: txData.transactionHash, sender: senderAddress };
 }
 
 async function deployContractWrapper(
-  senderLabel,
+  senderAddress,
+  senderPrivateKey,
   contractBytecode,
   constructorArguments,
   contractABI
 ) {
-  if (senderLabel !== sender) {
-    return { error: "Unknown senderLabel" };
-  }
   const result = await deployContract(
-    senderLabel,
+    senderAddress,
+    senderPrivateKey,
     contractBytecode,
     constructorArguments,
     contractABI
@@ -162,15 +165,14 @@ async function deployContractWrapper(
 }
 
 async function invokeContractMethodWrapper(
-  senderLabel,
+  senderAddress,
+  senderPrivateKey,
   contractMethodPayload,
   contractAddress
 ) {
-  if (senderLabel !== sender) {
-    return { error: "Unknown senderLabel" };
-  }
   const result = await invokeContractMethod(
-    senderLabel,
+    senderAddress,
+    senderPrivateKey,
     contractMethodPayload,
     contractAddress
   );
