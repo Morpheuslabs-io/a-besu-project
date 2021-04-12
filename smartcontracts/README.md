@@ -89,6 +89,27 @@ Server is listening at port 30303
 
 ```
 
+### Generate account
+
+Before interacting with blockchain network, it is needed to generate an account:
+
+```
+cd deployment
+npm run generate-account
+```
+
+The generated account is associated with the `senderLabel` specified in the file `smartcontracts/deployment/generateAccount.js`
+
+```
+const senderLabel = "Label-new";
+```
+
+This `senderLabel` is then used in the file `smartcontracts/deployment/deployContractNew.js`
+
+```
+const senderLabel = "Label-new";
+```
+
 ### `deployment`
 
 cd into the folder `deployment`
@@ -96,6 +117,9 @@ cd into the folder `deployment`
 - Installation: `npm i`
 - Start local Ganache: `npm run ganache`
 - Open another Terminal tab to run the deployment: `npm run deploy-ganache-new`
+
+**Notice**
+If not yet, pls generate an account as mentioned in the above section
 
 ## Deployment output log
 

@@ -8,8 +8,9 @@
     "build": "ONLY_COMPILE=true node deployContract.js",
     "deploy-besu": "NETWORK=besu node deployContract.js",
     "deploy-ganache": "cross-env NETWORK=ganache node deployContract.js",
-    "deploy-besu-new": "NETWORK=besu node deployContractNew.js",
-    "deploy-ganache-new": "cross-env NETWORK=ganache node deployContractNew.js",
+    "deploy-besu-new": "node deployContractNew.js",
+    "deploy-ganache-new": "node deployContractNew.js",
+    "generate-account": "node generateAccount.js",
     "ganache": "npx ganache-cli -l 10000000 -d 'torch almost feed brother seat earth scorpion panther nuclear interest toy guide'"
   },
   "keywords": [],

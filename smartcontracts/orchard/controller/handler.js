@@ -119,7 +119,7 @@ async function getKeyHandle(req, res) {
     }
 
     if (!labelAddressMap[labelName]) {
-      const message = "labelName not found";
+      const message = `labelName (${labelName}) not found`;
       console.log("getKeyHandle: ", message);
       return res.status(500).send({ message });
     } else {
@@ -153,6 +153,10 @@ async function generateKeyHandle(req, res) {
     if (!labelAddressMap[labelName]) {
       const { address, privateKey } = await generateAccount();
       result = { publicKey: address, address, labelName };
+      labelAddressMap[labelName] = {
+        address,
+        privateKey,
+      };
     } else {
       // already exist
       result = {

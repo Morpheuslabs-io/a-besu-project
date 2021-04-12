@@ -16,7 +16,7 @@ const API_ETH_KEY = "http://127.0.0.1:30303/orchard/eth/key";
 
 const API_GENERATE_ETH_KEY = "http://127.0.0.1:30303/orchard/generate/eth/key";
 
-const senderLabel = "Label-1";
+const senderLabel = "Label-new";
 
 const MICROPAYMENT_LABEL = "MicroPayment_V1";
 const REWARDTOKEN_LABEL = "RewardToken_V1";
@@ -321,7 +321,7 @@ async function invokeContractMethod_register(
 
 async function main() {
   // Get/generate key
-  await request_ethKey("Label-1");
+  await request_ethKey(senderLabel);
   // await request_generateEthKey("Label-new");
 
   ////////////////////////////////////////////////////
