@@ -7,16 +7,34 @@ const solc = require("solc");
 
 axiosRetry(axios, { retries: 3 });
 
-const API_DEPLOY_CONTRACT = "http://127.0.0.1:30303/orchard/deployContract";
+if (process.env.NETWORK === "besu") {
+  require("dotenv").config({ path: ".env.new.besu" });
+} else if (process.env.NETWORK === "ganache") {
+  require("dotenv").config({ path: ".env.new.ganache" });
+} else if (process.env.NETWORK === "uat-besu") {
+  require("dotenv").config({ path: ".env.new.uat.besu" });
+} else if (process.env.NETWORK === "prod-besu") {
+  require("dotenv").config({ path: ".env.new.prod.besu" });
+}
 
-const API_INVOKE_CONTRACT_METHOD =
-  "http://127.0.0.1:30303/orchard/invokeContractMethod";
+const {
+  API_DEPLOY_CONTRACT,
+  API_INVOKE_CONTRACT_METHOD,
+  API_ETH_KEY,
+  API_GENERATE_ETH_KEY,
+  senderLabel,
+} = process.env;
 
-const API_ETH_KEY = "http://127.0.0.1:30303/orchard/eth/key";
-
-const API_GENERATE_ETH_KEY = "http://127.0.0.1:30303/orchard/generate/eth/key";
-
-const senderLabel = "Label-new";
+if (
+  !API_DEPLOY_CONTRACT ||
+  !API_INVOKE_CONTRACT_METHOD ||
+  !API_ETH_KEY ||
+  !API_GENERATE_ETH_KEY ||
+  !senderLabel
+) {
+  console.error("Missing ENV variable");
+  process.exit(1);
+}
 
 const MICROPAYMENT_LABEL = "MicroPayment_V1";
 const REWARDTOKEN_LABEL = "RewardToken_V1";
