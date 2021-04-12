@@ -14,7 +14,10 @@
     "deploy-ganache-new": "cross-env NETWORK=ganache node deployContractNew.js",
     "deploy-uat-besu-new": "NETWORK=uat-besu node deployContractNew.js",
     "deploy-prod-besu-new": "NETWORK=prod-besu node deployContractNew.js",
-    "generate-account": "node generateAccount.js",
+    "generate-account-uat-besu": "NETWORK=uat-besu node generateAccount.js",
+    "generate-account-prod-besu": "NETWORK=prod-besu node generateAccount.js",
+    "generate-account-besu": "NETWORK=besu node generateAccount.js",
+    "generate-account-ganache": "cross-env NETWORK=ganache node generateAccount.js",
     "ganache": "npx ganache-cli -l 10000000 -d 'torch almost feed brother seat earth scorpion panther nuclear interest toy guide'"
   },
   "keywords": [],

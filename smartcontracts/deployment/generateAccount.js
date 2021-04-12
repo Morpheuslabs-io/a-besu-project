@@ -3,11 +3,17 @@ const axiosRetry = require("axios-retry");
 
 axiosRetry(axios, { retries: 3 });
 
-const API_ETH_KEY = "http://127.0.0.1:30303/orchard/eth/key";
+if (process.env.NETWORK === "besu") {
+  require("dotenv").config({ path: ".env.new.besu" });
+} else if (process.env.NETWORK === "ganache") {
+  require("dotenv").config({ path: ".env.new.ganache" });
+} else if (process.env.NETWORK === "uat-besu") {
+  require("dotenv").config({ path: ".env.new.uat.besu" });
+} else if (process.env.NETWORK === "prod-besu") {
+  require("dotenv").config({ path: ".env.new.prod.besu" });
+}
 
-const API_GENERATE_ETH_KEY = "http://127.0.0.1:30303/orchard/generate/eth/key";
-
-const senderLabel = "Label-new";
+const { API_ETH_KEY, API_GENERATE_ETH_KEY, senderLabel } = process.env;
 
 async function request_ethKey(labelName) {
   try {
