@@ -28,18 +28,12 @@ const decimal = 0;
 const symbol = "RDT";
 const totalSupply = web3Utils.toBN(2 * 10 ** 9 * 10 ** decimal); // 2 billions token, decimal 0;
 
-async function request_deployContract(
-  senderLabel,
-  binary,
-  contractAbi,
-  encodedConstructor = null
-) {
+async function request_deployContract(senderLabel, encodedConstructor) {
   try {
     const result = await axios.post(API_DEPLOY_CONTRACT, {
       senderLabel,
-      binary,
+      binary: null, // not used param
       encodedConstructor,
-      contractAbi,
     });
 
     // {transactionHash, contractAddress, senderLabel}
@@ -159,11 +153,17 @@ async function deployContract_RewardToken() {
 
     const ctorArgsRewardToken = [totalSupply, symbolName, symbol, decimal];
 
+    const contract = new web3EthContract(compiledRewardToken.abi);
+    const encodedConstructor = contract
+      .deploy({
+        data: compiledRewardToken.bytecode,
+        arguments: ctorArgsRewardToken,
+      })
+      .encodeABI();
+
     const deployedRewardToken = await request_deployContract(
       senderLabel,
-      compiledRewardToken.bytecode,
-      compiledRewardToken.abi,
-      ctorArgsRewardToken
+      encodedConstructor
     );
 
     console.log("deployContract_RewardToken: ", deployedRewardToken);
@@ -184,11 +184,17 @@ async function deployContract_MicroPayment(rewardTokenAddress) {
 
     const ctorArgsMicroPayment = [rewardTokenAddress];
 
+    const contract = new web3EthContract(compiledMicroPayment.abi);
+    const encodedConstructor = contract
+      .deploy({
+        data: compiledMicroPayment.bytecode,
+        arguments: ctorArgsMicroPayment,
+      })
+      .encodeABI();
+
     const deployedMicroPayment = await request_deployContract(
       senderLabel,
-      compiledMicroPayment.bytecode,
-      compiledMicroPayment.abi,
-      ctorArgsMicroPayment
+      encodedConstructor
     );
 
     console.log("deployContract_MicroPayment: ", deployedMicroPayment);
@@ -209,11 +215,17 @@ async function deployContract_NameRegistryService() {
 
     const ctorArgsNameRegistryService = null;
 
+    const contract = new web3EthContract(compiledNameRegistryService.abi);
+    const encodedConstructor = contract
+      .deploy({
+        data: compiledNameRegistryService.bytecode,
+        arguments: ctorArgsNameRegistryService,
+      })
+      .encodeABI();
+
     const deployedNameRegistryService = await request_deployContract(
       senderLabel,
-      compiledNameRegistryService.bytecode,
-      compiledNameRegistryService.abi,
-      ctorArgsNameRegistryService
+      encodedConstructor
     );
 
     console.log(
@@ -240,11 +252,17 @@ async function deployContract_Program() {
 
     const ctorArgsProgram = null;
 
+    const contract = new web3EthContract(compiledProgram.abi);
+    const encodedConstructor = contract
+      .deploy({
+        data: compiledProgram.bytecode,
+        arguments: ctorArgsProgram,
+      })
+      .encodeABI();
+
     const deployedProgram = await request_deployContract(
       senderLabel,
-      compiledProgram.bytecode,
-      compiledProgram.abi,
-      ctorArgsProgram
+      encodedConstructor
     );
 
     console.log("deployContract_Program: ", deployedProgram);
@@ -322,7 +340,6 @@ async function invokeContractMethod_register(
 async function main() {
   // Get/generate key
   await request_ethKey(senderLabel);
-  // await request_generateEthKey("Label-new");
 
   ////////////////////////////////////////////////////
 

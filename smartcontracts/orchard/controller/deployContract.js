@@ -51,33 +51,19 @@ const privateKey =
 const web3 = new Web3(new Web3.providers.HttpProvider(BLOCKCHAIN_ENDPOINT));
 let chainId = CHAIN_ID;
 
-async function sendTx(senderAddress, senderPrivateKey, txObject) {
-  const txTo = txObject._parent.options.address;
-
-  let gasLimit;
-  try {
-    gasLimit = await txObject.estimateGas();
-    console.log("Estimated gas", gasLimit);
-  } catch (e) {
-    gasLimit = 5000 * 1000;
-  }
-
-  if (txTo !== null) {
-    gasLimit = 5000 * 1000;
-  }
-
-  const txData = txObject.encodeABI();
+// Used only for deploying contract
+async function sendTx(senderAddress, senderPrivateKey, encodedConstructor) {
+  const txData = encodedConstructor;
   const txFrom = senderAddress;
   const txKey = senderPrivateKey;
 
   let nonce = await web3.eth.getTransactionCount(txFrom);
 
-  gasLimit += 100000;
   const tx = {
     from: txFrom,
     nonce: nonce,
     data: txData,
-    gas: gasLimit,
+    gas: 8000000,
     // chainId,
     gasPrice: 0, // must specify 0 for gas-free tx
   };
@@ -91,22 +77,18 @@ async function sendTx(senderAddress, senderPrivateKey, txObject) {
 async function deployContract(
   senderAddress,
   senderPrivateKey,
-  bytecode,
-  ctorArgs,
-  abi
+  encodedConstructor
 ) {
   try {
-    const contract = new web3.eth.Contract(abi);
-    const deploy = contract.deploy({ data: bytecode, arguments: ctorArgs });
-
     console.log(`Deploying contract`);
-    const tx = await sendTx(senderAddress, senderPrivateKey, deploy);
+    const tx = await sendTx(
+      senderAddress,
+      senderPrivateKey,
+      encodedConstructor
+    );
 
-    // contract.options.address = tx.contractAddress;
     console.log("Deployed contract address: ", tx.contractAddress);
     console.log(`TxHash -> ${tx.transactionHash}`);
-
-    // console.log(contractName, JSON.stringify(abi));
 
     return {
       transactionHash: tx.transactionHash,
@@ -152,16 +134,12 @@ async function invokeContractMethod(
 async function deployContractWrapper(
   senderAddress,
   senderPrivateKey,
-  contractBytecode,
-  constructorArguments,
-  contractABI
+  encodedConstructor
 ) {
   const result = await deployContract(
     senderAddress,
     senderPrivateKey,
-    contractBytecode,
-    constructorArguments,
-    contractABI
+    encodedConstructor
   );
 
   return result;

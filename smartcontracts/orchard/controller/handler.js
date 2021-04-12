@@ -9,9 +9,9 @@ let labelAddressMap = require("../labelAddressMap.json");
 
 async function deployContractHandle(req, res) {
   try {
-    const { senderLabel, binary, encodedConstructor, contractAbi } = req.body;
+    const { senderLabel, encodedConstructor } = req.body;
 
-    if (!senderLabel || !binary || !contractAbi) {
+    if (!senderLabel || !encodedConstructor) {
       const message = "One of the input params is missing";
       console.log(message);
       return res.status(400).send({
@@ -36,9 +36,7 @@ async function deployContractHandle(req, res) {
     const deployResult = await deployContractWrapper(
       senderAddress,
       senderPrivateKey,
-      binary,
-      encodedConstructor || null,
-      contractAbi
+      encodedConstructor,
     );
 
     if (!deployResult) {
