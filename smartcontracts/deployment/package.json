@@ -8,6 +8,8 @@
     "build": "ONLY_COMPILE=true node deployContract.js",
     "deploy-besu": "NETWORK=besu node deployContract.js",
     "deploy-ganache": "cross-env NETWORK=ganache node deployContract.js",
+    "deploy-uat-besu": "NETWORK=uat-besu node deployContract.js",
+    "deploy-prod-besu": "NETWORK=prod-besu node deployContract.js",
     "deploy-besu-new": "node deployContractNew.js",
     "deploy-ganache-new": "node deployContractNew.js",
     "generate-account": "node generateAccount.js",
