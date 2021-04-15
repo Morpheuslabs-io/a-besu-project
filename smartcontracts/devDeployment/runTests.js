@@ -10,15 +10,15 @@ const ethereumUri = 'http://localhost:8545';
 const sourceFolder = "../contracts/micropayment";
 
 //config private key for deployment account
-const privateKey = "0x5714225d46406db6650859c6997f0376bb3d85b1b842381b800cca17bd4d8b5a";
+const privateKey = "0xb54b6df8732e701546857ba04086a12510bf465cc5add4b2176ae74bb6e0da5b";
 
 let web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
 const sender = account.address;
 let chainId = 2018;
 
-const tokenContractAddress = "0xC43eb43f238DBB98afE80aCcfEE9a22a804eFf74";
-const micropaymentContractAddress = "0xE683CdD1e95c71219F5C8C6f7322fA828e92e7Ba";
+const tokenContractAddress = "0x7eE3d7B5C73f4eE6716adBe8eCf6A2feC6C55A71";
+const micropaymentContractAddress = "0xE3780955d3eACcbEAd766a9c2208362bd14B1c94";
 
 async function transferToken(contract, to, amount, type, ref) {
 	let nonce = await web3.eth.getTransactionCount(sender);
@@ -105,7 +105,7 @@ async function main() {
 
 		// sending token
 		// transfer(address receiver, uint256 amount, address transactionReference)
-		let txNumber = 50;
+		let txNumber = 2;
 
 		for(let i = 0; i < txNumber; i++) {
 			let { address } = await web3.eth.accounts.create();
@@ -147,7 +147,7 @@ async function main() {
 
 		// just send without wait for confirmation
 
-		// sendToken(50, MicroPayment);
+		sendToken(89, MicroPayment);
 
 	} catch (ex) {
 		console.log(ex);
