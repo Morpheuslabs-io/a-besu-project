@@ -40,6 +40,32 @@ async function transferToken(contract, to, amount, type, ref) {
 	console.log(`New payment is done -> txHash ${txHash.transactionHash}`);
 }
 
+async function sendToken(numberTx, contract) {
+	let nonce = await web3.eth.getTransactionCount(sender);
+
+	for(let i = 0; i < numberTx; i++) {
+		let { address } = await web3.eth.accounts.create();
+
+		let payload = contract.methods.transfer(address, getRandomInt(2000), web3.utils.asciiToHex("TRANSFER"), web3.utils.asciiToHex(`REF${i}`)).encodeABI();
+
+		let tx = {
+			from : sender,
+			to: contract._address,
+			nonce,
+			data : payload,
+			gas : 2000000,
+			gasPrice: 10000000,
+			chainId
+		};
+
+		let signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
+		web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+		console.log(`Sent new tx ${signedTx.transactionHash}`);
+		
+		nonce++;
+	}
+}
+
 function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
   }
@@ -89,7 +115,7 @@ async function main() {
 		}
 
 		// checking transaction record
-		let {senders,receivers,amounts, txRefs,txTypes} = await MicroPayment.methods.getTransactionRecords(sender, 2).call();
+		let { senders,receivers,amounts, txRefs,txTypes } = await MicroPayment.methods.getTransactionRecords(sender, 2).call();
 
 		let results = senders.map((sender,idx) => {
 			return {
@@ -115,6 +141,11 @@ async function main() {
 		//filter by sender
 		result = await RewardToken.getPastEvents('Transfer',{filter: {'sender': sender}, fromBlock: fromBlock, toBlock: 'latest'});
 		console.log("filter by sender", result);
+
+
+		// just send without wait for confirmation
+
+		sendToken(50, MicroPayment);
 
 	} catch (ex) {
 		console.log(ex);
