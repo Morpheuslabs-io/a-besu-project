@@ -2,6 +2,7 @@ smartcontracts/deployment/node_modules
 smartcontracts/node_modules
 smartcontracts/deployment/build
 smartcontracts/build
+smartcontracts/orchard/node_modules
 .vscode
 
 node1/data/key
