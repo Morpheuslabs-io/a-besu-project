@@ -10,15 +10,15 @@ const ethereumUri = 'http://localhost:8545';
 const sourceFolder = "../contracts/micropayment";
 
 //config private key for deployment account
-const privateKey = "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d";
+const privateKey = "0x5714225d46406db6650859c6997f0376bb3d85b1b842381b800cca17bd4d8b5a";
 
 let web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
 const sender = account.address;
-let chainId = 5777;
+let chainId = 2018;
 
-const tokenContractAddress = "0x970e8f18ebfEa0B08810f33a5A40438b9530FBCF";
-const micropaymentContractAddress = "0x5b9b42d6e4B2e4Bf8d42Eba32D46918e10899B66";
+const tokenContractAddress = "0xC43eb43f238DBB98afE80aCcfEE9a22a804eFf74";
+const micropaymentContractAddress = "0xE683CdD1e95c71219F5C8C6f7322fA828e92e7Ba";
 
 async function transferToken(contract, to, amount, type, ref) {
 	let nonce = await web3.eth.getTransactionCount(sender);
@@ -31,7 +31,8 @@ async function transferToken(contract, to, amount, type, ref) {
 		nonce : nonce,
 		data : payload,
 		gas : 2000000,
-		gasPrice: 10000000,
+		// gasPrice: 10000000,		
+		gasPrice: 0,
 		chainId
 	};
 
@@ -54,7 +55,8 @@ async function sendToken(numberTx, contract) {
 			nonce,
 			data : payload,
 			gas : 2000000,
-			gasPrice: 10000000,
+			// gasPrice: 10000000,
+			gasPrice: 0,
 			chainId
 		};
 
@@ -145,7 +147,7 @@ async function main() {
 
 		// just send without wait for confirmation
 
-		sendToken(50, MicroPayment);
+		// sendToken(50, MicroPayment);
 
 	} catch (ex) {
 		console.log(ex);
