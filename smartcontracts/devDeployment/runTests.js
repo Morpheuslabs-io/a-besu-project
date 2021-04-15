@@ -91,7 +91,7 @@ async function main() {
 			nonce : nonce,
 			data : payload,
 			gas : 2000000,
-			gasPrice: 100,
+			gasPrice: 0,
 			chainId
 		};
 	
