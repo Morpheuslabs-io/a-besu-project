@@ -4,13 +4,13 @@ const axiosRetry = require("axios-retry");
 axiosRetry(axios, { retries: 3 });
 
 if (process.env.NETWORK === "besu") {
-  require("dotenv").config({ path: ".env.new.besu" });
+  require("dotenv").config({ path: ".env.besu" });
 } else if (process.env.NETWORK === "ganache") {
-  require("dotenv").config({ path: ".env.new.ganache" });
+  require("dotenv").config({ path: ".env.ganache" });
 } else if (process.env.NETWORK === "uat-besu") {
-  require("dotenv").config({ path: ".env.new.uat.besu" });
+  require("dotenv").config({ path: ".env.uat.besu" });
 } else if (process.env.NETWORK === "prod-besu") {
-  require("dotenv").config({ path: ".env.new.prod.besu" });
+  require("dotenv").config({ path: ".env.prod.besu" });
 }
 
 const { API_ETH_KEY, API_GENERATE_ETH_KEY, senderLabel } = process.env;

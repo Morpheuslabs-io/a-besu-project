@@ -1,9 +1,11 @@
-const Web3 = require("web3");
+const axios = require("axios");
+const axiosRetry = require("axios-retry");
+const web3Utils = require("web3-utils");
+const web3EthContract = require("web3-eth-contract");
 const fs = require("fs");
 const solc = require("solc");
-const keythereum = require("keythereum");
 
-const onlyCompile = process.env.ONLY_COMPILE === "true";
+axiosRetry(axios, { retries: 3 });
 
 if (process.env.NETWORK === "besu") {
   require("dotenv").config({ path: ".env.besu" });
@@ -16,101 +18,103 @@ if (process.env.NETWORK === "besu") {
 }
 
 const {
-  OWNER_ADDRESS,
-  KEY_FILE_PATH,
-  PRIVATE_KEY,
-  OWNER_PASSPHRASE,
-  CHAIN_ID,
-  BLOCKCHAIN_ENDPOINT,
+  API_DEPLOY_CONTRACT,
+  API_INVOKE_CONTRACT_METHOD,
+  API_ETH_KEY,
+  API_GENERATE_ETH_KEY,
+  senderLabel,
 } = process.env;
 
 if (
-  (PRIVATE_KEY || (KEY_FILE_PATH && OWNER_ADDRESS && OWNER_PASSPHRASE)) &&
-  CHAIN_ID &&
-  BLOCKCHAIN_ENDPOINT
+  !API_DEPLOY_CONTRACT ||
+  !API_INVOKE_CONTRACT_METHOD ||
+  !API_ETH_KEY ||
+  !API_GENERATE_ETH_KEY ||
+  !senderLabel
 ) {
-  if (onlyCompile) {
-    console.log(`Compiling smart contract`);
-  } else {
-    console.log(`NETWORK: ${process.env.NETWORK}`);
-    console.log(`Deployment to: ${BLOCKCHAIN_ENDPOINT}`);
-  }
-} else {
   console.error("Missing ENV variable");
   process.exit(1);
 }
 
-function getPrivKey(addr, keyFilePath, passphrase) {
-  let keyObject = keythereum.importFromFile(addr, keyFilePath);
-  let privateKey = keythereum.recover(passphrase, keyObject);
-  return privateKey.toString("hex");
-}
+const MICROPAYMENT_LABEL = "MicroPayment_V1";
+const REWARDTOKEN_LABEL = "RewardToken_V1";
+const PROGRAM_LABEL = "Program_V1";
 
-// This is the genesis account private key
-// const privateKey = '8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63'
+// For RewardToken deployment
+const symbolName = "RewardToken";
+const decimal = 0;
+const symbol = "RDT";
+const totalSupply = web3Utils.toBN(2 * 10 ** 9 * 10 ** decimal); // 2 billions token, decimal 0;
 
-// This is the private key decoded from the keyfile
-// const privateKey = '7bc861ae7cec9c7c30d7cc6b3c3b1abbef9893215853193e782760e33cd7cbd2'
-
-// If PRIVATE_KEY is specified, it will be taken. Otherwise, read from KEY_FILE_PATH
-const privateKey =
-  PRIVATE_KEY || getPrivKey(OWNER_ADDRESS, KEY_FILE_PATH, OWNER_PASSPHRASE);
-
-// console.log("privateKey:", privateKey);
-
-let web3 = new Web3(new Web3.providers.HttpProvider(BLOCKCHAIN_ENDPOINT));
-const account = web3.eth.accounts.privateKeyToAccount(privateKey);
-const sender = account.address;
-console.log("sender:", sender);
-let chainId = CHAIN_ID;
-
-async function sendTx(txObject) {
-  const txTo = txObject._parent.options.address;
-  let gasPrice = 100000000;
-
-  let gasLimit;
+async function request_deployContract(senderLabel, encodedConstructor) {
   try {
-    gasLimit = await txObject.estimateGas();
-    console.log("Estimated gas", gasLimit);
-  } catch (e) {
-    gasLimit = 5000 * 1000;
+    const result = await axios.post(API_DEPLOY_CONTRACT, {
+      senderLabel,
+      binary: null, // not used param
+      encodedConstructor,
+    });
+
+    // {transactionHash, contractAddress, senderLabel}
+    return result.data;
+  } catch (err) {
+    console.error(err.response.data);
+    process.exit(1);
   }
-
-  if (txTo !== null) {
-    gasLimit = 5000 * 1000;
-  }
-
-  const txData = txObject.encodeABI();
-  const txFrom = account.address;
-  const txKey = account.privateKey;
-
-  let nonce = await web3.eth.getTransactionCount(txFrom);
-
-  gasLimit += 100000;
-  const tx = {
-    from: txFrom,
-    nonce: nonce,
-    data: txData,
-    gas: gasLimit,
-    chainId,
-    gasPrice,
-  };
-
-  const signedTx = await web3.eth.accounts.signTransaction(tx, txKey);
-  // don't wait for confirmation
-  //signedTxs.push(signedTx.rawTransaction);
-
-  //console.log(signedTx);
-
-  let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-
-  return txHash;
 }
 
-// Example
-// "contractFolder" -> ../contracts/micropayment
-// "contractName" -> RewardToken
-async function deployContract(contractFolder, contractName, ctorArgs) {
+async function request_invokeContractMethod(
+  senderLabel,
+  contractMethodPayload,
+  contractAddress
+) {
+  try {
+    const result = await axios.post(API_INVOKE_CONTRACT_METHOD, {
+      senderLabel,
+      contractMethodPayload,
+      contractAddress,
+    });
+
+    // {transactionHash, senderLabel}
+    return result.data;
+  } catch (err) {
+    console.error(err.response.data);
+    process.exit(1);
+  }
+}
+
+async function request_ethKey(labelName) {
+  try {
+    const result = await axios.post(API_ETH_KEY, {
+      labelName,
+    });
+
+    console.log("Deployment account info: ", result.data);
+
+    // {publicKey, address}
+    return result.data;
+  } catch (err) {
+    console.error(err.response.data);
+    return null;
+  }
+}
+
+async function request_generateEthKey(labelName) {
+  try {
+    const result = await axios.post(API_GENERATE_ETH_KEY, {
+      labelName,
+    });
+
+    console.log("request_generateEthKey: ", result.data);
+
+    // {publicKey, address}
+    return result.data;
+  } catch (err) {
+    console.error(err.response.data);
+    return null;
+  }
+}
+
+async function compileContract(contractFolder, contractName) {
   let sourceFile = `${contractFolder}/${contractName}.sol`;
   console.log(
     `Start compiling contract ${contractName}, source file -->`,
@@ -151,180 +155,275 @@ async function deployContract(contractFolder, contractName, ctorArgs) {
     let bytecode = compiledContract.evm.bytecode.object;
     let abi = compiledContract.abi;
 
-    console.log("bytecode:", bytecode);
-
-    if (onlyCompile) {
-      console.log("Success");
-      return { _address: "0xdummy" };
-    }
-
-    let contract = new web3.eth.Contract(abi);
-    const deploy = contract.deploy({ data: bytecode, arguments: ctorArgs });
-
-    console.log(`Deploying contract ${contractName}`);
-    let tx = await sendTx(deploy);
-
-    contract = new web3.eth.Contract(abi, tx.contractAddress);
-    // contract.options.address = tx.contractAddress;
-    console.log(
-      "Deployed contract",
-      contractName,
-      " contract address -->",
-      tx.contractAddress
-    );
-    console.log(`TxHash -> ${tx.transactionHash}`);
-
-    // console.log(contractName, JSON.stringify(abi));
-
-    return contract;
+    return { bytecode, abi };
   } catch (e) {
-    console.log("ERROR", e);
+    console.log("compileContract - Error:", e);
+    return null;
   }
 }
 
-const BigNumber = web3.utils.BN;
-const symbolName = "RewardToken";
-const decimal = 0;
-const symbol = "RDT";
-const totalSupply = new BigNumber(2 * 10 ** 9 * 10 ** decimal); // 2 billions token, decimal 0;
-
-// Example: contractMethodPayload = RewardToken.methods.setAuthorized(MicroPayment._address).encodeABI();
-// contractAddress = RewardToken._address
-async function invokeContractMethod(contractMethodPayload, contractAddress) {
-  // let contractMethodPayload = RewardToken.methods
-  //   .setAuthorized(MicroPayment._address)
-  //   .encodeABI();
-  let nonce = await web3.eth.getTransactionCount(sender);
-
-  let tx = {
-    from: sender,
-    to: contractAddress,
-    nonce: nonce,
-    data: contractMethodPayload,
-    gas: 500000,
-    gasPrice: 1,
-    chainId,
-  };
-
-  let signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
-  let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-  return txHash;
-}
-
-async function deployContract_micropayment() {
+async function deployContract_RewardToken() {
   try {
-    const RewardToken = await deployContract(
+    const compiledRewardToken = await compileContract(
       "../contracts/micropayment",
-      "RewardToken",
-      [totalSupply, symbolName, symbol, decimal]
-    );
-    const MicroPayment = await deployContract(
-      "../contracts/micropayment",
-      "MicroPayment",
-      [RewardToken._address]
+      "RewardToken"
     );
 
-    if (onlyCompile) {
-      return;
-    }
+    const ctorArgsRewardToken = [totalSupply, symbolName, symbol, decimal];
 
-    // set admin
-    let payload = RewardToken.methods
-      .setAuthorized(MicroPayment._address)
+    const contract = new web3EthContract(compiledRewardToken.abi);
+    const encodedConstructor = contract
+      .deploy({
+        data: compiledRewardToken.bytecode,
+        arguments: ctorArgsRewardToken,
+      })
       .encodeABI();
 
-    let txHash = await invokeContractMethod(payload, RewardToken._address);
-    console.log(`Set admin txHash: ${txHash.transactionHash}`);
-
-    return {
-      RewardToken,
-      MicroPayment,
-    };
-  } catch (ex) {
-    console.log(ex);
-    return null;
-  }
-}
-
-async function deployContract_utility() {
-  try {
-    // Deploy Program
-    const ProgramContract = await deployContract(
-      "../contracts/utility",
-      "Program"
+    const deployedRewardToken = await request_deployContract(
+      senderLabel,
+      encodedConstructor
     );
-    return ProgramContract;
-  } catch (ex) {
-    console.log(ex);
+
+    console.log("deployContract_RewardToken: ", deployedRewardToken);
+
+    return { ...deployedRewardToken, abi: compiledRewardToken.abi };
+  } catch (e) {
+    console.error("deployContract_RewardToken - Error:", e);
     return null;
   }
 }
 
-async function deployContract_nameRegistryService() {
+async function deployContract_MicroPayment(rewardTokenAddress) {
   try {
-    // Deploy NameRegistryService
-    const NameRegistryServiceContract = await deployContract(
+    const compiledMicroPayment = await compileContract(
+      "../contracts/micropayment",
+      "MicroPayment"
+    );
+
+    const ctorArgsMicroPayment = [rewardTokenAddress];
+
+    const contract = new web3EthContract(compiledMicroPayment.abi);
+    const encodedConstructor = contract
+      .deploy({
+        data: compiledMicroPayment.bytecode,
+        arguments: ctorArgsMicroPayment,
+      })
+      .encodeABI();
+
+    const deployedMicroPayment = await request_deployContract(
+      senderLabel,
+      encodedConstructor
+    );
+
+    console.log("deployContract_MicroPayment: ", deployedMicroPayment);
+
+    return { ...deployedMicroPayment, abi: compiledMicroPayment.abi };
+  } catch (e) {
+    console.error("deployContract_MicroPayment - Error:", e);
+    return null;
+  }
+}
+
+async function deployContract_NameRegistryService() {
+  try {
+    const compiledNameRegistryService = await compileContract(
       "../contracts/utility",
       "NameRegistryService"
     );
-    return NameRegistryServiceContract;
-  } catch (ex) {
-    console.log(ex);
+
+    const ctorArgsNameRegistryService = null;
+
+    const contract = new web3EthContract(compiledNameRegistryService.abi);
+    const encodedConstructor = contract
+      .deploy({
+        data: compiledNameRegistryService.bytecode,
+        arguments: ctorArgsNameRegistryService,
+      })
+      .encodeABI();
+
+    const deployedNameRegistryService = await request_deployContract(
+      senderLabel,
+      encodedConstructor
+    );
+
+    console.log(
+      "deployContract_NameRegistryService: ",
+      deployedNameRegistryService
+    );
+
+    return {
+      ...deployedNameRegistryService,
+      abi: compiledNameRegistryService.abi,
+    };
+  } catch (e) {
+    console.error("deployContract_NameRegistryService - Error:", e);
     return null;
   }
 }
 
-const MICROPAYMENT_LABEL = "MicroPayment_V1";
-const REWARDTOKEN_LABEL = "RewardToken_V1";
-const PROGRAM_LABEL = "Program_V1";
+async function deployContract_Program() {
+  try {
+    const compiledProgram = await compileContract(
+      "../contracts/utility",
+      "Program"
+    );
+
+    const ctorArgsProgram = null;
+
+    const contract = new web3EthContract(compiledProgram.abi);
+    const encodedConstructor = contract
+      .deploy({
+        data: compiledProgram.bytecode,
+        arguments: ctorArgsProgram,
+      })
+      .encodeABI();
+
+    const deployedProgram = await request_deployContract(
+      senderLabel,
+      encodedConstructor
+    );
+
+    console.log("deployContract_Program: ", deployedProgram);
+
+    return deployedProgram;
+  } catch (e) {
+    console.error("deployContract_Program - Error:", e);
+    return null;
+  }
+}
+
+// RewardToken setAuthorized for a given "authAddress"
+async function invokeContractMethod_setAuthorized(
+  rewardTokenAbi,
+  rewardTokenAddress,
+  authAddress
+) {
+  try {
+    const rewardTokenContract = new web3EthContract(
+      rewardTokenAbi,
+      rewardTokenAddress
+    );
+
+    const contractMethodPayload = rewardTokenContract.methods
+      .setAuthorized(authAddress)
+      .encodeABI();
+
+    const result = await request_invokeContractMethod(
+      senderLabel,
+      contractMethodPayload,
+      rewardTokenAddress
+    );
+
+    console.log("invokeContractMethod_setAuthorized:", result);
+
+    return result;
+  } catch (e) {
+    console.error("invokeContractMethod_setAuthorized - Error:", e);
+    return null;
+  }
+}
+
+// NameRegistryService register label for a given address
+async function invokeContractMethod_register(
+  nameRegistryServiceAbi,
+  nameRegistryServiceAddress,
+  registeredLabel,
+  registeredAddress
+) {
+  try {
+    const nameRegistryServiceContract = new web3EthContract(
+      nameRegistryServiceAbi,
+      nameRegistryServiceAddress
+    );
+
+    const contractMethodPayload = nameRegistryServiceContract.methods
+      .register(registeredLabel, registeredAddress)
+      .encodeABI();
+
+    const result = await request_invokeContractMethod(
+      senderLabel,
+      contractMethodPayload,
+      nameRegistryServiceAddress
+    );
+
+    console.log("invokeContractMethod_register:", result);
+
+    return result;
+  } catch (e) {
+    console.error("invokeContractMethod_register - Error:", e);
+    return null;
+  }
+}
 
 async function main() {
-  const NameRegistryServiceContract = await deployContract_nameRegistryService();
-  const MicroPaymentContract = await deployContract_micropayment();
-  const Program = await deployContract_utility();
+  // Get/generate key
+  await request_ethKey(senderLabel);
 
-  if (onlyCompile) {
-    console.log("Done");
-    process.exit(0);
-  }
+  ////////////////////////////////////////////////////
 
-  const { RewardToken, MicroPayment } = MicroPaymentContract;
+  // Deploy NameRegistryService contract
+  const deployedNameRegistryService = await deployContract_NameRegistryService();
 
-  let payload;
-  let txHash;
+  // Deploy RewardToken contract
+  const deployedRewardToken = await deployContract_RewardToken();
 
-  // register Program
-  payload = NameRegistryServiceContract.methods
-    .register(PROGRAM_LABEL, Program._address)
-    .encodeABI();
-
-  txHash = await invokeContractMethod(
-    payload,
-    NameRegistryServiceContract._address
+  // Deploy MicroPayment contract
+  const deployedMicroPayment = await deployContract_MicroPayment(
+    deployedRewardToken.contractAddress
   );
-  console.log(`Register Program txHash: ${txHash.transactionHash}`);
 
-  // register MicroPayment
-  payload = NameRegistryServiceContract.methods
-    .register(MICROPAYMENT_LABEL, MicroPayment._address)
-    .encodeABI();
+  // Deploy Program contract
+  const deployedProgram = await deployContract_Program();
 
-  txHash = await invokeContractMethod(
-    payload,
-    NameRegistryServiceContract._address
+  ////////////////////////////////////////////////////
+
+  // Invoke contract method
+  // RewardToken setAuthorized for MicroPayment
+  console.log(
+    `RewardToken setAuthorized for MicroPayment at address: ${deployedMicroPayment.contractAddress}`
   );
-  console.log(`Register MicroPayment txHash: ${txHash.transactionHash}`);
-
-  // register RewardToken
-  payload = NameRegistryServiceContract.methods
-    .register(REWARDTOKEN_LABEL, RewardToken._address)
-    .encodeABI();
-
-  txHash = await invokeContractMethod(
-    payload,
-    NameRegistryServiceContract._address
+  const resultSetAuthorized = await invokeContractMethod_setAuthorized(
+    deployedRewardToken.abi,
+    deployedRewardToken.contractAddress,
+    deployedMicroPayment.contractAddress
   );
-  console.log(`Register RewardToken txHash: ${txHash.transactionHash}`);
+
+  // NameRegistryService register for RewardToken
+  console.log(
+    `NameRegistryService register for RewardToken at address: ${deployedRewardToken.contractAddress}`
+  );
+  const resultRegisterRewardToken = await invokeContractMethod_register(
+    deployedNameRegistryService.abi,
+    deployedNameRegistryService.contractAddress,
+    REWARDTOKEN_LABEL,
+    deployedRewardToken.contractAddress
+  );
+
+  // NameRegistryService register for MicroPayment
+  console.log(
+    `NameRegistryService register for MicroPayment at address: ${deployedMicroPayment.contractAddress}`
+  );
+  const resultRegisterMicroPayment = await invokeContractMethod_register(
+    deployedNameRegistryService.abi,
+    deployedNameRegistryService.contractAddress,
+    MICROPAYMENT_LABEL,
+    deployedMicroPayment.contractAddress
+  );
+
+  // NameRegistryService register for Program
+  console.log(
+    `NameRegistryService register for Program at address: ${deployedProgram.contractAddress}`
+  );
+  const resultRegisterProgram = await invokeContractMethod_register(
+    deployedNameRegistryService.abi,
+    deployedNameRegistryService.contractAddress,
+    PROGRAM_LABEL,
+    deployedProgram.contractAddress
+  );
+
+  ////////////////////////////////////////////////////
+
+  process.exit(0);
 }
 
 main();

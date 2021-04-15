@@ -11,14 +11,14 @@ const ethereumUri = 'http://localhost:8545';
 const sourceFolder = "../contracts/utility";
 
 //config private key for deployment account
-const privateKey = "0xdba3922888a550d7ef150e682196f061046c0fdf0813235bb2a874f0226b09fb";
+const privateKey = "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d";
 
 let web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
 const sender = account.address;
 let chainId = 5777;
 
-const programContractAddress = "0xFcBF4a95B7dDba61A1c7e026D863576f71b9c6E3";
+const programContractAddress = "0xEC5d4F247aF81A843612eb1371CBCfa88b762119";
 
 async function getMerchantAddress(programContract, merchantName) {
 	let address = await programContract.methods.getMerchantByName(merchantName).call();
