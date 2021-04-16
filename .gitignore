@@ -1,4 +1,5 @@
 smartcontracts/deployment/node_modules
+smartcontracts/devDeployment/node_modules
 smartcontracts/node_modules
 smartcontracts/deployment/build
 smartcontracts/build
