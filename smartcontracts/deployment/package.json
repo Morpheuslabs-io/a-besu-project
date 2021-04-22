@@ -14,7 +14,7 @@
     "generate-account-prod-besu": "NETWORK=prod-besu node generateAccount.js",
     "generate-account-besu": "NETWORK=besu node generateAccount.js",
     "generate-account-ganache": "cross-env NETWORK=ganache node generateAccount.js",
-    "ganache": "npx ganache-cli -l 10000000 -d 'torch almost feed brother seat earth scorpion panther nuclear interest toy guide'"
+    "ganache": "npx ganache-cli -l 10000000 -b 5 -d 'torch almost feed brother seat earth scorpion panther nuclear interest toy guide'"
   },
   "keywords": [],
   "author": "",

@@ -31,6 +31,7 @@ cp -rf ./$nodeConfigFile $NODE_FOLDER
 cp -rf ./$tomlConfigFile $NODE_FOLDER
 cp -rf ./$keypairDataFolder/* $NODE_FOLDER
 cp -rf ./genesis.json $NODE_FOLDER
+cp -rf ./besu-log.xml $NODE_FOLDER
 cp -rf ./*.sh $NODE_FOLDER
 
-/opt/besu-21.1.2/bin/besu --data-path $NODE_FOLDER/data --genesis-file=$NODE_FOLDER/genesis.json --config-file=$NODE_FOLDER/$tomlConfigFile &
+LOG4J_CONFIGURATION_FILE=./besu-log.xml /opt/besu-21.1.2/bin/besu --data-path $NODE_FOLDER/data --genesis-file=$NODE_FOLDER/genesis.json --config-file=$NODE_FOLDER/$tomlConfigFile &

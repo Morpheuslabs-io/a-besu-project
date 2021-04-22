@@ -107,6 +107,7 @@ async function invokeContractMethod(
   contractMethodPayload,
   contractAddress
 ) {
+
   const nonce = await web3.eth.getTransactionCount(senderAddress);
 
   const tx = {

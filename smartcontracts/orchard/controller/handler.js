@@ -61,14 +61,16 @@ async function deployContractHandle(req, res) {
 
 async function invokeContractMethodHandle(req, res) {
   try {
-    const { senderLabel, contractMethodPayload, contractAddress } = req.body;
+    const { senderLabel, encodedFunction, contractAddress } = req.body;
 
-    if (!senderLabel || !contractMethodPayload || !contractAddress) {
+    if (!senderLabel || !encodedFunction || !contractAddress) {
       return res.status(400).send({
         status: "error",
         message: "One of the input params is missing",
       });
     }
+
+    console.log("encodedFunction: ", encodedFunction);
 
     // Get senderAddress from senderLabel
     if (!labelAddressMap[senderLabel]) {
@@ -84,7 +86,7 @@ async function invokeContractMethodHandle(req, res) {
     const deployResult = await invokeContractMethodWrapper(
       senderAddress,
       senderPrivateKey,
-      contractMethodPayload,
+      encodedFunction,
       contractAddress
     );
 

@@ -48,6 +48,7 @@ const totalSupply = web3Utils.toBN(2 * 10 ** 9 * 10 ** decimal); // 2 billions t
 
 async function request_deployContract(senderLabel, encodedConstructor) {
   try {
+
     const result = await axios.post(API_DEPLOY_CONTRACT, {
       senderLabel,
       binary: null, // not used param
@@ -64,13 +65,13 @@ async function request_deployContract(senderLabel, encodedConstructor) {
 
 async function request_invokeContractMethod(
   senderLabel,
-  contractMethodPayload,
+  encodedFunction,
   contractAddress
 ) {
   try {
     const result = await axios.post(API_INVOKE_CONTRACT_METHOD, {
       senderLabel,
-      contractMethodPayload,
+      encodedFunction,
       contractAddress,
     });
 
@@ -163,6 +164,7 @@ async function compileContract(contractFolder, contractName) {
 }
 
 async function deployContract_RewardToken() {
+
   try {
     const compiledRewardToken = await compileContract(
       "../contracts/micropayment",
@@ -304,13 +306,13 @@ async function invokeContractMethod_setAuthorized(
       rewardTokenAddress
     );
 
-    const contractMethodPayload = rewardTokenContract.methods
+    const encodedFunction = rewardTokenContract.methods
       .setAuthorized(authAddress)
       .encodeABI();
 
     const result = await request_invokeContractMethod(
       senderLabel,
-      contractMethodPayload,
+      encodedFunction,
       rewardTokenAddress
     );
 
@@ -336,13 +338,13 @@ async function invokeContractMethod_register(
       nameRegistryServiceAddress
     );
 
-    const contractMethodPayload = nameRegistryServiceContract.methods
+    const encodedFunction = nameRegistryServiceContract.methods
       .register(registeredLabel, registeredAddress)
       .encodeABI();
 
     const result = await request_invokeContractMethod(
       senderLabel,
-      contractMethodPayload,
+      encodedFunction,
       nameRegistryServiceAddress
     );
 
@@ -355,6 +357,10 @@ async function invokeContractMethod_register(
   }
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function main() {
   // Get/generate key
   await request_ethKey(senderLabel);
@@ -363,6 +369,11 @@ async function main() {
 
   // Deploy NameRegistryService contract
   const deployedNameRegistryService = await deployContract_NameRegistryService();
+
+  console.log("preparing to call deplying contract endpoint ... ");
+  await sleep(5000);
+
+  console.log("calling deplying contract endpoint ... ");
 
   // Deploy RewardToken contract
   const deployedRewardToken = await deployContract_RewardToken();

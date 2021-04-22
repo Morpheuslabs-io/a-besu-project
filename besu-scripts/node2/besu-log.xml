@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+  <Properties>
+    <Property name="root.log.level">INFO</Property>
+  </Properties>
+
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} | %t | %-5level | %c{1} | %msg %throwable{short.message}%n" />
+    </Console>
+    <File name="LogFile" fileName="/opt/node2/data/besu-node.log">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} | %t | %-5level | %c{1} | %msg %throwable{short.message}%n"/>
+    </File>
+  </Appenders>
+  <Loggers>
+    <Root level="${sys:root.log.level}">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="LogFile"/>
+    </Root>
+  </Loggers>
+</Configuration>
