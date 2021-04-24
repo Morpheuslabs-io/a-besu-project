@@ -59,6 +59,8 @@ async function sendTx(senderAddress, senderPrivateKey, encodedConstructor) {
 
   let nonce = await web3.eth.getTransactionCount(txFrom);
 
+  console.log('nonce, deploy: ', nonce);
+
   const tx = {
     from: txFrom,
     nonce: nonce,
@@ -110,10 +112,12 @@ async function invokeContractMethod(
 
   const nonce = await web3.eth.getTransactionCount(senderAddress);
 
+  console.log('nonce, invoke: ', nonce);
+
   const tx = {
     from: senderAddress,
     to: contractAddress,
-    nonce: nonce,
+    // nonce: nonce,
     data: contractMethodPayload,
     gas: 500000,
     gasPrice: 0, // must specify 0 for gas-free tx
