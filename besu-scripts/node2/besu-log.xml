@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration status="INFO" monitorInterval="5">
   <Properties>
     <Property name="root.log.level">INFO</Property>
+    <Property name="NODE_FOLDER">/opt/node2/data</Property>
+    <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} | %t | %-5level | %c{1} | %msg %throwable{short.message}%n</Property>
   </Properties>
 
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} | %t | %-5level | %c{1} | %msg %throwable{short.message}%n" />
+      <PatternLayout pattern="${LOG_PATTERN}"/>
     </Console>
-    <File name="LogFile" fileName="/opt/node2/data/besu-node.log">
-      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} | %t | %-5level | %c{1} | %msg %throwable{short.message}%n"/>
-    </File>
+    <RollingFile name="RollingFile" fileName="${NODE_FOLDER}/node.log"
+        filePattern="{NODE_FOLDER}/node.log">
+        <PatternLayout pattern="${LOG_PATTERN}"/>
+        <Policies>
+            <SizeBasedTriggeringPolicy size="50MB" />
+        </Policies>
+    </RollingFile>
   </Appenders>
   <Loggers>
     <Root level="${sys:root.log.level}">
       <AppenderRef ref="Console" />
-      <AppenderRef ref="LogFile"/>
+      <AppenderRef ref="RollingFile" />
     </Root>
   </Loggers>
 </Configuration>
