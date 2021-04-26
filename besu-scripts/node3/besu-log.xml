@@ -2,7 +2,7 @@
 <Configuration status="INFO" monitorInterval="5">
   <Properties>
     <Property name="root.log.level">INFO</Property>
-    <Property name="NODE_FOLDER">/opt/node2/data</Property>
+    <Property name="NODE_FOLDER">/opt/node3/data</Property>
     <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} | %t | %-5level | %c{1} | %msg %throwable{short.message}%n</Property>
   </Properties>
 
