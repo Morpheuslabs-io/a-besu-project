@@ -15,6 +15,7 @@ const web3 = new Web3(process.env.BLOCKCHAIN_ENDPOINT);
 const getNonce = async (address) => {
   const nonce = await web3.eth.getTransactionCount(address);
   console.log(`getNonce: ${nonce} (address: ${address})`);
+  return nonce
 }
 
 module.exports = {

@@ -49,6 +49,8 @@ const totalSupply = web3Utils.toBN(2 * 10 ** 9 * 10 ** decimal); // 2 billions t
 
 let senderLabelAddress
 
+let currNonce
+
 async function request_deployContract(senderLabel, encodedConstructor) {
   try {
 
@@ -61,7 +63,7 @@ async function request_deployContract(senderLabel, encodedConstructor) {
     // {transactionHash, contractAddress, senderLabel}
     return result.data;
   } catch (err) {
-    console.error(err.response.data);
+    console.error(err);
     process.exit(1);
   }
 }
@@ -81,7 +83,7 @@ async function request_invokeContractMethod(
     // {transactionHash, senderLabel}
     return result.data;
   } catch (err) {
-    console.error(err.response.data);
+    console.error(err);
     process.exit(1);
   }
 }
@@ -95,10 +97,10 @@ async function request_ethKey(labelName) {
     console.log("Deployment account info: ", result.data);
 
     // {publicKey, address}
-    senderLabelAddress = address
+    senderLabelAddress = result.data.address
     return result.data;
   } catch (err) {
-    console.error(err.response.data);
+    console.error(err);
     return null;
   }
 }
@@ -114,7 +116,7 @@ async function request_generateEthKey(labelName) {
     // {publicKey, address}
     return result.data;
   } catch (err) {
-    console.error(err.response.data);
+    console.error(err);
     return null;
   }
 }
@@ -365,13 +367,14 @@ async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function waitForNewNonce(currNonce) {
+async function waitForNewNonce() {
   while (true) {
     const newNonce = await getNonce(senderLabelAddress)
     if (newNonce > currNonce) {
+      currNonce = newNonce // update
       break
     }
-    console.log(`waitForNewNonce - current nonce: ${currNonce}`);
+    console.log('waitForNewNonce - current nonce: ', currNonce);
     await sleep(2000)
   }
 }
@@ -386,7 +389,7 @@ async function main() {
     console.error('senderLabelAddress undefined. Please run generate-account-???');
     process.exit(1)
   }
-  const currNonce = await getNonce(senderLabelAddress)
+  currNonce = await getNonce(senderLabelAddress)
 
   // Deploy NameRegistryService contract
   const deployedNameRegistryService = await deployContract_NameRegistryService();
@@ -396,26 +399,26 @@ async function main() {
 
   console.log("calling deploying contract endpoint ... ");
 
-  await waitForNewNonce(currNonce);
+  await waitForNewNonce();
 
   // Deploy RewardToken contract
   const deployedRewardToken = await deployContract_RewardToken();
 
-  await waitForNewNonce(currNonce);
+  await waitForNewNonce();
 
   // Deploy MicroPayment contract
   const deployedMicroPayment = await deployContract_MicroPayment(
     deployedRewardToken.contractAddress
   );
 
-  await waitForNewNonce(currNonce);
+  await waitForNewNonce();
 
   // Deploy Program contract
   const deployedProgram = await deployContract_Program();
 
   ////////////////////////////////////////////////////
 
-  await waitForNewNonce(currNonce);
+  await waitForNewNonce();
 
   // Invoke contract method
   // RewardToken setAuthorized for MicroPayment
@@ -428,7 +431,7 @@ async function main() {
     deployedMicroPayment.contractAddress
   );
 
-  await waitForNewNonce(currNonce);
+  await waitForNewNonce();
 
   // NameRegistryService register for RewardToken
   console.log(
@@ -441,7 +444,7 @@ async function main() {
     deployedRewardToken.contractAddress
   );
 
-  await waitForNewNonce(currNonce);
+  await waitForNewNonce();
 
   // NameRegistryService register for MicroPayment
   console.log(
@@ -454,7 +457,7 @@ async function main() {
     deployedMicroPayment.contractAddress
   );
 
-  await waitForNewNonce(currNonce);
+  await waitForNewNonce();
 
   // NameRegistryService register for Program
   console.log(
