@@ -4,6 +4,7 @@ const web3Utils = require("web3-utils");
 const web3EthContract = require("web3-eth-contract");
 const fs = require("fs");
 const solc = require("solc");
+const {getNonce} = require("./queryUtil");
 
 axiosRetry(axios, { retries: 3 });
 
@@ -45,6 +46,8 @@ const symbolName = "RewardToken";
 const decimal = 0;
 const symbol = "RDT";
 const totalSupply = web3Utils.toBN(2 * 10 ** 9 * 10 ** decimal); // 2 billions token, decimal 0;
+
+let senderLabelAddress
 
 async function request_deployContract(senderLabel, encodedConstructor) {
   try {
@@ -92,6 +95,7 @@ async function request_ethKey(labelName) {
     console.log("Deployment account info: ", result.data);
 
     // {publicKey, address}
+    senderLabelAddress = address
     return result.data;
   } catch (err) {
     console.error(err.response.data);
@@ -357,8 +361,19 @@ async function invokeContractMethod_register(
   }
 }
 
-function sleep(ms) {
+async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitForNewNonce(currNonce) {
+  while (true) {
+    const newNonce = await getNonce(senderLabelAddress)
+    if (newNonce > currNonce) {
+      break
+    }
+    console.log(`waitForNewNonce - current nonce: ${currNonce}`);
+    await sleep(2000)
+  }
 }
 
 async function main() {
@@ -367,26 +382,40 @@ async function main() {
 
   ////////////////////////////////////////////////////
 
+  if (!senderLabelAddress) {
+    console.error('senderLabelAddress undefined. Please run generate-account-???');
+    process.exit(1)
+  }
+  const currNonce = await getNonce(senderLabelAddress)
+
   // Deploy NameRegistryService contract
   const deployedNameRegistryService = await deployContract_NameRegistryService();
 
-  console.log("preparing to call deplying contract endpoint ... ");
+  console.log("preparing to call deploying contract endpoint ... ");
   await sleep(5000);
 
-  console.log("calling deplying contract endpoint ... ");
+  console.log("calling deploying contract endpoint ... ");
+
+  await waitForNewNonce(currNonce);
 
   // Deploy RewardToken contract
   const deployedRewardToken = await deployContract_RewardToken();
+
+  await waitForNewNonce(currNonce);
 
   // Deploy MicroPayment contract
   const deployedMicroPayment = await deployContract_MicroPayment(
     deployedRewardToken.contractAddress
   );
 
+  await waitForNewNonce(currNonce);
+
   // Deploy Program contract
   const deployedProgram = await deployContract_Program();
 
   ////////////////////////////////////////////////////
+
+  await waitForNewNonce(currNonce);
 
   // Invoke contract method
   // RewardToken setAuthorized for MicroPayment
@@ -399,6 +428,8 @@ async function main() {
     deployedMicroPayment.contractAddress
   );
 
+  await waitForNewNonce(currNonce);
+
   // NameRegistryService register for RewardToken
   console.log(
     `NameRegistryService register for RewardToken at address: ${deployedRewardToken.contractAddress}`
@@ -410,6 +441,8 @@ async function main() {
     deployedRewardToken.contractAddress
   );
 
+  await waitForNewNonce(currNonce);
+
   // NameRegistryService register for MicroPayment
   console.log(
     `NameRegistryService register for MicroPayment at address: ${deployedMicroPayment.contractAddress}`
@@ -420,6 +453,8 @@ async function main() {
     MICROPAYMENT_LABEL,
     deployedMicroPayment.contractAddress
   );
+
+  await waitForNewNonce(currNonce);
 
   // NameRegistryService register for Program
   console.log(
