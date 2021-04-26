@@ -368,13 +368,15 @@ async function sleep(ms) {
 }
 
 async function waitForNewNonce() {
+  let RETRY_CNT = 5
   while (true) {
     const newNonce = await getNonce(senderLabelAddress)
-    if (newNonce > currNonce) {
+    if (RETRY_CNT <= 0 || newNonce > currNonce) {
       currNonce = newNonce // update
       break
     }
     console.log('waitForNewNonce - current nonce: ', currNonce);
+    RETRY_CNT--;
     await sleep(2000)
   }
 }
