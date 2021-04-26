@@ -29,14 +29,10 @@ Folder `besu-scripts-uat`
 This step is done **only once** to generate 4 pairs of keypair files for the first 4 nodes.
 
   - cd in the folder `create-network-files`
-  - In the script `create_network_files.sh`, edit the `NETWORK_FILES_LOCATION` specifying the folder path holding the generated artifacts.
-  - Run this script to generate the artifacts including:
-    - A folder `keys` with 4 sub-folders (correspondent to 4 node data folders) where `nodekey` and `nodekey.pub` files are contained.
-      - Copy the files `nodekey` and `nodekey.pub` to the node data folder:
-        - `node1/nodekey.dev|uat|prod`
-        - `node2/nodekey.dev|uat|prod`
-        - `node3/nodekey.dev|uat|prod`
-        - `node4/nodekey.dev|uat|prod`
+  - Run the script `create_network_files.sh` to generate the artifacts including:
+    - A folder `keys` with 4 sub-folders each of which has the folder name in form of hash
+    - Rename these 4 sub-folders to `node1`, `node2`, `node3` and `node4` (correspondent to 4 node data folders) where `nodekey` and `nodekey.pub` files are contained.
+  - Run another script `copy_nodekey.sh uat|prod|dev` for copying the newly-generated nodekeys accordingly to `uat|prod|dev` env
 
     - A `genesis.json` file that needs to be copied to:
         - `node1/`
