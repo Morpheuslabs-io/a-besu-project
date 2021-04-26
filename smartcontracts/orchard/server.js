@@ -1,5 +1,7 @@
 if (process.env.NETWORK === "besu") {
   require("dotenv").config({ path: ".env.besu" });
+} else if (process.env.NETWORK === "uat-besu") {
+  require("dotenv").config({ path: ".env.uat.besu" });
 } else {
   require("dotenv").config({ path: ".env.ganache" });
 }

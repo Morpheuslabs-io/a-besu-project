@@ -66,7 +66,7 @@ async function sendTx(senderAddress, senderPrivateKey, encodedConstructor) {
     nonce: nonce,
     data: txData,
     gas: 8000000,
-    // chainId,
+    chainId,
     gasPrice: 0, // must specify 0 for gas-free tx
   };
 
@@ -117,11 +117,11 @@ async function invokeContractMethod(
   const tx = {
     from: senderAddress,
     to: contractAddress,
-    // nonce: nonce,
+    nonce: nonce,
     data: contractMethodPayload,
     gas: 500000,
     gasPrice: 0, // must specify 0 for gas-free tx
-    // chainId,
+    chainId,
   };
 
   const signedTx = await web3.eth.accounts.signTransaction(
