@@ -1,6 +1,6 @@
 {
   "config" : {
-    "chainId" : 5018,
+    "chainId" : 2018,
     "muirglacierblock" : 0,
     "ibft2" : {
       "blockperiodseconds" : 2,
@@ -17,17 +17,20 @@
   "coinbase" : "0x0000000000000000000000000000000000000000",
   "alloc" : {
     "fe3b557e8fb62b89f4916b721be55ceb828dbd73" : {
+      "privateKey" : "8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63",
       "comment" : "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
       "balance" : "0xad78ebc5ac6200000"
     },
     "627306090abaB3A6e1400e9345bC60c78a8BEf57" : {
+      "privateKey" : "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3",
       "comment" : "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
       "balance" : "90000000000000000000000"
     },
     "f17f52151EbEF6C7334FAD080c5704D77216b732" : {
+      "privateKey" : "ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
       "comment" : "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
       "balance" : "90000000000000000000000"
     }
   },
-  "extraData" : "0xf87ea00000000000000000000000000000000000000000000000000000000000000000f8549438f0e7b35662580e81b3bc44dfdd5bf77d2db115944833100ae3ed2eba8b224c1eca5da56ac8b9295c94d6d2fa67e5a2c637a43d3dde5772981404e23006949b85f8c61a5b5791e4fe779ea3e10e55498c89ce808400000000c0"
+  "extraData" : "0xf87ea00000000000000000000000000000000000000000000000000000000000000000f85494c72de5135bb741c4540d77a2fa5228facc55a30894d917a9d80fca3c0481c56c5cead076ae41e2bf6b944e5acb744ccbf256e836d3165468b6098259dc7b94c6d368d6c10dd7649acf45301655249e65c15faf808400000000c0"
 }

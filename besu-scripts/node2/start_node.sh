@@ -30,7 +30,7 @@ export $(egrep -v '^#' $bootnodeConfigFile | xargs)
 
 ###
 
-echo "Starting $NODE_FOLDER as validator node"
+echo "Starting $NODE_FOLDER as boot node and validator node"
 
 echo "Copy node folder artifacts to the target location"
 
