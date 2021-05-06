@@ -10,15 +10,15 @@ const ethereumUri = 'http://localhost:8545';
 const sourceFolder = "../contracts/micropayment";
 
 //config private key for deployment account
-const privateKey = "0xb54b6df8732e701546857ba04086a12510bf465cc5add4b2176ae74bb6e0da5b";
+const privateKey = "0x254a0d2cc96c29690b1a0cbf1ea08f089dbd301b6f11c1274a46eedcdb5680b3";
 
 let web3 = new Web3(new Web3.providers.HttpProvider(ethereumUri));
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
 const sender = account.address;
 let chainId = 2018;
 
-const tokenContractAddress = "0x7eE3d7B5C73f4eE6716adBe8eCf6A2feC6C55A71";
-const micropaymentContractAddress = "0xE3780955d3eACcbEAd766a9c2208362bd14B1c94";
+const tokenContractAddress = "0xE113518Dd8be62C0c622f34B5e8381ab120b09E4";
+const micropaymentContractAddress = "0x6fdaDf5C28d31D4969B6887153C14d5360d22708";
 
 async function transferToken(contract, to, amount, type, ref) {
 	let nonce = await web3.eth.getTransactionCount(sender);
@@ -47,7 +47,7 @@ async function sendToken(numberTx, contract) {
 	for(let i = 0; i < numberTx; i++) {
 		let { address } = await web3.eth.accounts.create();
 
-		let payload = contract.methods.transfer(address, getRandomInt(2000), web3.utils.asciiToHex("TRANSFER"), web3.utils.asciiToHex(`REF${i}`)).encodeABI();
+		let payload = contract.methods.transfer(address, getRandomInt(1, 2000), web3.utils.asciiToHex("TRANSFER"), web3.utils.asciiToHex(`REF${i}`)).encodeABI();
 
 		let tx = {
 			from : sender,
@@ -68,8 +68,48 @@ async function sendToken(numberTx, contract) {
 	}
 }
 
-function getRandomInt(max) {
-	return Math.floor(Math.random() * Math.floor(max));
+async function mint(contract, receiver, amount) {
+	let nonce = await web3.eth.getTransactionCount(sender);
+
+	let payload = contract.methods.mint(receiver, amount).encodeABI();
+
+	let tx = {
+		from : sender,
+		to: contract._address,
+		nonce : nonce,
+		data : payload,
+		gas : 2000000,
+		gasPrice: 10000000,
+		chainId
+	};
+
+	let signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
+	let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+	console.log(`Mint new token is done -> txHash ${txHash.transactionHash}`);
+}
+
+async function burn(contract, target, amount) {
+	let nonce = await web3.eth.getTransactionCount(sender);
+
+	let payload = contract.methods.mint(target, amount).encodeABI();
+
+	let tx = {
+		from : sender,
+		to: contract._address,
+		nonce : nonce,
+		data : payload,
+		gas : 2000000,
+		gasPrice: 10000000,
+		chainId
+	};
+
+	let signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
+	let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+	console.log(`Burn token is done -> txHash ${txHash.transactionHash}`);
+}
+
+function getRandomInt(min, max) {
+	return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
 async function main() {
@@ -99,6 +139,11 @@ async function main() {
 		let txHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
 		console.log(`Set admin txHash ${txHash.transactionHash}`);
 
+		let { address } = await web3.eth.accounts.create();
+		let amount = getRandomInt(0,2000);
+		await mint(MicroPayment, address, amount);
+		await burn(MicroPayment, address, amount);
+
 		// checking balance of user
 		let { balance, unsettledBalance } = await MicroPayment.methods.balanceOf(sender).call();
 		console.log(`Balance of owner ${balance}, UnsettleBalance ${unsettledBalance}`);
@@ -109,7 +154,7 @@ async function main() {
 
 		for(let i = 0; i < txNumber; i++) {
 			let { address } = await web3.eth.accounts.create();
-			await transferToken(MicroPayment, address, getRandomInt(2000), "TRANSFER", `REF${i}`);
+			await transferToken(MicroPayment, address, getRandomInt(1, 2000), "TRANSFER", `REF${i}`);
 
 			// checking balance of user
 			let userBalance = await MicroPayment.methods.balanceOf(address).call();
@@ -117,7 +162,7 @@ async function main() {
 		}
 
 		// checking transaction record
-		let { senders,receivers,amounts, txRefs,txTypes } = await MicroPayment.methods.getTransactionRecords(sender, 2).call();
+		let { senders, receivers, amounts, txRefs, txTypes , txTimes } = await MicroPayment.methods.getTransactionRecords(sender, 1).call();
 
 		let results = senders.map((sender,idx) => {
 			return {
@@ -125,7 +170,8 @@ async function main() {
 				receiver: receivers[idx],
 				amount: amounts[idx],
 				txRef: web3.utils.hexToAscii(txRefs[idx]).replace(/\x00/g,''),
-				txType: web3.utils.hexToAscii(txTypes[idx]).replace(/\x00/g,'')
+				txType: web3.utils.hexToAscii(txTypes[idx]).replace(/\x00/g,''),
+				time: txTimes[idx],
 			}});
 
 		console.log("History",results);
@@ -146,7 +192,6 @@ async function main() {
 
 
 		// just send without wait for confirmation
-
 		sendToken(89, MicroPayment);
 
 	} catch (ex) {
